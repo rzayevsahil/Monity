@@ -37,9 +37,9 @@ Windows masaüstünde **uygulama kullanım süresini** takip eden WPF uygulamas�
 ## İndir ve kur
 
 1. [Releases](https://github.com/rzayevsahil/Monity/releases) sayfasına gidin.
-2. En son sürümde **Monity-x.x.x-win-x64.zip** (veya benzeri) dosyasını indirin.
-3. Zip’i bir klasöre açın (örn. `Masaüstü\Monity`).
-4. **Monity.App.exe** dosyasını çalıştırın.
+2. En son sürümde **Monity-Setup-x.x.x.exe** (önerilen) veya **Monity-x.x.x-win-x64.zip** (taşınabilir) dosyasını indirin.
+3. **Setup exe:** Kurulum sihirbazını çalıştırın; masaüstü kısayolu ve Başlat menüsü otomatik oluşturulur. Kurulum yeri varsayılan: `%LocalAppData%\Monity`. Programlar ve Özellikler'den kaldırılabilir.
+4. **Zip:** Bir klasöre açıp **Monity.App.exe** çalıştırın. Uygulama içi güncelleme bu zip'i kullanır.
 
 **Güncelleme:** Yeni bir sürüm yayımlandığında uygulama penceresinde "Yeni sürüm mevcut (x.x.x)" yazısı ve **Güncelle** butonu görünür. Tek tıklamayla indirip üzerine kurulur; uygulama kapanıp yeni sürüm açılır.
 
@@ -70,6 +70,8 @@ dotnet publish src/Monity.Updater/Monity.Updater.csproj -c Release -r win-x64 --
 
 Uygulama çıktısı: `src/Monity.App/bin/Release/net8.0-windows/win-x64/publish/`  
 Updater çıktısı: `src/Monity.Updater/bin/Release/net8.0/win-x64/publish/Monity.Updater.exe`  
+
+**Tek komutla kurulum:** `.\build-release.ps1` (Inno Setup 6 kurulu olmalı) ile App + Updater publish edilir ve Setup exe derlenir. Çıktı: `installer/Output/Monity-Setup-1.0.0.exe`.
 
 Release zip’i oluşturmak için: Uygulama publish klasörünün içeriğini zip’leyin, **Updater.exe** dosyasını da bu zip’in içine ekleyin. Zip adı: `Monity-1.0.0-win-x64.zip` (sürüm numarasıyla). GitHub’da yeni release açıp bu zip’i ekleyin; tag örn. `v1.0.0`.
 
