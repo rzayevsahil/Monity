@@ -30,7 +30,18 @@ Windows masaüstünde **uygulama kullanım süresini** takip eden WPF uygulamas�
 ## Gereksinimler
 
 - **Windows** 10 veya 11  
-- **.NET 8 SDK**
+- **.NET 8** (veya aşağıdaki self-contained zip ile kurulum; ayrıca .NET yüklemeniz gerekmez)
+
+---
+
+## İndir ve kur
+
+1. [Releases](https://github.com/rzayevsahil/Monity/releases) sayfasına gidin.
+2. En son sürümde **Monity-x.x.x-win-x64.zip** (veya benzeri) dosyasını indirin.
+3. Zip’i bir klasöre açın (örn. `Masaüstü\Monity`).
+4. **Monity.App.exe** dosyasını çalıştırın.
+
+**Güncelleme:** Yeni bir sürüm yayımlandığında uygulama penceresinde "Yeni sürüm mevcut (x.x.x)" yazısı ve **Güncelle** butonu görünür. Tek tıklamayla indirip üzerine kurulur; uygulama kapanıp yeni sürüm açılır.
 
 ---
 
@@ -47,13 +58,20 @@ dotnet build Monity.sln
 dotnet run --project src/Monity.App/Monity.App.csproj
 ```
 
-Release derlemesi:
+Release derlemesi ve dağıtım zip’i:
 
 ```bash
-dotnet publish src/Monity.App/Monity.App.csproj -c Release -r win-x64 --self-contained
+# Uygulama (self-contained, kullanıcı .NET kurmak zorunda kalmaz)
+dotnet publish src/Monity.App/Monity.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=false
+
+# Updater (tek exe, release zip’e eklenecek)
+dotnet publish src/Monity.Updater/Monity.Updater.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
 ```
 
-Çıktı: `src/Monity.App/bin/Release/net8.0-windows/win-x64/publish/`
+Uygulama çıktısı: `src/Monity.App/bin/Release/net8.0-windows/win-x64/publish/`  
+Updater çıktısı: `src/Monity.Updater/bin/Release/net8.0/win-x64/publish/Monity.Updater.exe`  
+
+Release zip’i oluşturmak için: Uygulama publish klasörünün içeriğini zip’leyin, **Updater.exe** dosyasını da bu zip’in içine ekleyin. Zip adı: `Monity-1.0.0-win-x64.zip` (sürüm numarasıyla). GitHub’da yeni release açıp bu zip’i ekleyin; tag örn. `v1.0.0`.
 
 ---
 
@@ -71,10 +89,12 @@ monity/
     │   ├── Persistence/         # SQLite (Dapper), DatabaseMigrator, UsageRepository
     │   ├── InstalledApps/       # InstalledAppsProvider (Uninstall registry)
     │   └── AppDisplayNameResolver
-    └── Monity.App/
-        ├── Views/               # DashboardPage, SettingsPage
-        ├── Power/               # PowerEventHandler (WM_POWERBROADCAST)
-        └── App.xaml(.cs)
+    ├── Monity.App/
+    │   ├── Services/            # UpdateService (GitHub API, indirme, güncelleme)
+    │   ├── Views/               # DashboardPage, SettingsPage
+    │   ├── Power/               # PowerEventHandler (WM_POWERBROADCAST)
+    │   └── App.xaml(.cs)
+    └── Monity.Updater/          # Güncelleme yardımcısı (tek tık güncelleme)
 ```
 
 ---

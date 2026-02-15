@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Extensions.DependencyInjection;
+using Monity.App.Services;
 using Monity.App.Views;
 using Monity.Infrastructure.Tracking;
 
@@ -10,12 +11,16 @@ namespace Monity.App;
 public partial class MainWindow : Window
 {
     private readonly UsageTrackingService _trackingService;
+    private readonly UpdateService _updateService;
     private System.Windows.Forms.NotifyIcon? _trayIcon;
+    private UpdateService.UpdateCheckResult? _pendingUpdate;
 
     public MainWindow()
     {
         InitializeComponent();
-        _trackingService = ((App)System.Windows.Application.Current).Services.GetRequiredService<UsageTrackingService>();
+        var services = ((App)System.Windows.Application.Current).Services;
+        _trackingService = services.GetRequiredService<UsageTrackingService>();
+        _updateService = services.GetRequiredService<UpdateService>();
         Loaded += MainWindow_Loaded;
         SetWindowIcon();
     }
@@ -39,6 +44,37 @@ public partial class MainWindow : Window
     {
         MainFrame.Navigate(new DashboardPage(Services));
         SetupTrayIcon();
+        _updateService.EnsureUpdaterInPlace();
+        _ = CheckForUpdatesAsync();
+    }
+
+    private async System.Threading.Tasks.Task CheckForUpdatesAsync()
+    {
+        var result = await _updateService.CheckForUpdateAsync();
+        if (result == null) return;
+        _pendingUpdate = result;
+        await Dispatcher.InvokeAsync(() =>
+        {
+            TxtUpdateMessage.Text = $"Yeni sürüm mevcut ({result.Version})";
+            UpdateBanner.Visibility = Visibility.Visible;
+        });
+    }
+
+    private async void BtnUpdate_Click(object sender, RoutedEventArgs e)
+    {
+        if (_pendingUpdate == null) return;
+        BtnUpdate.IsEnabled = false;
+        BtnUpdate.Content = "İndiriliyor...";
+        var progress = new Progress<int>(pct => { BtnUpdate.Content = pct < 100 ? $"İndiriliyor... %{pct}" : "Kuruluyor..."; });
+        var ok = await _updateService.DownloadAndApplyUpdateAsync(_pendingUpdate.Version, _pendingUpdate.DownloadUrl, progress);
+        if (ok)
+            System.Windows.Application.Current.Shutdown();
+        else
+        {
+            BtnUpdate.IsEnabled = true;
+            BtnUpdate.Content = "Güncelle";
+            System.Windows.MessageBox.Show("Güncelleme indirilemedi. Lütfen internet bağlantınızı kontrol edin veya Releases sayfasından manuel indirin.", "Güncelleme", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
 
     private void SetupTrayIcon()

@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Monity.App.Power;
+using Monity.App.Services;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
 using Monity.Infrastructure.WinApi;
@@ -80,6 +81,7 @@ public partial class App : System.Windows.Application
                 onSuspend: () => engine.HandlePowerSuspend(),
                 onResume: () => engine.HandlePowerResume());
         });
+        services.AddSingleton<UpdateService>();
         services.AddTransient<MainWindow>();
     }
 

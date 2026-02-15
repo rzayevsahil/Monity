@@ -5,6 +5,13 @@
     <ProjectReference Include="..\Monity.Infrastructure\Monity.Infrastructure.csproj" />
   </ItemGroup>
 
+  <Target Name="CopyUpdater" AfterTargets="Build">
+    <PropertyGroup>
+      <UpdaterOutDir>$(MSBuildThisFileDirectory)..\Monity.Updater\bin\$(Configuration)\net8.0\</UpdaterOutDir>
+    </PropertyGroup>
+    <Copy SourceFiles="$(UpdaterOutDir)Monity.Updater.exe" DestinationFiles="$(OutputPath)Updater.exe" SkipUnchangedFiles="true" Condition="Exists('$(UpdaterOutDir)Monity.Updater.exe')" />
+  </Target>
+
   <ItemGroup>
     <Resource Include="Assets\Logo.png" />
   </ItemGroup>
@@ -23,6 +30,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
   </PropertyGroup>
 
 </Project>
