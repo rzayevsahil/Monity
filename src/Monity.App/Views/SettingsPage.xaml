@@ -1,0 +1,51 @@
+<Page x:Class="Monity.App.Views.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="600"
+      Title="Ayarlar"
+      Background="{StaticResource BackgroundBrush}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24">
+            <Button Content="← Geri" Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,24" Click="BtnBack_Click"/>
+            <TextBlock Text="Ayarlar" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,24"/>
+
+            <!-- Idle threshold -->
+            <TextBlock Text="Boşta kalma süresi (saniye)" FontSize="14" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Bu süre boyunca klavye veya fareye hiç dokunmazsanız, artık süre sayılmaz (örneğin ekrandan uzaklaştığınızda). 10 ile 600 saniye arası bir değer girin (60 = 1 dakika)." 
+                       FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <TextBox x:Name="TxtIdleThreshold" Width="120" HorizontalAlignment="Left" Padding="8,6" Margin="0,0,0,24"
+                         PreviewTextInput="TxtIdleThreshold_PreviewTextInput"
+                         LostFocus="TxtIdleThreshold_LostFocus"/>
+
+            <!-- Ignore list -->
+            <TextBlock Text="Takip hariç tutulacak uygulamalar" FontSize="14" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Aşağıdaki listeden takip etmek istemediğiniz uygulamaları işaretleyin. Listede yalnızca daha önce kullanılmış uygulamalar görünür. Monity ve Windows Gezgini zaten takip dışıdır." 
+                       FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <TextBox x:Name="TxtAppSearch" Margin="0,0,0,8" Padding="8,6" 
+                     FontSize="13" VerticalContentAlignment="Center"
+                     Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                     GotFocus="TxtAppSearch_GotFocus" LostFocus="TxtAppSearch_LostFocus"
+                     TextChanged="TxtAppSearch_TextChanged"/>
+            <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="220">
+                <Grid>
+                    <ListBox x:Name="AppExcludeList" BorderThickness="0" Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsExcluded, Mode=TwoWay}" Content="{Binding DisplayName}" Margin="0,4" Cursor="Hand"/>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock x:Name="EmptyAppListMessage" Text="Henüz kullanılan uygulama yok. Uygulamaları kullandıkça burada listelenecektir." 
+                               Foreground="{StaticResource TextMutedBrush}" FontSize="12" TextWrapping="Wrap" 
+                               VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"/>
+                </Grid>
+            </Border>
+
+            <!-- Save -->
+            <Button Content="Kaydet" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left" Click="BtnSave_Click"/>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
