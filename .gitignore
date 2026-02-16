@@ -1,6 +1,8 @@
 # Build çıktıları
 [Bb]in/
 [Oo]bj/
+installer/Output/
+
 [Ll]og/
 [Ll]ogs/
 [Oo]ut/
