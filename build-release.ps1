@@ -1,11 +1,21 @@
 # Monity Release Build Script
 # 1. Publish App, 2. Publish Updater, 3. Compile Inno Setup
+# Sürüm tek yerde: src/Monity.App/Monity.App.csproj -> <Version>
 # Gereksinim: Inno Setup 6 kurulu (https://jrsoftware.org/isinfo.php)
 
 $ErrorActionPreference = "Stop"
 $RootDir = $PSScriptRoot
 
-Write-Host "=== Monity Release Build ===" -ForegroundColor Cyan
+# Sürümü csproj'dan oku (tek kaynak)
+$csprojPath = Join-Path $RootDir "src\Monity.App\Monity.App.csproj"
+$csprojXml = [xml](Get-Content $csprojPath -Encoding UTF8)
+$Version = $csprojXml.Project.PropertyGroup.Version
+if (-not $Version) {
+    Write-Host "HATA: Monity.App.csproj icinde <Version> bulunamadi." -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "=== Monity Release Build (v$Version) ===" -ForegroundColor Cyan
 
 # 1. Publish App
 Write-Host "`n[1/3] Publishing Monity.App..." -ForegroundColor Yellow
@@ -37,9 +47,9 @@ if (-not $Iscc) {
 }
 
 Write-Host "`n[3/3] Compiling installer..." -ForegroundColor Yellow
-& $Iscc "$RootDir\installer\Monity.iss"
+& $Iscc "/DMyAppVersion=$Version" "$RootDir\installer\Monity.iss"
 if ($LASTEXITCODE -ne 0) { exit 1 }
 
 Write-Host "`n=== Tamamlandi ===" -ForegroundColor Green
-Write-Host "Setup: $RootDir\installer\Output\Monity-Setup-2.1.0.exe"
-Write-Host "Zip icin: publish klasorunu zip'leyip Monity-2.1.0-win-x64.zip adiyla release'e ekleyin."
+Write-Host "Setup: $RootDir\installer\Output\Monity-Setup-$Version.exe"
+Write-Host "Zip icin: publish klasorunu zip'leyip Monity-$Version-win-x64.zip adiyla release'e ekleyin."

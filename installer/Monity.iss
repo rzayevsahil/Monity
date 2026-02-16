@@ -1,8 +1,11 @@
 ; Monity Inno Setup Script
-; Her release'te MyAppVersion güncellenmeli
+; MyAppVersion: build-release.ps1 csproj'daki Version'i okuyup /DMyAppVersion= ile verir.
+; IDE'den tek basina derlersen asagidaki varsayilan kullanilir.
 
 #define MyAppName "Monity"
-#define MyAppVersion "2.1.0"
+#ifndef MyAppVersion
+#define MyAppVersion "0.0.0"
+#endif
 #define MyAppPublisher "Monity"
 #define MyAppURL "https://github.com/rzayevsahil/Monity"
 #define MyAppExeName "Monity.App.exe"
