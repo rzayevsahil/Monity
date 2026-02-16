@@ -22,6 +22,7 @@ public sealed class UpdateService
     public async Task<UpdateCheckResult?> CheckForUpdateAsync(CancellationToken ct = default)
     {
         var currentStr = AppVersion.Current;
+        Serilog.Log.Debug("Update check: current version={Current}, api={Url}", currentStr, UpdateCheckConfig.LatestReleaseApiUrl);
         try
         {
             var response = await HttpClient.GetStringAsync(UpdateCheckConfig.LatestReleaseApiUrl, ct);

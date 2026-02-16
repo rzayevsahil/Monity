@@ -12,7 +12,10 @@ public static class AppVersion
     {
         var attr = Assembly.GetEntryAssembly()
             ?.GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-        var v = attr?.InformationalVersion?.Split('-')[0].Trim();
-        return !string.IsNullOrEmpty(v) ? v : "1.0.0";
+        var raw = attr?.InformationalVersion?.Trim();
+        if (string.IsNullOrEmpty(raw)) return "1.0.0";
+        // 2.0.0+sha veya 2.0.0-beta -> sadece 2.0.0 (Version.TryParse için)
+        var versionPart = raw.Split('-', '+')[0].Trim();
+        return !string.IsNullOrEmpty(versionPart) ? versionPart : "1.0.0";
     }
 }
