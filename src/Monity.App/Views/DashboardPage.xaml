@@ -57,14 +57,17 @@
 
             <!-- App list -->
             <TextBlock Text="Uygulama Kullanımı" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,12"/>
-            <Grid Margin="0,0,0,12">
-                <TextBox x:Name="AppSearchBox" Padding="8,6" FontSize="13" VerticalAlignment="Stretch"
-                         TextChanged="AppSearchBox_TextChanged"
-                         ToolTip="Uygulama adına göre filtrele"/>
-                <TextBlock x:Name="AppSearchPlaceholder" Text="Ara" Padding="10,8" FontSize="13"
-                           Foreground="{StaticResource TextMutedBrush}" IsHitTestVisible="False"
-                           VerticalAlignment="Center"/>
-            </Grid>
+            <Border Margin="0,0,0,12" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8">
+                <Grid>
+                    <TextBox x:Name="AppSearchBox" Padding="10,8" FontSize="13" VerticalAlignment="Stretch"
+                             BorderThickness="0" Background="Transparent"
+                             TextChanged="AppSearchBox_TextChanged"
+                             ToolTip="Uygulama adına göre filtrele"/>
+                    <TextBlock x:Name="AppSearchPlaceholder" Text="Ara" Padding="10,8" FontSize="13"
+                               Foreground="{StaticResource TextMutedBrush}" IsHitTestVisible="False"
+                               VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
             <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="0" BorderBrush="#E2E8F0" BorderThickness="1">
                 <ListView x:Name="AppListView" Height="250" BorderThickness="0">
                     <ListView.View>

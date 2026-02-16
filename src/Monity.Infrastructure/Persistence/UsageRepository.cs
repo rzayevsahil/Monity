@@ -239,6 +239,27 @@ public sealed class UsageRepository : IUsageRepository
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 
+    public async Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+
+        var sql = """
+            SELECT COALESCE(SUM(CASE WHEN is_idle = 0 THEN duration_seconds ELSE 0 END), 0) AS TotalSeconds,
+                   COUNT(*) AS SessionCount
+            FROM usage_sessions
+            WHERE day_date >= @Start AND day_date <= @End
+            """;
+
+        var row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new
+        {
+            Start = startDate.ToString("yyyy-MM-dd"),
+            End = endDate.ToString("yyyy-MM-dd")
+        });
+        if (row == null)
+            return new DailyTotal(0, 0);
+        return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
+    }
+
     public async Task<string?> GetSettingAsync(string key, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();

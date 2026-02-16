@@ -102,6 +102,11 @@ public partial class MainWindow : Window
         _trayIcon.ContextMenuStrip = ctx;
     }
 
+    private void BtnStatistics_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigate(new StatisticsPage(Services));
+    }
+
     private void BtnSettings_Click(object sender, RoutedEventArgs e)
     {
         MainFrame.Navigate(new SettingsPage(Services));

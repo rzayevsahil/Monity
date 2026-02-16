@@ -16,7 +16,12 @@ Windows masaüstünde **uygulama kullanım süresini** takip eden WPF uygulamas�
 ### Arayüz
 - **Dashboard:** Seçilen gün için toplam süre, kullanım kaydı sayısı, “şu an aktif” uygulama; tarih seçici ve yenile butonu.
 - **Saatlik grafik:** Gün içi kullanım dağılımı (LiveCharts2).
-- **Uygulama listesi:** Günlük kullanım süresi ve yüzde ile tablo.
+- **Uygulama listesi:** Günlük kullanım süresi ve yüzde ile tablo; yuvarlatılmış arama kutusu ile filtreleme.
+- **İstatistikler:** Ana menüden erişilen ayrı sayfa:
+  - **Dönem seçici:** Günlük, haftalık, aylık veya yıllık.
+  - **Tarih seçimi:** Seçilen döneme göre toplam süre, günde ortalama ve kullanım kaydı sayısı.
+  - **Uygulama kullanımı tablosu:** Toplam, ortalama ve yüzde sütunları; arama kutusu ile filtreleme.
+  - **Dashboard’a dön:** Sayfa başlığının yanında ve sayfa sonunda geri dönüş butonu.
 - **Ayarlar:**
   - Boşta kalma süresi (saniye), 10–600 arası.
   - **Takip hariç tutulacak uygulamalar:** Hem daha önce kullanılan (DB’deki) hem de **kurulu programlar** (Windows Uninstall kayıtlarından) listelenir; arama kutusu ile filtreleme. Monity ve Windows Gezgini varsayılan olarak hariçtir.
@@ -93,7 +98,7 @@ monity/
     │   └── AppDisplayNameResolver
     ├── Monity.App/
     │   ├── Services/            # UpdateService (GitHub API, indirme, güncelleme)
-    │   ├── Views/               # DashboardPage, SettingsPage
+    │   ├── Views/               # DashboardPage, StatisticsPage, SettingsPage
     │   ├── Power/               # PowerEventHandler (WM_POWERBROADCAST)
     │   └── App.xaml(.cs)
     └── Monity.Updater/          # Güncelleme yardımcısı (tek tık güncelleme)
