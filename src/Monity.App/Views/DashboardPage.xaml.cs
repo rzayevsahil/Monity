@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -20,6 +22,7 @@ public partial class DashboardPage : Page
     private readonly UsageTrackingService _trackingService;
     private long _totalSeconds;
     private ObservableCollection<AppUsageItem> _appItems = [];
+    private ICollectionView _appListView = null!;
 
     public DashboardPage(IServiceProvider services)
     {
@@ -29,7 +32,8 @@ public partial class DashboardPage : Page
         _trackingService = services.GetRequiredService<UsageTrackingService>();
 
         DatePicker.SelectedDate = DateTime.Today;
-        AppListView.ItemsSource = _appItems;
+        _appListView = CollectionViewSource.GetDefaultView(_appItems);
+        AppListView.ItemsSource = _appListView;
         SetupHourlyChartAxes();
 
         Loaded += async (_, _) =>
@@ -118,10 +122,23 @@ public partial class DashboardPage : Page
     /// </summary>
     private void ClearDashboardData()
     {
-        TxtTodayTotal.Text = "0h 0m";
+        TxtTodayTotal.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
         _appItems.Clear();
         HourlyChart.Series = new ObservableCollection<ISeries>();
+    }
+
+    private void AppSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        var query = (AppSearchBox.Text ?? "").Trim();
+        AppSearchPlaceholder.Visibility = string.IsNullOrEmpty(AppSearchBox.Text)
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+        _appListView.Filter = string.IsNullOrEmpty(query)
+            ? null
+            : obj => obj is AppUsageItem item &&
+                     item.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase);
+        _appListView.Refresh();
     }
 
     private void ApplyDataToUI(long total, int sessionCount,
@@ -195,10 +212,10 @@ public partial class DashboardPage : Page
         var h = seconds / 3600;
         var m = (seconds % 3600) / 60;
         if (h > 0)
-            return $"{h}h {m}m";
+            return $"{h} sa {m} dk";
         if (m > 0)
-            return $"{m}m";
-        return $"{seconds}s";
+            return $"{m} dk";
+        return $"{seconds} sn";
     }
 
     private class AppUsageItem

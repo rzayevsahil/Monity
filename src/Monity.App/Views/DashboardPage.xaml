@@ -22,7 +22,7 @@
                 <Border Grid.Column="0" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0" BorderBrush="#E2E8F0" BorderThickness="1">
                     <StackPanel>
                         <TextBlock Text="Bugün Toplam" Foreground="{StaticResource TextMutedBrush}" FontSize="12"/>
-                        <TextBlock x:Name="TxtTodayTotal" Text="0h 0m" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"/>
+                        <TextBlock x:Name="TxtTodayTotal" Text="0 sa 0 dk" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="1" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20" Margin="4,0" BorderBrush="#E2E8F0" BorderThickness="1">
@@ -57,13 +57,37 @@
 
             <!-- App list -->
             <TextBlock Text="Uygulama Kullanımı" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,12"/>
+            <Grid Margin="0,0,0,12">
+                <TextBox x:Name="AppSearchBox" Padding="8,6" FontSize="13" VerticalAlignment="Stretch"
+                         TextChanged="AppSearchBox_TextChanged"
+                         ToolTip="Uygulama adına göre filtrele"/>
+                <TextBlock x:Name="AppSearchPlaceholder" Text="Ara" Padding="10,8" FontSize="13"
+                           Foreground="{StaticResource TextMutedBrush}" IsHitTestVisible="False"
+                           VerticalAlignment="Center"/>
+            </Grid>
             <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="0" BorderBrush="#E2E8F0" BorderThickness="1">
                 <ListView x:Name="AppListView" Height="250" BorderThickness="0">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Uygulama" Width="200" DisplayMemberBinding="{Binding DisplayName}"/>
-                            <GridViewColumn Header="Süre" Width="100" DisplayMemberBinding="{Binding DurationFormatted}"/>
-                            <GridViewColumn Header="Yüzde" Width="80" DisplayMemberBinding="{Binding PercentageFormatted}"/>
+                            <GridViewColumn Header="Süre" Width="100">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border HorizontalAlignment="Stretch" MinWidth="100" Padding="8,0">
+                                            <TextBlock Text="{Binding DurationFormatted}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Oran" Width="80">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border HorizontalAlignment="Stretch" MinWidth="80" Padding="8,0">
+                                            <TextBlock Text="{Binding PercentageFormatted}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>
