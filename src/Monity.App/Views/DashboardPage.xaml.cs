@@ -164,22 +164,25 @@ public partial class DashboardPage : Page
         var hourlyValues = new double[24];
         foreach (var h in hourly)
             hourlyValues[(int)h.Hour] = h.TotalSeconds / 60.0; // Dakika
-        // Grafiği güncelle: önce seriyi temizle ki kontrol yeniden çizilsin
         HourlyChart.Series = new ObservableCollection<ISeries>();
         HourlyChart.Series = new ObservableCollection<ISeries>
         {
             new ColumnSeries<double>
             {
                 Values = hourlyValues,
-                Fill = new SolidColorPaint(new SKColor(37, 99, 235))
+                Fill = new SolidColorPaint(new SKColor(37, 99, 235)),
+                Stroke = new SolidColorPaint(new SKColor(29, 78, 216)) { StrokeThickness = 1 },
+                Rx = 4,
+                Ry = 4
             }
         };
     }
 
     private void SetupHourlyChartAxes()
     {
-        var textColor = new SKColor(100, 116, 139); // slate
+        var textColor = new SKColor(71, 85, 105);
         var separatorColor = new SKColor(226, 232, 240);
+        var font = SKTypeface.FromFamilyName("Segoe UI", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright);
 
         HourlyChart.XAxes = new List<Axis>
         {
@@ -187,22 +190,29 @@ public partial class DashboardPage : Page
             {
                 Labeler = value =>
                 {
-                    var h = (int)value;
-                    return h >= 0 && h < 24 && (h % 3 == 0) ? h.ToString() : string.Empty;
+                    var h = (int)Math.Round(value);
+                    return h >= 0 && h < 24 ? h.ToString() : string.Empty;
                 },
-                LabelsPaint = new SolidColorPaint(textColor) { SKTypeface = SKTypeface.FromFamilyName("Segoe UI") },
+                LabelsPaint = new SolidColorPaint(textColor) { SKTypeface = font },
                 SeparatorsPaint = new SolidColorPaint(separatorColor) { StrokeThickness = 1 },
-                MinStep = 1
+                MinStep = 1,
+                NamePaint = null
             }
         };
         HourlyChart.YAxes = new List<Axis>
         {
             new Axis
             {
-                Labeler = value => $"{(int)value} dk",
-                LabelsPaint = new SolidColorPaint(textColor) { SKTypeface = SKTypeface.FromFamilyName("Segoe UI") },
+                Labeler = value =>
+                {
+                    var mins = (int)value;
+                    if (mins >= 60) return $"{mins / 60} sa";
+                    return mins > 0 ? $"{mins} dk" : "0 dk";
+                },
+                LabelsPaint = new SolidColorPaint(textColor) { SKTypeface = font },
                 SeparatorsPaint = new SolidColorPaint(separatorColor) { StrokeThickness = 1 },
-                MinStep = 15
+                MinStep = 15,
+                NamePaint = null
             }
         };
     }

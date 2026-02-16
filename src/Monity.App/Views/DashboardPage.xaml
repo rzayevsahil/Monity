@@ -51,8 +51,8 @@
 
             <!-- Hourly chart -->
             <TextBlock Text="Saatlik Kullanım" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,12"/>
-            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,24" BorderBrush="#E2E8F0" BorderThickness="1" Height="200">
-                <lvc:CartesianChart x:Name="HourlyChart"/>
+            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="#E2E8F0" BorderThickness="1" Height="240">
+                <lvc:CartesianChart x:Name="HourlyChart" DrawMarginFrame="{x:Null}"/>
             </Border>
 
             <!-- App list -->
