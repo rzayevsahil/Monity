@@ -87,8 +87,13 @@ public partial class DashboardPage : Page
 
     private async System.Threading.Tasks.Task LoadDataAsync(string date)
     {
+        if (string.IsNullOrWhiteSpace(date))
+            return;
         try
         {
+            // Seçilen tarih için özeti usage_sessions'tan güncelle; böylece her zaman o güne ait güncel veri gösterilir
+            await _repository.UpdateDailySummaryAsync(date);
+
             var (total, sessionCount) = await _repository.GetDailyTotalAsync(date, excludeIdle: true);
             var apps = await _repository.GetDailyUsageAsync(date, excludeIdle: true);
             var hourly = await _repository.GetHourlyUsageAsync(date, excludeIdle: true);
