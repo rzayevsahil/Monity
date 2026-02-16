@@ -232,7 +232,10 @@ public sealed class UsageRepository : IUsageRepository
             WHERE date = @Date
             """;
 
-        var row = await conn.QuerySingleAsync<dynamic>(sql, new { Date = date });
+        // O tarihte kayıt yoksa bazı ortamlarda 0 satır döner; tek satır zorunlu değil
+        var row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Date = date });
+        if (row == null)
+            return new DailyTotal(0, 0);
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 

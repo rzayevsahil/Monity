@@ -60,6 +60,8 @@ public partial class DashboardPage : Page
         BtnRefresh.IsEnabled = false;
         try
         {
+            // DatePicker'dan yeni seçilen tarihin commit edilmesi için odağı butona al (özellikle yazılan tarih için)
+            BtnRefresh.Focus();
             await LoadDataAsync(GetSelectedDateString());
         }
         finally
@@ -70,8 +72,7 @@ public partial class DashboardPage : Page
 
     private string GetSelectedDateString()
     {
-        if (DatePicker.SelectedDate.HasValue)
-            return DatePicker.SelectedDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        // Önce kutuda görünen metni kullan (kullanıcının gördüğü tarih = takvim veya yazılan)
         var text = DatePicker.Text;
         if (!string.IsNullOrWhiteSpace(text))
         {
@@ -82,6 +83,8 @@ public partial class DashboardPage : Page
                     return parsed.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
             }
         }
+        if (DatePicker.SelectedDate.HasValue)
+            return DatePicker.SelectedDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         return DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
     }
 
@@ -106,12 +109,19 @@ public partial class DashboardPage : Page
         catch (Exception ex)
         {
             Serilog.Log.Error(ex, "Failed to load dashboard data");
-            await Dispatcher.InvokeAsync(() =>
-            {
-                TxtTodayTotal.Text = "?";
-                TxtSessionCount.Text = "?";
-            });
+            await Dispatcher.InvokeAsync(() => ClearDashboardData());
         }
+    }
+
+    /// <summary>
+    /// Liste ve grafiği boşaltır; veri yok veya hata durumunda kullanılır.
+    /// </summary>
+    private void ClearDashboardData()
+    {
+        TxtTodayTotal.Text = "0h 0m";
+        TxtSessionCount.Text = "0";
+        _appItems.Clear();
+        HourlyChart.Series = new ObservableCollection<ISeries>();
     }
 
     private void ApplyDataToUI(long total, int sessionCount,
@@ -137,6 +147,8 @@ public partial class DashboardPage : Page
         var hourlyValues = new double[24];
         foreach (var h in hourly)
             hourlyValues[(int)h.Hour] = h.TotalSeconds / 60.0; // Dakika
+        // Grafiği güncelle: önce seriyi temizle ki kontrol yeniden çizilsin
+        HourlyChart.Series = new ObservableCollection<ISeries>();
         HourlyChart.Series = new ObservableCollection<ISeries>
         {
             new ColumnSeries<double>
