@@ -70,3 +70,4 @@ if ($LASTEXITCODE -ne 0) { exit 1 }
 Write-Host "`n=== Tamamlandi ===" -ForegroundColor Green
 Write-Host "Setup: $RootDir\installer\Output\Monity-Setup-$Version.exe"
 Write-Host "Zip icin: $AppPublishDir icindekileri zip'leyip Monity-$Version-win-x64.zip adiyla release'e ekleyin (Updater.exe zaten icinde)."
+Read-Host "`nKapatmak icin Enter'a basin"
