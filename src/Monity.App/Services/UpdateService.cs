@@ -21,26 +21,54 @@ public sealed class UpdateService
 
     public async Task<UpdateCheckResult?> CheckForUpdateAsync(CancellationToken ct = default)
     {
+        var currentStr = AppVersion.Current;
         try
         {
             var response = await HttpClient.GetStringAsync(UpdateCheckConfig.LatestReleaseApiUrl, ct);
             var release = JsonSerializer.Deserialize<GitHubRelease>(response);
-            if (release?.TagName == null) return null;
+            if (release?.TagName == null)
+            {
+                Serilog.Log.Debug("Update check: no release or tag_name");
+                return null;
+            }
 
             var latestVersion = release.TagName.TrimStart('v').Trim();
-            if (string.IsNullOrEmpty(latestVersion)) return null;
-
-            if (!Version.TryParse(latestVersion, out var latest) ||
-                !Version.TryParse(AppVersion.Current, out var current))
+            if (string.IsNullOrEmpty(latestVersion))
+            {
+                Serilog.Log.Debug("Update check: tag_name empty after trim");
                 return null;
+            }
 
-            if (latest <= current) return null;
+            if (!Version.TryParse(latestVersion, out var latest))
+            {
+                Serilog.Log.Debug("Update check: could not parse latest version {Tag}", release.TagName);
+                return null;
+            }
+            if (!Version.TryParse(currentStr, out var current))
+            {
+                Serilog.Log.Debug("Update check: could not parse current version {Current}", currentStr);
+                return null;
+            }
 
+            if (latest <= current)
+            {
+                Serilog.Log.Debug("Update check: no update (current={Current}, latest={Latest})", currentStr, latestVersion);
+                return null;
+            }
+
+            // Uygulama zip'ini seç (win-x64); "Source code (zip)" gibi asset'leri atla
             var zipAsset = release.Assets?.FirstOrDefault(a =>
-                a.Name?.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) == true);
+                a.Name?.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) == true &&
+                a.Name.Contains("win-x64", StringComparison.OrdinalIgnoreCase));
             var downloadUrl = zipAsset?.BrowserDownloadUrl;
-            if (string.IsNullOrEmpty(downloadUrl)) return null;
+            if (string.IsNullOrEmpty(downloadUrl))
+            {
+                Serilog.Log.Debug("Update check: no win-x64 zip asset in release (assets: {Names})",
+                    release.Assets == null ? "" : string.Join(", ", release.Assets.Select(x => x.Name ?? "")));
+                return null;
+            }
 
+            Serilog.Log.Information("Update check: update available (current={Current}, latest={Latest})", currentStr, latestVersion);
             return new UpdateCheckResult(latestVersion, downloadUrl);
         }
         catch (Exception ex)

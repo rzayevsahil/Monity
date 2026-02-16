@@ -46,7 +46,9 @@ Windows masaüstünde **uygulama kullanım süresini** takip eden WPF uygulamas�
 3. **Setup exe:** Kurulum sihirbazını çalıştırın; masaüstü kısayolu ve Başlat menüsü otomatik oluşturulur. Kurulum yeri varsayılan: `%LocalAppData%\Monity`. Programlar ve Özellikler'den kaldırılabilir.
 4. **Zip:** Bir klasöre açıp **Monity.App.exe** çalıştırın. Uygulama içi güncelleme bu zip'i kullanır.
 
-**Güncelleme:** Yeni bir sürüm yayımlandığında uygulama penceresinde "Yeni sürüm mevcut (x.x.x)" yazısı ve **Güncelle** butonu görünür. Tek tıklamayla indirip üzerine kurulur; uygulama kapanıp yeni sürüm açılır.
+**Güncelleme:** Uygulama her açılışta GitHub’daki **en son release**’i (`releases/latest`) kontrol eder. Sürüm numarası (tag, örn. v2.0.0) yüklü sürümden büyükse pencerede "Yeni sürüm mevcut (x.x.x)" ve **Güncelle** butonu çıkar; tek tıklamayla zip indirilir ve kurulur.
+
+**Güncelleme görünmüyorsa:** Ağ hatası veya GitHub API limiti (saatte 60 istek) nedeniyle kontrol bazen başarısız olabilir. [Releases](https://github.com/rzayevsahil/Monity/releases) sayfasından en son sürümü manuel indirip kurabilirsiniz. Hata detayı `%LocalAppData%\Monity\Logs\monity-*.log` dosyasında "Update check failed" ile kaydedilir.
 
 ---
 

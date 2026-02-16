@@ -19,6 +19,22 @@ public interface IUsageRepository
 }
 
 public record AppListItem(string ProcessName, string? DisplayName);
-public record AppUsageSummary(long AppId, string ProcessName, string? DisplayName, long TotalSeconds, long SessionCount);
-public record HourlyUsage(long Hour, long TotalSeconds);
+
+/// <summary>Dapper materialization: parameterless ctor + settable properties (SQLite INTEGER → long).</summary>
+public class AppUsageSummary
+{
+    public long AppId { get; set; }
+    public string ProcessName { get; set; } = "";
+    public string? DisplayName { get; set; }
+    public long TotalSeconds { get; set; }
+    public long SessionCount { get; set; }
+}
+
+/// <summary>Dapper materialization: parameterless ctor + settable properties (SQLite INTEGER → long).</summary>
+public class HourlyUsage
+{
+    public long Hour { get; set; }
+    public long TotalSeconds { get; set; }
+}
+
 public record DailyTotal(long TotalSeconds, int SessionCount);
