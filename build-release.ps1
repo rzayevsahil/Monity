@@ -41,4 +41,5 @@ Write-Host "`n[3/3] Compiling installer..." -ForegroundColor Yellow
 if ($LASTEXITCODE -ne 0) { exit 1 }
 
 Write-Host "`n=== Tamamlandi ===" -ForegroundColor Green
-Write-Host "Setup: $RootDir\installer\Output\Monity-Setup-1.0.0.exe"
+Write-Host "Setup: $RootDir\installer\Output\Monity-Setup-2.0.0.exe"
+Write-Host "Zip icin: publish klasorunu zip'leyip Monity-2.0.0-win-x64.zip adiyla release'e ekleyin."

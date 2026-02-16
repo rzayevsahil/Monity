@@ -2,7 +2,7 @@
 ; Her release'te MyAppVersion güncellenmeli
 
 #define MyAppName "Monity"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "2.0.0"
 #define MyAppPublisher "Monity"
 #define MyAppURL "https://github.com/rzayevsahil/Monity"
 #define MyAppExeName "Monity.App.exe"
