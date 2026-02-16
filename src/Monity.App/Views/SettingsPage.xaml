@@ -16,19 +16,22 @@
             <TextBlock Text="Boşta kalma süresi (saniye)" FontSize="14" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Bu süre boyunca klavye veya fareye hiç dokunmazsanız, artık süre sayılmaz (örneğin ekrandan uzaklaştığınızda). 10 ile 600 saniye arası bir değer girin (60 = 1 dakika)." 
                        FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
-            <TextBox x:Name="TxtIdleThreshold" Width="120" HorizontalAlignment="Left" Padding="8,6" Margin="0,0,0,24"
+            <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,24" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8">
+                <TextBox x:Name="TxtIdleThreshold" Padding="10,8" BorderThickness="0" Background="Transparent"
                          PreviewTextInput="TxtIdleThreshold_PreviewTextInput"
                          LostFocus="TxtIdleThreshold_LostFocus"/>
+            </Border>
 
             <!-- Ignore list -->
             <TextBlock Text="Takip hariç tutulacak uygulamalar" FontSize="14" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Aşağıdaki listeden takip etmek istemediğiniz uygulamaları işaretleyin. Listede yalnızca daha önce kullanılmış uygulamalar görünür. Monity ve Windows Gezgini zaten takip dışıdır." 
                        FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
-            <TextBox x:Name="TxtAppSearch" Margin="0,0,0,8" Padding="8,6" 
-                     FontSize="13" VerticalContentAlignment="Center"
-                     Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
-                     GotFocus="TxtAppSearch_GotFocus" LostFocus="TxtAppSearch_LostFocus"
-                     TextChanged="TxtAppSearch_TextChanged"/>
+            <Border Margin="0,0,0,8" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8">
+                <TextBox x:Name="TxtAppSearch" Padding="10,8" BorderThickness="0" Background="Transparent"
+                         FontSize="13" VerticalContentAlignment="Center"
+                         GotFocus="TxtAppSearch_GotFocus" LostFocus="TxtAppSearch_LostFocus"
+                         TextChanged="TxtAppSearch_TextChanged"/>
+            </Border>
             <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="220">
                 <Grid>
                     <ListBox x:Name="AppExcludeList" BorderThickness="0" Background="Transparent">
