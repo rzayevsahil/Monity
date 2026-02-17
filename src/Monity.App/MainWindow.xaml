@@ -15,6 +15,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
@@ -40,5 +41,17 @@
 
         <!-- Content -->
         <Frame x:Name="MainFrame" Grid.Row="1" NavigationUIVisibility="Hidden"/>
+
+        <!-- Footer: version + developer -->
+        <Border Grid.Row="2" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="16,8">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock x:Name="TxtFooterVersion" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                <TextBlock Text=" · " FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
+                <TextBlock FontSize="12" Foreground="{StaticResource TextMutedBrush}">
+                    <Run Text="Geliştirici: "/>
+                    <Hyperlink x:Name="LinkFooterDeveloper" RequestNavigate="LinkFooter_RequestNavigate"/>
+                </TextBlock>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>

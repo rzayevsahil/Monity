@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,8 +46,23 @@ public partial class MainWindow : Window
     {
         MainFrame.Navigate(new DashboardPage(Services));
         SetupTrayIcon();
+        SetupFooter();
         _updateService.EnsureUpdaterInPlace();
         _ = CheckForUpdatesAsync();
+    }
+
+    private void SetupFooter()
+    {
+        TxtFooterVersion.Text = $"Monity v{AppVersion.Current}";
+        LinkFooterDeveloper.Inlines.Clear();
+        LinkFooterDeveloper.Inlines.Add(new Run(AboutConfig.DeveloperName));
+        LinkFooterDeveloper.NavigateUri = new Uri(AboutConfig.DeveloperUrl);
+    }
+
+    private void LinkFooter_RequestNavigate(object sender, RequestNavigateEventArgs e)
+    {
+        try { Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true }); } catch { }
+        e.Handled = true;
     }
 
     private async System.Threading.Tasks.Task CheckForUpdatesAsync()
