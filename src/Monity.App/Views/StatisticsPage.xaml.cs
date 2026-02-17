@@ -272,7 +272,7 @@ public partial class StatisticsPage : Page
                 DataLabelsPaint = new SolidColorPaint(textColor) { SKTypeface = font },
                 DataLabelsSize = 11,
                 DataLabelsFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture),
-                ToolTipLabelFormatter = point => $"{point.Context.Series?.Name ?? ""}: {((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture)}"
+                ToolTipLabelFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture)
             });
         }
         var restSeconds = totalSeconds > 0 ? apps.Skip(10).Sum(x => x.TotalSeconds) : 0L;
@@ -286,7 +286,7 @@ public partial class StatisticsPage : Page
                 DataLabelsPaint = new SolidColorPaint(textColor) { SKTypeface = font },
                 DataLabelsSize = 11,
                 DataLabelsFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture),
-                ToolTipLabelFormatter = point => $"{point.Context.Series?.Name ?? ""}: {((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture)}"
+                ToolTipLabelFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture)
             });
         }
         AppDistributionChart.Series = new ObservableCollection<ISeries>(pieSeries);
