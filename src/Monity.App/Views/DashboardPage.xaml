@@ -10,8 +10,9 @@
       Background="{StaticResource BackgroundBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
-            <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,16"/>
-            
+            <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock x:Name="TxtFirstActivity" Text="Bugün başlangıç: —" FontSize="13" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,16" ToolTip="Seçilen günde kaydedilen ilk kullanım saati"/>
+
             <!-- Summary Cards -->
             <Grid Margin="0,0,0,24">
                 <Grid.ColumnDefinitions>

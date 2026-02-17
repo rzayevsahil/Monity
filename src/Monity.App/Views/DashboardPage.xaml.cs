@@ -106,10 +106,11 @@ public partial class DashboardPage : Page
             var (total, sessionCount) = await _repository.GetDailyTotalAsync(date, excludeIdle: true, excludedProcessNames: excluded);
             var apps = await _repository.GetDailyUsageAsync(date, excludeIdle: true, excludedProcessNames: excluded);
             var hourly = await _repository.GetHourlyUsageAsync(date, excludeIdle: true);
+            var firstActivity = await _repository.GetFirstSessionStartedAtAsync(date);
 
             await Dispatcher.InvokeAsync(() =>
             {
-                ApplyDataToUI(total, sessionCount, apps, hourly);
+                ApplyDataToUI(total, sessionCount, apps, hourly, firstActivity);
             }, System.Windows.Threading.DispatcherPriority.Normal);
         }
         catch (Exception ex)
@@ -126,6 +127,7 @@ public partial class DashboardPage : Page
     {
         TxtTodayTotal.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
+        TxtFirstActivity.Text = "Bugün başlangıç: —";
         _appItems.Clear();
         HourlyChart.Series = new ObservableCollection<ISeries>();
     }
@@ -145,11 +147,15 @@ public partial class DashboardPage : Page
 
     private void ApplyDataToUI(long total, int sessionCount,
         System.Collections.Generic.IReadOnlyList<AppUsageSummary> apps,
-        System.Collections.Generic.IReadOnlyList<HourlyUsage> hourly)
+        System.Collections.Generic.IReadOnlyList<HourlyUsage> hourly,
+        DateTime? firstActivity = null)
     {
         _totalSeconds = total;
         TxtTodayTotal.Text = FormatDuration(total);
         TxtSessionCount.Text = sessionCount.ToString();
+        TxtFirstActivity.Text = firstActivity.HasValue
+            ? $"Bugün başlangıç: {firstActivity.Value:HH:mm}"
+            : "Bugün başlangıç: —";
 
         _appItems.Clear();
         foreach (var a in apps)

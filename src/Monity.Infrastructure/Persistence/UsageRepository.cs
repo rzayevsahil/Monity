@@ -283,6 +283,16 @@ public sealed class UsageRepository : IUsageRepository
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 
+    public async Task<DateTime?> GetFirstSessionStartedAtAsync(string date, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var startedAtStr = await conn.QuerySingleOrDefaultAsync<string>(
+            "SELECT MIN(started_at) FROM usage_sessions WHERE day_date = @Date",
+            new { Date = date });
+        if (string.IsNullOrEmpty(startedAtStr)) return null;
+        return DateTime.TryParse(startedAtStr, null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt) ? dt : null;
+    }
+
     public async Task<string?> GetSettingAsync(string key, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();

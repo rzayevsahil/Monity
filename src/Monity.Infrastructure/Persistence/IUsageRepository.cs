@@ -13,6 +13,7 @@ public interface IUsageRepository
     Task<IReadOnlyList<HourlyUsage>> GetHourlyUsageAsync(string date, bool excludeIdle = true, CancellationToken ct = default);
     Task<DailyTotal> GetDailyTotalAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
     Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
+    Task<DateTime?> GetFirstSessionStartedAtAsync(string date, CancellationToken ct = default);
     Task<string?> GetSettingAsync(string key, CancellationToken ct = default);
     Task SetSettingAsync(string key, string value, CancellationToken ct = default);
     Task<IReadOnlyList<AppListItem>> GetTrackedAppsAsync(CancellationToken ct = default);
