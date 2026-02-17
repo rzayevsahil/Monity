@@ -344,4 +344,26 @@ public sealed class UsageRepository : IUsageRepository
             "SELECT process_name AS ProcessName, display_name AS DisplayName FROM apps ORDER BY COALESCE(display_name, process_name)");
         return rows.ToList();
     }
+
+    public async Task<string?> GetProcessNameByAppIdAsync(int appId, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        return await conn.QuerySingleOrDefaultAsync<string>(
+            "SELECT process_name FROM apps WHERE id = @AppId",
+            new { AppId = appId });
+    }
+
+    public async Task<long> GetTodayTotalSecondsForAppIdAsync(int appId, CancellationToken ct = default)
+    {
+        var today = DateTime.Today.ToString("yyyy-MM-dd");
+        await using var conn = OpenConnection();
+        var total = await conn.ExecuteScalarAsync<long?>(
+            """
+            SELECT COALESCE(SUM(duration_seconds), 0)
+            FROM usage_sessions
+            WHERE app_id = @AppId AND day_date = @Today AND is_idle = 0
+            """,
+            new { AppId = appId, Today = today });
+        return total ?? 0;
+    }
 }

@@ -117,6 +117,14 @@ public partial class MainWindow : Window
             Activate();
         };
 
+        if (Services.GetRequiredService<Monity.App.Services.ITrayNotifier>() is Monity.App.Services.TrayNotifier holder)
+        {
+            holder.SetNotifier((title, text) =>
+            {
+                _trayIcon?.ShowBalloonTip(3000, title, text, System.Windows.Forms.ToolTipIcon.Info);
+            });
+        }
+
         var ctx = new System.Windows.Forms.ContextMenuStrip();
         var openItem = new System.Windows.Forms.ToolStripMenuItem("Aç");
         openItem.Click += (_, _) => { Show(); WindowState = WindowState.Normal; Activate(); };

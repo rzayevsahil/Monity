@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows;
@@ -27,10 +28,15 @@ public partial class SettingsPage : Page
     private readonly IUsageRepository _repository;
     private readonly ThemeService _themeService;
     private readonly ObservableCollection<AppExcludeItem> _appExcludeItems = [];
+    private readonly ObservableCollection<DailyLimitItem> _dailyLimitItems = [];
     private readonly ICollectionView _appExcludeView;
+    private readonly ICollectionView _dailyLimitView;
     private const int IdleMinSeconds = 10;
     private const int IdleMaxSeconds = 600;
+    private const int DailyLimitMinMinutes = 1;
+    private const int DailyLimitMaxMinutes = 1440;
     private const string AppSearchPlaceholder = "Ara";
+    private const string DailyLimitSearchPlaceholder = "Ara";
 
     public SettingsPage(IServiceProvider services)
     {
@@ -40,8 +46,11 @@ public partial class SettingsPage : Page
         _repository = services.GetRequiredService<IUsageRepository>();
         _themeService = services.GetRequiredService<ThemeService>();
         _appExcludeView = CollectionViewSource.GetDefaultView(_appExcludeItems);
+        _dailyLimitView = CollectionViewSource.GetDefaultView(_dailyLimitItems);
         AppExcludeList.ItemsSource = _appExcludeView;
+        DailyLimitList.ItemsSource = _dailyLimitView;
         System.Windows.DataObject.AddPastingHandler(TxtIdleThreshold, TxtIdleThreshold_OnPaste);
+        System.Windows.DataObject.AddPastingHandler(TxtDailyLimitMinutes, TxtDailyLimitMinutes_OnPaste);
         Loaded += SettingsPage_Loaded;
     }
 
@@ -86,6 +95,67 @@ public partial class SettingsPage : Page
         EmptyAppListMessage.Visibility = _appExcludeItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowAppSearchPlaceholder();
         ApplyAppSearchFilter();
+
+        // Günlük süre kısıtları listesi (takip hariç ile aynı kaynak; sütunda kısıtlı süre gösterilir)
+        var limitsJson = await _repository.GetSettingAsync("daily_limits") ?? "{}";
+        Dictionary<string, long>? limitsByProcess = null;
+        try
+        {
+            limitsByProcess = JsonSerializer.Deserialize<Dictionary<string, long>>(limitsJson);
+        }
+        catch { /* invalid = no limits */ }
+
+        _dailyLimitItems.Clear();
+        foreach (var app in _appExcludeItems)
+        {
+            var limitSeconds = limitsByProcess != null && limitsByProcess.TryGetValue(app.ProcessName, out var sec) ? sec : (long?)null;
+            var limitMinutes = limitSeconds.HasValue && limitSeconds > 0 ? (int)(limitSeconds.Value / 60) : (int?)null;
+            _dailyLimitItems.Add(new DailyLimitItem(app.ProcessName, app.DisplayName, limitMinutes));
+        }
+        EmptyDailyLimitMessage.Visibility = _dailyLimitItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowDailyLimitSearchPlaceholder();
+        ApplyDailyLimitSearchFilter();
+    }
+
+    private void TxtDailyLimitSearch_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (TxtDailyLimitSearch.Text == DailyLimitSearchPlaceholder)
+        {
+            TxtDailyLimitSearch.Text = "";
+            TxtDailyLimitSearch.SetResourceReference(ForegroundProperty, "TextBrush");
+        }
+    }
+
+    private void TxtDailyLimitSearch_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(TxtDailyLimitSearch.Text))
+            ShowDailyLimitSearchPlaceholder();
+    }
+
+    private void ShowDailyLimitSearchPlaceholder()
+    {
+        TxtDailyLimitSearch.Text = DailyLimitSearchPlaceholder;
+        TxtDailyLimitSearch.SetResourceReference(ForegroundProperty, "TextMutedBrush");
+    }
+
+    private void TxtDailyLimitSearch_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        ApplyDailyLimitSearchFilter();
+    }
+
+    private void ApplyDailyLimitSearchFilter()
+    {
+        var raw = TxtDailyLimitSearch?.Text ?? "";
+        var query = (raw == DailyLimitSearchPlaceholder ? "" : raw).Trim();
+        _dailyLimitView.Filter = string.IsNullOrEmpty(query)
+            ? null
+            : obj =>
+            {
+                if (obj is not DailyLimitItem item) return false;
+                var ci = CultureInfo.CurrentCulture.CompareInfo;
+                return ci.IndexOf(item.DisplayName, query, CompareOptions.IgnoreCase) >= 0
+                       || ci.IndexOf(item.ProcessName, query, CompareOptions.IgnoreCase) >= 0;
+            };
     }
 
     private void TxtAppSearch_GotFocus(object sender, RoutedEventArgs e)
@@ -173,6 +243,47 @@ public partial class SettingsPage : Page
             TxtIdleThreshold.Text = IdleMaxSeconds.ToString();
     }
 
+    private void TxtDailyLimitMinutes_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        if (!Regex.IsMatch(e.Text, "^[0-9]+$")) { e.Handled = true; return; }
+        var current = TxtDailyLimitMinutes.Text ?? "";
+        var start = Math.Min(TxtDailyLimitMinutes.SelectionStart, current.Length);
+        var len = TxtDailyLimitMinutes.SelectionLength;
+        var proposed = current[..Math.Max(0, start)] + e.Text + current[Math.Min(current.Length, start + len)..];
+        if (proposed.Length > 0 && uint.TryParse(proposed, out var value) && value > DailyLimitMaxMinutes)
+            e.Handled = true;
+    }
+
+    private void TxtDailyLimitMinutes_OnPaste(object sender, DataObjectPastingEventArgs e)
+    {
+        var text = e.SourceDataObject.GetData(System.Windows.DataFormats.Text) as string;
+        if (string.IsNullOrEmpty(text)) return;
+        var digits = new string(text.Where(char.IsDigit).ToArray());
+        if (digits.Length == 0) { e.CancelCommand(); return; }
+        e.CancelCommand();
+        var current = TxtDailyLimitMinutes.Text ?? "";
+        var start = Math.Min(TxtDailyLimitMinutes.SelectionStart, current.Length);
+        var len = TxtDailyLimitMinutes.SelectionLength;
+        var newText = current[..Math.Max(0, start)] + digits + current[Math.Min(current.Length, start + len)..];
+        if (uint.TryParse(newText, out var value) && value > DailyLimitMaxMinutes)
+            newText = DailyLimitMaxMinutes.ToString();
+        TxtDailyLimitMinutes.Text = newText;
+        TxtDailyLimitMinutes.SelectionStart = TxtDailyLimitMinutes.SelectionLength = 0;
+        TxtDailyLimitMinutes.SelectionStart = newText.Length;
+    }
+
+    private void TxtDailyLimitMinutes_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(TxtDailyLimitMinutes.Text))
+            return;
+        if (!uint.TryParse(TxtDailyLimitMinutes.Text, out var value))
+            return;
+        if (value < DailyLimitMinMinutes)
+            TxtDailyLimitMinutes.Text = DailyLimitMinMinutes.ToString();
+        else if (value > DailyLimitMaxMinutes)
+            TxtDailyLimitMinutes.Text = DailyLimitMaxMinutes.ToString();
+    }
+
     private void BtnBack_Click(object sender, RoutedEventArgs e)
     {
         var frame = FindParent<Frame>(this);
@@ -200,6 +311,28 @@ public partial class SettingsPage : Page
         var engine = _services.GetRequiredService<ITrackingEngine>();
         var userList = ignored.Length > 0 ? ignored.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [];
         engine.SetIgnoredProcesses(["Monity.App", "explorer"], userList);
+
+        // Günlük süre kısıtları: seçilen uygulamalara input değerini uygula, sonra hepsini kaydet; kısıtlı süre sütunda görünür
+        const int maxMinutesPerDay = 24 * 60; // 1440
+        var inputText = (TxtDailyLimitMinutes?.Text ?? "").Trim();
+        if (!string.IsNullOrEmpty(inputText) && long.TryParse(inputText, out var inputMinutes) && inputMinutes > 0)
+        {
+            if (inputMinutes > maxMinutesPerDay) inputMinutes = maxMinutesPerDay;
+            var selectedMinutes = (int)inputMinutes;
+            foreach (var item in _dailyLimitItems.Where(x => x.IsSelected))
+                item.SetLimitMinutes(selectedMinutes);
+        }
+        var dailyLimits = new Dictionary<string, long>();
+        foreach (var item in _dailyLimitItems)
+        {
+            if (item.LimitMinutes is not { } minutes || minutes <= 0) continue;
+            var sec = minutes > maxMinutesPerDay ? maxMinutesPerDay * 60L : minutes * 60L;
+            dailyLimits[item.ProcessName] = sec;
+        }
+        var dailyLimitsJson = JsonSerializer.Serialize(dailyLimits);
+        await _repository.SetSettingAsync("daily_limits", dailyLimitsJson);
+        foreach (var item in _dailyLimitItems)
+            item.IsSelected = false;
 
         System.Windows.MessageBox.Show("Ayarlar kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
     }
@@ -231,6 +364,42 @@ public partial class SettingsPage : Page
             ProcessName = processName;
             DisplayName = displayName;
             _isExcluded = isExcluded;
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
+    }
+
+    private sealed class DailyLimitItem : INotifyPropertyChanged
+    {
+        private const int DisplayNameMaxLength = 28;
+
+        public string ProcessName { get; }
+        public string DisplayName { get; }
+        /// <summary>Uygulama adı, tablo hizası için en fazla DisplayNameMaxLength karakter; uzunsa sonuna "…" eklenir.</summary>
+        public string DisplayNameShort => string.IsNullOrEmpty(DisplayName)
+            ? ""
+            : DisplayName.Length <= DisplayNameMaxLength
+                ? DisplayName
+                : DisplayName[..(DisplayNameMaxLength - 1)] + "…";
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set { _isSelected = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected))); }
+        }
+        private int? _limitMinutes;
+        public int? LimitMinutes
+        {
+            get => _limitMinutes;
+            private set { _limitMinutes = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LimitMinutes))); PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LimitDisplayText))); }
+        }
+        public string LimitDisplayText => LimitMinutes is { } m && m > 0 ? $"{m} dk" : "—";
+        public void SetLimitMinutes(int minutes) => LimitMinutes = minutes;
+        public DailyLimitItem(string processName, string displayName, int? limitMinutes)
+        {
+            ProcessName = processName;
+            DisplayName = displayName;
+            _limitMinutes = limitMinutes;
         }
         public event PropertyChangedEventHandler? PropertyChanged;
     }

@@ -10,6 +10,7 @@ namespace Monity.Infrastructure.Tracking;
 public sealed class SessionBuffer
 {
     private readonly IUsageRepository _repository;
+    private readonly Func<IReadOnlyList<int>, Task>? _onAfterFlushAppIdsAsync;
     private readonly ConcurrentQueue<UsageSession> _buffer = new();
     private readonly SemaphoreSlim _flushLock = new(1, 1);
     private DateTime _lastFlush = DateTime.UtcNow;
@@ -17,9 +18,10 @@ public sealed class SessionBuffer
     public int BufferSizeThreshold { get; set; } = 20;
     public TimeSpan FlushInterval { get; set; } = TimeSpan.FromMinutes(5);
 
-    public SessionBuffer(IUsageRepository repository)
+    public SessionBuffer(IUsageRepository repository, Func<IReadOnlyList<int>, Task>? onAfterFlushAppIdsAsync = null)
     {
         _repository = repository;
+        _onAfterFlushAppIdsAsync = onAfterFlushAppIdsAsync;
     }
 
     public void Add(UsageSession session)
@@ -45,6 +47,11 @@ public sealed class SessionBuffer
             {
                 await _repository.AddSessionsAsync(items, ct);
                 Serilog.Log.Debug("SessionBuffer flushed {Count} sessions", items.Count);
+                if (_onAfterFlushAppIdsAsync != null)
+                {
+                    var appIds = items.Select(s => s.AppId).Distinct().ToList();
+                    _ = InvokeAfterFlushCallbackAsync(appIds);
+                }
             }
 
             _lastFlush = DateTime.UtcNow;
@@ -58,6 +65,18 @@ public sealed class SessionBuffer
         finally
         {
             _flushLock.Release();
+        }
+    }
+
+    private async Task InvokeAfterFlushCallbackAsync(IReadOnlyList<int> appIds)
+    {
+        try
+        {
+            await _onAfterFlushAppIdsAsync!(appIds);
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Warning(ex, "SessionBuffer after-flush callback failed");
         }
     }
 

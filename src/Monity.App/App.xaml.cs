@@ -63,7 +63,11 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IDatabasePathProvider, DatabasePathProvider>();
         services.AddSingleton<IUsageRepository, UsageRepository>();
         services.AddSingleton<IWindowTracker, WindowTracker>();
-        services.AddSingleton<SessionBuffer>();
+        services.AddSingleton<ITrayNotifier, TrayNotifier>();
+        services.AddSingleton<IDailyLimitCheckService, DailyLimitCheckService>();
+        services.AddSingleton<SessionBuffer>(sp => new SessionBuffer(
+            sp.GetRequiredService<IUsageRepository>(),
+            async (appIds) => { await sp.GetRequiredService<IDailyLimitCheckService>().CheckAndNotifyAsync(appIds); }));
         services.AddSingleton<ITrackingEngine>(sp =>
         {
             var wt = sp.GetRequiredService<IWindowTracker>();
