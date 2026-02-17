@@ -159,7 +159,8 @@ public sealed class UpdateService
             ZipFile.ExtractToDirectory(zipPath, extractPath, true);
             try { File.Delete(zipPath); } catch { }
 
-            var updaterArgs = $"\"{Path.Combine(extractPath)}\" \"{appDir}\"";
+            var currentPid = System.Diagnostics.Process.GetCurrentProcess().Id;
+            var updaterArgs = $"\"{Path.Combine(extractPath)}\" \"{appDir}\" {currentPid}";
             var startInfo = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = UpdaterPath,
