@@ -283,6 +283,34 @@ public sealed class UsageRepository : IUsageRepository
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 
+    public async Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+
+        var excludeFilter = excludedProcessNames is { Count: > 0 }
+            ? " AND app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
+            : "";
+        var sql = $"""
+            SELECT day_date AS Date,
+                   SUM(CASE WHEN is_idle = 0 THEN duration_seconds ELSE 0 END) AS TotalSeconds
+            FROM usage_sessions
+            WHERE day_date >= @Start AND day_date <= @End{excludeFilter}
+            GROUP BY day_date
+            ORDER BY day_date
+            """;
+
+        var param = new
+        {
+            Start = startDate.ToString("yyyy-MM-dd"),
+            End = endDate.ToString("yyyy-MM-dd"),
+            Excluded = excludedProcessNames is { Count: > 0 } ? excludedProcessNames : null
+        };
+        var rows = param.Excluded != null
+            ? await conn.QueryAsync<DailyTotalByDate>(sql, param)
+            : await conn.QueryAsync<DailyTotalByDate>(sql, new { param.Start, param.End });
+        return rows.ToList();
+    }
+
     public async Task<DateTime?> GetFirstSessionStartedAtAsync(string date, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();

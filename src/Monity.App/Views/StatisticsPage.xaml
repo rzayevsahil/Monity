@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
       mc:Ignorable="d"
       d:DesignHeight="500" d:DesignWidth="800"
       Title="İstatistikler"
@@ -62,6 +63,18 @@
                     </StackPanel>
                 </Border>
             </Grid>
+
+            <!-- Zaman dağılımı grafiği (saatlik veya günlük) -->
+            <TextBlock x:Name="TxtTimeChartTitle" Text="Saatlik Kullanım" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Height="220">
+                <lvc:CartesianChart x:Name="TimeDistributionChart" DrawMarginFrame="{x:Null}"/>
+            </Border>
+
+            <!-- Uygulama dağılım grafiği (pie) -->
+            <TextBlock Text="Uygulama Dağılımı" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Height="220">
+                <lvc:PieChart x:Name="AppDistributionChart"/>
+            </Border>
 
             <!-- Uygulama listesi -->
             <TextBlock Text="Uygulama Kullanımı" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
