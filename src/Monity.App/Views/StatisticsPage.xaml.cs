@@ -141,7 +141,14 @@ public partial class StatisticsPage : Page
             IReadOnlyList<HourlyUsage>? hourly = hourlyTask != null ? await hourlyTask : null;
             IReadOnlyList<DailyTotalByDate>? dailyTotals = dailyTotalsTask != null ? await dailyTotalsTask : null;
 
-            await Dispatcher.InvokeAsync(() => ApplyData(total.TotalSeconds, total.SessionCount, apps, dayCount, hourly, dailyTotals, period));
+            await Dispatcher.InvokeAsync(() =>
+            {
+                ApplyData(total.TotalSeconds, total.SessionCount, apps, dayCount, hourly, dailyTotals, period);
+                if (period == DurationAndPeriodHelper.PeriodKind.Daily)
+                    TxtDateRange.Text = "";
+                else
+                    TxtDateRange.Text = $"{start.ToString("d", CultureInfo.CurrentCulture)} – {end.ToString("d", CultureInfo.CurrentCulture)}";
+            });
         }
         catch (Exception ex)
         {
@@ -297,6 +304,7 @@ public partial class StatisticsPage : Page
         TxtTotal.Text = "0 sa 0 dk";
         TxtAverage.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
+        TxtDateRange.Text = "";
         _appItems.Clear();
         TimeDistributionChart.Series = new ObservableCollection<ISeries>();
         AppDistributionChart.Series = new ObservableCollection<ISeries>();
