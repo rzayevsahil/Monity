@@ -113,8 +113,11 @@ public partial class StatisticsPage : Page
 
         try
         {
-            var totalTask = _repository.GetRangeTotalAsync(start, end, excludeIdle: true);
-            var appsTask = _repository.GetWeeklyUsageAsync(start, end, excludeIdle: true);
+            var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";
+            var excluded = ignoredStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+
+            var totalTask = _repository.GetRangeTotalAsync(start, end, excludeIdle: true, excludedProcessNames: excluded);
+            var appsTask = _repository.GetWeeklyUsageAsync(start, end, excludeIdle: true, excludedProcessNames: excluded);
             await System.Threading.Tasks.Task.WhenAll(totalTask, appsTask);
 
             var total = await totalTask;

@@ -98,11 +98,13 @@ public partial class DashboardPage : Page
             return;
         try
         {
-            // Seçilen tarih için özeti usage_sessions'tan güncelle; böylece her zaman o güne ait güncel veri gösterilir
             await _repository.UpdateDailySummaryAsync(date);
 
-            var (total, sessionCount) = await _repository.GetDailyTotalAsync(date, excludeIdle: true);
-            var apps = await _repository.GetDailyUsageAsync(date, excludeIdle: true);
+            var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";
+            var excluded = ignoredStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            var (total, sessionCount) = await _repository.GetDailyTotalAsync(date, excludeIdle: true, excludedProcessNames: excluded);
+            var apps = await _repository.GetDailyUsageAsync(date, excludeIdle: true, excludedProcessNames: excluded);
             var hourly = await _repository.GetHourlyUsageAsync(date, excludeIdle: true);
 
             await Dispatcher.InvokeAsync(() =>
