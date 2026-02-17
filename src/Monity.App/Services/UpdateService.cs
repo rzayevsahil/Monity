@@ -159,8 +159,17 @@ public sealed class UpdateService
             ZipFile.ExtractToDirectory(zipPath, extractPath, true);
             try { File.Delete(zipPath); } catch { }
 
+            // Zip bazen tek üst klasörle gelir (örn. Monity-2.2.1-win-x64/). O zaman dosyalar
+            // extractPath altında değil extractPath\ThatFolder altındadır; Updater'a düz klasör ver.
+            var entries = Directory.GetFileSystemEntries(extractPath);
+            var subdirs = entries.Where(e => Directory.Exists(e)).ToList();
+            var filesAtRoot = entries.Where(e => File.Exists(e)).ToList();
+            if (subdirs.Count == 1 && filesAtRoot.Count == 0)
+                extractPath = subdirs[0];
+
             var currentPid = System.Diagnostics.Process.GetCurrentProcess().Id;
-            var updaterArgs = $"\"{Path.Combine(extractPath)}\" \"{appDir}\" {currentPid}";
+            var updaterArgs = $"\"{extractPath}\" \"{appDir}\" {currentPid}";
+            Serilog.Log.Information("Starting updater: extractPath={ExtractPath}, appDir={AppDir}, pid={Pid}", extractPath, appDir, currentPid);
             var startInfo = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = UpdaterPath,

@@ -85,7 +85,14 @@ public partial class MainWindow : Window
         var progress = new Progress<int>(pct => { BtnUpdate.Content = pct < 100 ? $"İndiriliyor... %{pct}" : "Kuruluyor..."; });
         var ok = await _updateService.DownloadAndApplyUpdateAsync(_pendingUpdate.Version, _pendingUpdate.DownloadUrl, progress);
         if (ok)
+        {
+            System.Windows.MessageBox.Show(
+                "Güncelleme indirildi. Uygulama şimdi kapanacak ve yeni sürümle otomatik açılacak.",
+                "Güncelleme",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
             System.Windows.Application.Current.Shutdown();
+        }
         else
         {
             BtnUpdate.IsEnabled = true;

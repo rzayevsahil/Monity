@@ -13,6 +13,8 @@ if (string.IsNullOrEmpty(sourceDir) || string.IsNullOrEmpty(targetDir) || !Direc
 var logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Monity", "updater.log");
 void Log(string msg) { try { File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {msg}{Environment.NewLine}"); } catch { } }
 
+Log($"Updater started: source={sourceDir}, target={targetDir}, parentPid={parentPid}");
+
 try
 {
     // Ana uygulama tamamen kapansin diye bekle (process ID verildiyse)
@@ -59,8 +61,10 @@ try
             WorkingDirectory = targetDir,
             UseShellExecute = true
         });
+        Log("Update applied successfully; Monity.App.exe started.");
     }
-    Log("Update applied successfully.");
+    else
+        Log($"WARNING: Monity.App.exe not found at {appExe}");
 }
 catch (Exception ex)
 {
