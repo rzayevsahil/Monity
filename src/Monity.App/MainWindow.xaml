@@ -9,7 +9,7 @@
         Height="600" Width="900"
         MinHeight="400" MinWidth="600"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BackgroundBrush}"
+        Background="{DynamicResource BackgroundBrush}"
         Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
@@ -19,22 +19,22 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0" Background="{StaticResource CardBrush}" Padding="16,12" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+        <Border Grid.Row="0" Background="{DynamicResource CardBrush}" Padding="16,12" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Image Source="pack://application:,,,/Monity.App;component/Assets/Logo.png" Width="32" Height="32" Margin="0,0,10,0" Stretch="Uniform"/>
-                    <TextBlock Text="Monity" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Monity" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Border x:Name="UpdateBanner" Visibility="Collapsed" Background="#E0F2FE" CornerRadius="6" Padding="10,6" Margin="0,0,12,0" VerticalAlignment="Center">
+                    <Border x:Name="UpdateBanner" Visibility="Collapsed" Background="{DynamicResource UpdateBannerBrush}" CornerRadius="6" Padding="10,6" Margin="0,0,12,0" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock x:Name="TxtUpdateMessage" Text="Yeni sürüm mevcut" Foreground="{StaticResource TextBrush}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <Button x:Name="BtnUpdate" Content="Güncelle" Style="{StaticResource PrimaryButtonStyle}" Padding="10,6" Click="BtnUpdate_Click"/>
+                            <TextBlock x:Name="TxtUpdateMessage" Text="Yeni sürüm mevcut" Foreground="{DynamicResource TextBrush}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <Button x:Name="BtnUpdate" Content="Güncelle" Style="{DynamicResource PrimaryButtonStyle}" Padding="10,6" Click="BtnUpdate_Click"/>
                         </StackPanel>
                     </Border>
-                    <Button x:Name="BtnStatistics" Content="İstatistikler" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnStatistics_Click"/>
-                    <Button x:Name="BtnSettings" Content="Ayarlar" Style="{StaticResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnSettings_Click"/>
-                    <Button x:Name="BtnMinimizeToTray" Content="Tray'e Küçült" Style="{StaticResource SecondaryButtonStyle}" Click="BtnMinimizeToTray_Click"/>
+                    <Button x:Name="BtnStatistics" Content="İstatistikler" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnStatistics_Click"/>
+                    <Button x:Name="BtnSettings" Content="Ayarlar" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnSettings_Click"/>
+                    <Button x:Name="BtnMinimizeToTray" Content="Tray'e Küçült" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnMinimizeToTray_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -43,11 +43,11 @@
         <Frame x:Name="MainFrame" Grid.Row="1" NavigationUIVisibility="Hidden"/>
 
         <!-- Footer: version + developer -->
-        <Border Grid.Row="2" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="16,8">
+        <Border Grid.Row="2" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="16,8">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock x:Name="TxtFooterVersion" FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
-                <TextBlock Text=" · " FontSize="12" Foreground="{StaticResource TextMutedBrush}"/>
-                <TextBlock FontSize="12" Foreground="{StaticResource TextMutedBrush}">
+                <TextBlock x:Name="TxtFooterVersion" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                <TextBlock Text=" · " FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
+                <TextBlock FontSize="12" Foreground="{DynamicResource TextMutedBrush}">
                     <Run Text="Geliştirici: "/>
                     <Hyperlink x:Name="LinkFooterDeveloper" RequestNavigate="LinkFooter_RequestNavigate"/>
                 </TextBlock>

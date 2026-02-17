@@ -7,11 +7,11 @@
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Dashboard"
-      Background="{StaticResource BackgroundBrush}">
+      Background="{DynamicResource BackgroundBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
-            <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
-            <TextBlock x:Name="TxtFirstActivity" Text="Bugün başlangıç: —" FontSize="13" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,16" ToolTip="Seçilen günde kaydedilen ilk kullanım saati"/>
+            <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock x:Name="TxtFirstActivity" Text="Bugün başlangıç: —" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,16" ToolTip="Seçilen günde kaydedilen ilk kullanım saati"/>
 
             <!-- Summary Cards -->
             <Grid Margin="0,0,0,24">
@@ -20,65 +20,84 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0" BorderBrush="#E2E8F0" BorderThickness="1">
+                <Border Grid.Column="0" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Bugün Toplam" Foreground="{StaticResource TextMutedBrush}" FontSize="12"/>
-                        <TextBlock x:Name="TxtTodayTotal" Text="0 sa 0 dk" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"/>
+                        <TextBlock Text="Bugün Toplam" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                        <TextBlock x:Name="TxtTodayTotal" Text="0 sa 0 dk" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                     </StackPanel>
                 </Border>
-                <Border Grid.Column="1" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20" Margin="4,0" BorderBrush="#E2E8F0" BorderThickness="1">
+                <Border Grid.Column="1" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="4,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Kullanım kaydı" Foreground="{StaticResource TextMutedBrush}" FontSize="12"
+                        <TextBlock Text="Kullanım kaydı" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"
                                    ToolTip="Seçilen günde kaç adet kullanım dilimi kaydedildi (her uygulama değişiminde yeni kayıt oluşur)"/>
-                        <TextBlock x:Name="TxtSessionCount" Text="0" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}"/>
+                        <TextBlock x:Name="TxtSessionCount" Text="0" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                     </StackPanel>
                 </Border>
-                <Border Grid.Column="2" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20" Margin="8,0,0,0" BorderBrush="#E2E8F0" BorderThickness="1">
+                <Border Grid.Column="2" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="8,0,0,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Şu an aktif" Foreground="{StaticResource TextMutedBrush}" FontSize="12"/>
-                        <TextBlock x:Name="TxtCurrentApp" Text="-" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="Şu an aktif" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                        <TextBlock x:Name="TxtCurrentApp" Text="-" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Border>
             </Grid>
 
             <!-- Date selector -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
-                <TextBlock Text="Tarih:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextBrush}"/>
-                <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
+                <TextBlock Text="Tarih:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
                     <DatePicker x:Name="DatePicker" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
                 </Border>
-                <Button x:Name="BtnRefresh" Content="Yenile" Style="{StaticResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
+                <Button x:Name="BtnRefresh" Content="Yenile" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
             </StackPanel>
 
             <!-- Hourly chart -->
-            <TextBlock Text="Saatlik Kullanım" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,12"/>
-            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="#E2E8F0" BorderThickness="1" Height="240">
+            <TextBlock Text="Saatlik Kullanım" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Height="240">
                 <lvc:CartesianChart x:Name="HourlyChart" DrawMarginFrame="{x:Null}"/>
             </Border>
 
             <!-- App list -->
-            <TextBlock Text="Uygulama Kullanımı" FontSize="16" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,12"/>
-            <Border Margin="0,0,0,12" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8">
+            <TextBlock Text="Uygulama Kullanımı" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <Border Margin="0,0,0,12" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <Grid>
                     <TextBox x:Name="AppSearchBox" Padding="10,8" FontSize="13" VerticalAlignment="Stretch"
-                             BorderThickness="0" Background="Transparent"
+                             Foreground="{DynamicResource TextBrush}" BorderThickness="0" Background="Transparent"
                              TextChanged="AppSearchBox_TextChanged"
                              ToolTip="Uygulama adına göre filtrele"/>
                     <TextBlock x:Name="AppSearchPlaceholder" Text="Ara" Padding="10,8" FontSize="13"
-                               Foreground="{StaticResource TextMutedBrush}" IsHitTestVisible="False"
+                               Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False"
                                VerticalAlignment="Center"/>
                 </Grid>
             </Border>
-            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="0" BorderBrush="#E2E8F0" BorderThickness="1">
-                <ListView x:Name="AppListView" Height="250" BorderThickness="0">
+            <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <ListView x:Name="AppListView" Height="250" BorderThickness="0" Background="Transparent">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource ListViewItemHoverBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListView.Resources>
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Uygulama" Width="200" DisplayMemberBinding="{Binding DisplayName}"/>
+                            <GridViewColumn Header="Uygulama" Width="200">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border HorizontalAlignment="Stretch" MinWidth="200" Padding="8,0">
+                                            <TextBlock Text="{Binding DisplayName}" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Stretch"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
                             <GridViewColumn Header="Süre" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="100" Padding="8,0">
-                                            <TextBlock Text="{Binding DurationFormatted}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                            <TextBlock Text="{Binding DurationFormatted}" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                                         </Border>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
@@ -87,7 +106,7 @@
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="80" Padding="8,0">
-                                            <TextBlock Text="{Binding PercentageFormatted}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                                            <TextBlock Text="{Binding PercentageFormatted}" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                                         </Border>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>

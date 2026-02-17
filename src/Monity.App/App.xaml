@@ -7,13 +7,18 @@
              SessionEnding="Application_SessionEnding">
     <Application.Resources>
         <ResourceDictionary>
-            <SolidColorBrush x:Key="PrimaryBrush" Color="#2563EB"/>
-            <SolidColorBrush x:Key="PrimaryHoverBrush" Color="#1D4ED8"/>
-            <SolidColorBrush x:Key="BackgroundBrush" Color="#F1F5F9"/>
-            <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="TextBrush" Color="#0F172A"/>
-            <SolidColorBrush x:Key="TextMutedBrush" Color="#64748B"/>
-            <SolidColorBrush x:Key="BorderBrush" Color="#E2E8F0"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Light.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- ListView başlık satırı (GridViewColumnHeader) -->
+            <Style TargetType="GridViewColumnHeader">
+                <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                <Setter Property="Padding" Value="8,8"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+                <Setter Property="BorderThickness" Value="0,0,1,0"/>
+            </Style>
 
             <!-- Tarih seçici: tek çerçeve görünümü -->
             <Style TargetType="DatePicker">
@@ -25,7 +30,7 @@
 
             <!-- Birincil buton (dolu, vurgulu) -->
             <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-                <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="Padding" Value="16,10"/>
@@ -41,7 +46,7 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="{StaticResource PrimaryHoverBrush}"/>
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource PrimaryHoverBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="border" Property="Opacity" Value="0.6"/>
@@ -55,11 +60,11 @@
             <!-- İkincil buton (çerçeveli, sade) -->
             <Style x:Key="SecondaryButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
                 <Setter Property="FontWeight" Value="Medium"/>
                 <Setter Property="Padding" Value="16,10"/>
                 <Setter Property="BorderThickness" Value="1.5"/>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -73,8 +78,8 @@
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="#F1F5F9"/>
-                                    <Setter TargetName="border" Property="BorderBrush" Value="#94A3B8"/>
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource SecondaryButtonHoverBgBrush}"/>
+                                    <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource SecondaryButtonHoverBorderBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="border" Property="Opacity" Value="0.5"/>

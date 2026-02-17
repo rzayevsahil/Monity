@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Monity.App.Views;
+using Monity.App.Services;
 using Monity.Infrastructure.InstalledApps;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
@@ -24,6 +25,7 @@ public partial class SettingsPage : Page
     private readonly IServiceProvider _services;
     private readonly UsageTrackingService _trackingService;
     private readonly IUsageRepository _repository;
+    private readonly ThemeService _themeService;
     private readonly ObservableCollection<AppExcludeItem> _appExcludeItems = [];
     private readonly ICollectionView _appExcludeView;
     private const int IdleMinSeconds = 10;
@@ -36,6 +38,7 @@ public partial class SettingsPage : Page
         _services = services;
         _trackingService = services.GetRequiredService<UsageTrackingService>();
         _repository = services.GetRequiredService<IUsageRepository>();
+        _themeService = services.GetRequiredService<ThemeService>();
         _appExcludeView = CollectionViewSource.GetDefaultView(_appExcludeItems);
         AppExcludeList.ItemsSource = _appExcludeView;
         System.Windows.DataObject.AddPastingHandler(TxtIdleThreshold, TxtIdleThreshold_OnPaste);
@@ -44,6 +47,10 @@ public partial class SettingsPage : Page
 
     private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
     {
+        var theme = await _themeService.GetThemeAsync();
+        RbThemeDark.IsChecked = theme == "dark";
+        RbThemeLight.IsChecked = theme != "dark";
+
         var idleSeconds = _trackingService.IdleThresholdMs / 1000;
         TxtIdleThreshold.Text = idleSeconds.ToString();
 
@@ -86,7 +93,7 @@ public partial class SettingsPage : Page
         if (TxtAppSearch.Text == AppSearchPlaceholder)
         {
             TxtAppSearch.Text = "";
-            TxtAppSearch.Foreground = (System.Windows.Media.Brush)FindResource("TextBrush");
+            TxtAppSearch.SetResourceReference(ForegroundProperty, "TextBrush");
         }
     }
 
@@ -99,7 +106,7 @@ public partial class SettingsPage : Page
     private void ShowAppSearchPlaceholder()
     {
         TxtAppSearch.Text = AppSearchPlaceholder;
-        TxtAppSearch.Foreground = (System.Windows.Media.Brush)FindResource("TextMutedBrush");
+        TxtAppSearch.SetResourceReference(ForegroundProperty, "TextMutedBrush");
     }
 
     private void TxtAppSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -182,6 +189,10 @@ public partial class SettingsPage : Page
 
         _trackingService.IdleThresholdMs = seconds * 1000;
         await _repository.SetSettingAsync("idle_threshold_seconds", seconds.ToString());
+
+        var theme = RbThemeDark.IsChecked == true ? "dark" : "light";
+        _themeService.ApplyTheme(theme);
+        await _themeService.SaveThemeAsync(theme);
 
         var ignored = string.Join(",", _appExcludeItems.Where(x => x.IsExcluded).Select(x => x.ProcessName));
         await _repository.SetSettingAsync("ignored_processes", ignored);

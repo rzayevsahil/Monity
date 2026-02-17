@@ -6,49 +6,57 @@
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="600"
       Title="Ayarlar"
-      Background="{StaticResource BackgroundBrush}">
+      Background="{DynamicResource BackgroundBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
-            <Button Content="← Geri" Style="{StaticResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,24" Click="BtnBack_Click"/>
-            <TextBlock Text="Ayarlar" FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextBrush}" Margin="0,0,0,24"/>
+            <Button Content="← Geri" Style="{DynamicResource SecondaryButtonStyle}" Foreground="{DynamicResource TextBrush}" HorizontalAlignment="Left" Margin="0,0,0,24" Click="BtnBack_Click"/>
+            <TextBlock Text="Ayarlar" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,24"/>
+
+            <!-- Tema -->
+            <TextBlock Text="Tema" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                <RadioButton x:Name="RbThemeLight" Content="Açık" GroupName="Theme" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}"/>
+                <RadioButton x:Name="RbThemeDark" Content="Koyu" GroupName="Theme" Foreground="{DynamicResource TextBrush}"/>
+            </StackPanel>
 
             <!-- Idle threshold -->
-            <TextBlock Text="Boşta kalma süresi (saniye)" FontSize="14" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Boşta kalma süresi (saniye)" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Bu süre boyunca klavye veya fareye hiç dokunmazsanız, artık süre sayılmaz (örneğin ekrandan uzaklaştığınızda). 10 ile 600 saniye arası bir değer girin (60 = 1 dakika)." 
-                       FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
-            <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,24" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8">
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,24" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtIdleThreshold" Padding="10,8" BorderThickness="0" Background="Transparent"
+                         Foreground="{DynamicResource TextBrush}"
                          PreviewTextInput="TxtIdleThreshold_PreviewTextInput"
                          LostFocus="TxtIdleThreshold_LostFocus"/>
             </Border>
 
             <!-- Ignore list -->
-            <TextBlock Text="Takip hariç tutulacak uygulamalar" FontSize="14" Foreground="{StaticResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Takip hariç tutulacak uygulamalar" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Aşağıdaki listeden takip etmek istemediğiniz uygulamaları işaretleyin. Listede yalnızca daha önce kullanılmış uygulamalar görünür. Monity ve Windows Gezgini zaten takip dışıdır." 
-                       FontSize="12" Foreground="{StaticResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
-            <Border Margin="0,0,0,8" Background="{StaticResource CardBrush}" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8">
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <Border Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtAppSearch" Padding="10,8" BorderThickness="0" Background="Transparent"
-                         FontSize="13" VerticalContentAlignment="Center"
+                         Foreground="{DynamicResource TextBrush}" FontSize="13" VerticalContentAlignment="Center"
                          GotFocus="TxtAppSearch_GotFocus" LostFocus="TxtAppSearch_LostFocus"
                          TextChanged="TxtAppSearch_TextChanged"/>
             </Border>
-            <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="220">
+            <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="220">
                 <Grid>
                     <ListBox x:Name="AppExcludeList" BorderThickness="0" Background="Transparent">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsExcluded, Mode=TwoWay}" Content="{Binding DisplayName}" Margin="0,4" Cursor="Hand"/>
+                                <CheckBox IsChecked="{Binding IsExcluded, Mode=TwoWay}" Content="{Binding DisplayName}" Margin="0,4" Cursor="Hand" Foreground="{DynamicResource TextBrush}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                     <TextBlock x:Name="EmptyAppListMessage" Text="Henüz kullanılan uygulama yok. Uygulamaları kullandıkça burada listelenecektir." 
-                               Foreground="{StaticResource TextMutedBrush}" FontSize="12" TextWrapping="Wrap" 
+                               Foreground="{DynamicResource TextMutedBrush}" FontSize="12" TextWrapping="Wrap" 
                                VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"/>
                 </Grid>
             </Border>
 
             <!-- Save -->
-            <Button Content="Kaydet" Style="{StaticResource PrimaryButtonStyle}" HorizontalAlignment="Left" Click="BtnSave_Click"/>
+            <Button Content="Kaydet" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Click="BtnSave_Click"/>
         </StackPanel>
     </ScrollViewer>
 </Page>

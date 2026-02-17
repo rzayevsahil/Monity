@@ -46,6 +46,9 @@ public partial class App : System.Windows.Application
         var engine = _services.GetRequiredService<ITrackingEngine>();
         engine.SetIgnoredProcesses(["Monity.App", "explorer"], userList);
 
+        var themeService = _services.GetRequiredService<ThemeService>();
+        await themeService.ApplyStoredThemeAsync();
+
         _trackingService.Start();
 
         var mainWindow = _services.GetRequiredService<MainWindow>();
@@ -82,6 +85,7 @@ public partial class App : System.Windows.Application
                 onResume: () => engine.HandlePowerResume());
         });
         services.AddSingleton<UpdateService>();
+        services.AddSingleton<ThemeService>();
         services.AddTransient<MainWindow>();
     }
 
