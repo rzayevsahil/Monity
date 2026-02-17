@@ -271,8 +271,8 @@ public partial class StatisticsPage : Page
                 Fill = new SolidColorPaint(pieColors[i % pieColors.Length]),
                 DataLabelsPaint = new SolidColorPaint(textColor) { SKTypeface = font },
                 DataLabelsSize = 11,
-                DataLabelsFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture),
-                ToolTipLabelFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture)
+                DataLabelsFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture) + " dk",
+                ToolTipLabelFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture) + " dk"
             });
         }
         var restSeconds = totalSeconds > 0 ? apps.Skip(10).Sum(x => x.TotalSeconds) : 0L;
@@ -285,8 +285,8 @@ public partial class StatisticsPage : Page
                 Fill = new SolidColorPaint(new SKColor(148, 163, 184)),
                 DataLabelsPaint = new SolidColorPaint(textColor) { SKTypeface = font },
                 DataLabelsSize = 11,
-                DataLabelsFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture),
-                ToolTipLabelFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture)
+                DataLabelsFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture) + " dk",
+                ToolTipLabelFormatter = point => ((double)point.Coordinate.PrimaryValue).ToString("F2", CultureInfo.CurrentCulture) + " dk"
             });
         }
         AppDistributionChart.Series = new ObservableCollection<ISeries>(pieSeries);
