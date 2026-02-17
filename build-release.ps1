@@ -33,7 +33,7 @@ Pop-Location
 
 # 3. Updater.exe'yi App publish klasorune kopyala (zip ve kurulum icin)
 $AppPublishDir = Join-Path $RootDir "src\Monity.App\bin\Release\net8.0-windows\win-x64\publish"
-$UpdaterExeSrc = Join-Path $RootDir "src\Monity.Updater\bin\Release\net8.0\win-x64\publish\Monity.Updater.exe"
+$UpdaterExeSrc = Join-Path $RootDir "src\Monity.Updater\bin\Release\net8.0-windows\win-x64\publish\Monity.Updater.exe"
 $UpdaterExeDst = Join-Path $AppPublishDir "Updater.exe"
 
 Write-Host "`n[3/4] Updater.exe -> App publish klasorune kopyalaniyor..." -ForegroundColor Yellow

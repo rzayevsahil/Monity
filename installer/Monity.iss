@@ -12,7 +12,7 @@
 
 ; Publish klasörleri (installer/ klasörüne göre)
 #define AppPublishDir "..\src\Monity.App\bin\Release\net8.0-windows\win-x64\publish"
-#define UpdaterExe "..\src\Monity.Updater\bin\Release\net8.0\win-x64\publish\Monity.Updater.exe"
+#define UpdaterExe "..\src\Monity.Updater\bin\Release\net8.0-windows\win-x64\publish\Monity.Updater.exe"
 
 [Setup]
 AppId={{A8B9C7D6-E5F4-3210-ABCD-1234567890AB}

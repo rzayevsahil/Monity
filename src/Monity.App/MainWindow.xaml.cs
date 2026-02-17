@@ -91,6 +91,7 @@ public partial class MainWindow : Window
                 "Güncelleme",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+            await System.Threading.Tasks.Task.Delay(400);
             System.Windows.Application.Current.Shutdown();
         }
         else

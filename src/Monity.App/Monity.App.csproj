@@ -7,7 +7,7 @@
 
   <Target Name="CopyUpdater" AfterTargets="Build">
     <PropertyGroup>
-      <UpdaterOutDir>$(MSBuildThisFileDirectory)..\Monity.Updater\bin\$(Configuration)\net8.0\</UpdaterOutDir>
+      <UpdaterOutDir>$(MSBuildThisFileDirectory)..\Monity.Updater\bin\$(Configuration)\net8.0-windows\</UpdaterOutDir>
     </PropertyGroup>
     <Copy SourceFiles="$(UpdaterOutDir)Monity.Updater.exe" DestinationFiles="$(OutputPath)Updater.exe" SkipUnchangedFiles="true" Condition="Exists('$(UpdaterOutDir)Monity.Updater.exe')" />
   </Target>
@@ -32,7 +32,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <!-- Tek satır: Sürümü sadece burada güncelle. AssemblyVersion/FileVersion/InformationalVersion SDK tarafından bundan türetilir. -->
-    <Version>2.9.0</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
 </Project>
