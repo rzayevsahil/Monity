@@ -64,6 +64,23 @@ public partial class StatisticsPage : Page
         return DateTime.Today;
     }
 
+    private DateTime? GetSelectedEndDate()
+    {
+        if (DatePickerEnd.SelectedDate.HasValue)
+            return DatePickerEnd.SelectedDate.Value;
+        var text = DatePickerEnd.Text;
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            var cultures = new[] { CultureInfo.CurrentCulture, new CultureInfo("tr-TR"), CultureInfo.InvariantCulture };
+            foreach (var culture in cultures)
+            {
+                if (DateTime.TryParse(text, culture, DateTimeStyles.None, out var parsed))
+                    return parsed;
+            }
+        }
+        return null;
+    }
+
     private void Period_Changed(object sender, RoutedEventArgs e) => _ = LoadDataAsync();
 
     private async void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => await LoadDataAsync();
@@ -113,8 +130,26 @@ public partial class StatisticsPage : Page
     private async System.Threading.Tasks.Task LoadDataAsync()
     {
         var period = GetPeriod();
-        var date = GetSelectedDate();
-        var (start, end, dayCount) = DurationAndPeriodHelper.GetPeriodRange(period, date);
+        var dateStart = GetSelectedDate();
+        var dateEnd = GetSelectedEndDate();
+
+        DateTime start;
+        DateTime end;
+        int dayCount;
+        bool useHourly;
+
+        if (dateEnd.HasValue && dateEnd.Value.Date >= dateStart.Date)
+        {
+            start = dateStart.Date;
+            end = dateEnd.Value.Date;
+            dayCount = (end - start).Days + 1;
+            useHourly = start == end;
+        }
+        else
+        {
+            (start, end, dayCount) = DurationAndPeriodHelper.GetPeriodRange(period, dateStart);
+            useHourly = period == DurationAndPeriodHelper.PeriodKind.Daily;
+        }
 
         try
         {
@@ -127,7 +162,7 @@ public partial class StatisticsPage : Page
             System.Threading.Tasks.Task<IReadOnlyList<HourlyUsage>>? hourlyTask = null;
             System.Threading.Tasks.Task<IReadOnlyList<DailyTotalByDate>>? dailyTotalsTask = null;
 
-            if (period == DurationAndPeriodHelper.PeriodKind.Daily)
+            if (useHourly)
                 hourlyTask = _repository.GetHourlyUsageAsync(start.ToString("yyyy-MM-dd"), excludeIdle: true);
             else
                 dailyTotalsTask = _repository.GetDailyTotalsInRangeAsync(start, end, excludeIdle: true, excludedProcessNames: excluded);
@@ -144,7 +179,7 @@ public partial class StatisticsPage : Page
             await Dispatcher.InvokeAsync(() =>
             {
                 ApplyData(total.TotalSeconds, total.SessionCount, apps, dayCount, hourly, dailyTotals, period);
-                if (period == DurationAndPeriodHelper.PeriodKind.Daily)
+                if (start.Date == end.Date && period == DurationAndPeriodHelper.PeriodKind.Daily && !dateEnd.HasValue)
                     TxtDateRange.Text = "";
                 else
                     TxtDateRange.Text = $"{start.ToString("d", CultureInfo.CurrentCulture)} – {end.ToString("d", CultureInfo.CurrentCulture)}";
@@ -185,7 +220,7 @@ public partial class StatisticsPage : Page
         var textColor = new SKColor(71, 85, 105);
         var separatorColor = new SKColor(226, 232, 240);
 
-        if (period == DurationAndPeriodHelper.PeriodKind.Daily && hourly != null)
+        if (hourly != null)
         {
             TxtTimeChartTitle.Text = "Saatlik Kullanım";
             var hourlyValues = new double[24];

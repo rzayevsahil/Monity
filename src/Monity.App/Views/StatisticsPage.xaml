@@ -28,11 +28,15 @@
                 <RadioButton x:Name="RbYearly" Content="Yıllık" GroupName="Period" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
             </StackPanel>
 
-            <!-- Tarih seçimi -->
+            <!-- Tarih seçimi (başlangıç, bitiş, özel aralık) -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
-                <TextBlock x:Name="TxtDateLabel" Text="Tarih:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock x:Name="TxtDateLabel" Text="Başlangıç:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
                 <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
                     <DatePicker x:Name="DatePicker" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
+                </Border>
+                <TextBlock Text="Bitiş:" VerticalAlignment="Center" Margin="12,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
+                    <DatePicker x:Name="DatePickerEnd" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
                 </Border>
                 <Button x:Name="BtnRefresh" Content="Yenile" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
                 <TextBlock x:Name="TxtDateRange" VerticalAlignment="Center" Margin="16,0,0,0" FontSize="13" Foreground="{DynamicResource TextMutedBrush}"/>
