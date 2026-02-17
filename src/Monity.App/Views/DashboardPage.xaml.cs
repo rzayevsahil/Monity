@@ -98,6 +98,8 @@ public partial class DashboardPage : Page
             return;
         try
         {
+            // Buffer'daki bekleyen oturumları önce DB'ye yaz; aksi halde henüz flush olmamış veri okunmaz.
+            await _trackingService.FlushBufferAsync();
             await _repository.UpdateDailySummaryAsync(date);
 
             var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";

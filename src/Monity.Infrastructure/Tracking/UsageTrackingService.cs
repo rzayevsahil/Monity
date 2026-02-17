@@ -50,6 +50,11 @@ public sealed class UsageTrackingService
         Serilog.Log.Information("UsageTrackingService stopped");
     }
 
+    /// <summary>
+    /// Bekleyen oturumları hemen veritabanına yazar. Dashboard yenilemeden önce çağrılırsa güncel veri gösterilir.
+    /// </summary>
+    public Task FlushBufferAsync(CancellationToken ct = default) => _buffer.FlushAsync(ct);
+
     public event EventHandler<SessionEndedEventArgs>? SessionEnded;
     public event EventHandler<ForegroundChangedEventArgs>? ForegroundChanged
     {
