@@ -133,6 +133,8 @@ public partial class SettingsPage : Page
         EmptyDailyLimitMessage.Visibility = _dailyLimitItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDailyLimitSearchPlaceholder();
         ApplyDailyLimitSearchFilter();
+        var limitExceededAction = await _repository.GetSettingAsync("limit_exceeded_action") ?? "notify";
+        ChkLimitExceededCloseApp.IsChecked = limitExceededAction == "close_app";
 
         // Uygulama kategorileri listesi
         var appsWithCategory = await _repository.GetTrackedAppsWithCategoryAsync();
@@ -538,6 +540,8 @@ public partial class SettingsPage : Page
         }
         var dailyLimitsJson = JsonSerializer.Serialize(dailyLimits);
         await _repository.SetSettingAsync("daily_limits", dailyLimitsJson);
+        var limitExceededAction = ChkLimitExceededCloseApp.IsChecked == true ? "close_app" : "notify";
+        await _repository.SetSettingAsync("limit_exceeded_action", limitExceededAction);
         foreach (var item in _dailyLimitItems)
             item.IsSelected = false;
         System.Windows.MessageBox.Show("Günlük süre kısıtları kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);

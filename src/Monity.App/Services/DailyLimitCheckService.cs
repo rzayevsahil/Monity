@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.Json;
 using Monity.Infrastructure.Persistence;
 
@@ -6,6 +7,9 @@ namespace Monity.App.Services;
 
 public sealed class DailyLimitCheckService : IDailyLimitCheckService
 {
+    private const string LimitExceededActionKey = "limit_exceeded_action";
+    private const string CloseAppAction = "close_app";
+
     private readonly IUsageRepository _repository;
     private readonly ITrayNotifier _trayNotifier;
     private DateTime _notifiedDate = DateTime.MinValue;
@@ -41,6 +45,8 @@ public sealed class DailyLimitCheckService : IDailyLimitCheckService
 
         if (limits == null || limits.Count == 0) return;
 
+        var closeAppWhenExceeded = (await _repository.GetSettingAsync(LimitExceededActionKey, ct) ?? "").Trim().ToLowerInvariant() == CloseAppAction;
+
         foreach (var appId in appIds)
         {
             var processName = await _repository.GetProcessNameByAppIdAsync(appId, ct);
@@ -56,6 +62,34 @@ public sealed class DailyLimitCheckService : IDailyLimitCheckService
             var title = "Günlük kullanım süresi";
             var text = $"Günlük kullanım sürenizi tamamladınız: {processName} (limit: {limitText}).";
             _trayNotifier.ShowBalloonTip(title, text);
+
+            if (closeAppWhenExceeded)
+                TryCloseProcessesByName(processName);
+        }
+    }
+
+    private static void TryCloseProcessesByName(string processName)
+    {
+        var nameForLookup = processName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+            ? processName[..^4]
+            : processName;
+        try
+        {
+            foreach (var process in Process.GetProcessesByName(nameForLookup))
+            {
+                try
+                {
+                    process.Kill();
+                }
+                catch (Exception ex)
+                {
+                    Serilog.Log.Warning(ex, "Could not kill process {ProcessName} (Id: {Id})", processName, process.Id);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Warning(ex, "Could not get processes by name {ProcessName}", processName);
         }
     }
 

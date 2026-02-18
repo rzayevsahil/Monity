@@ -87,6 +87,8 @@
             <TextBlock Text="Günlük süre kısıtları" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Listeden uygulama(lar) seçin, dakika girin ve Kaydet'e basın; limit aşıldığında bildirim alırsınız. Kısıtlı süre kaydedildikten sonra sağ sütunda görünür." 
                        FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <CheckBox x:Name="ChkLimitExceededCloseApp" Content="Limit aşıldığında uygulamayı kapat"
+                      Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8" ToolTip="Açıkken limit aşan uygulama kapatılır (sadece bildirim yerine). Dikkat: Tüm pencereler kapanabilir."/>
             <Border Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtDailyLimitSearch" Padding="10,8" BorderThickness="0" Background="Transparent"
                          Foreground="{DynamicResource TextBrush}" FontSize="13" VerticalContentAlignment="Center"
