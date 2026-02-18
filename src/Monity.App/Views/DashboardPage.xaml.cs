@@ -22,6 +22,7 @@ public partial class DashboardPage : Page
     private readonly UsageTrackingService _trackingService;
     private long _totalSeconds;
     private ObservableCollection<AppUsageItem> _appItems = [];
+    private readonly ObservableCollection<HeatMapDayCell> _heatMapCells = [];
     private ICollectionView _appListView = null!;
 
     public DashboardPage(IServiceProvider services)
@@ -34,6 +35,7 @@ public partial class DashboardPage : Page
         DatePicker.SelectedDate = DateTime.Today;
         _appListView = CollectionViewSource.GetDefaultView(_appItems);
         AppListView.ItemsSource = _appListView;
+        HeatMapItemsControl.ItemsSource = _heatMapCells;
         SetupHourlyChartAxes();
         SetupCategoryFilter();
 
@@ -145,9 +147,18 @@ public partial class DashboardPage : Page
             var hourly = await _repository.GetHourlyUsageAsync(date, excludeIdle: true, categoryName: categoryName);
             var firstActivity = await _repository.GetFirstSessionStartedAtAsync(date);
 
+            var selectedDate = DateTime.ParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            var startOfMonth = new DateTime(selectedDate.Year, selectedDate.Month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+            var excludedList = excluded.ToList();
+            var dailyTotalsForMonth = await _repository.GetDailyTotalsInRangeAsync(startOfMonth, endOfMonth, excludeIdle: true, excludedProcessNames: excludedList, categoryName: categoryName);
+
             await Dispatcher.InvokeAsync(() =>
             {
                 ApplyDataToUI(total, sessionCount, apps, hourly, firstActivity);
+                UpdateHeatMap(dailyTotalsForMonth, startOfMonth, endOfMonth, selectedDate);
+                var ci = CultureInfo.CurrentCulture;
+                TxtHeatMapTitle.Text = $"Aylık kullanım yoğunluğu — {startOfMonth.ToString("MMMM yyyy", ci)}";
             }, System.Windows.Threading.DispatcherPriority.Normal);
         }
         catch (Exception ex)
@@ -165,7 +176,9 @@ public partial class DashboardPage : Page
         TxtTodayTotal.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
         TxtFirstActivity.Text = "Bugün başlangıç: —";
+        TxtHeatMapTitle.Text = "Aylık kullanım yoğunluğu";
         _appItems.Clear();
+        _heatMapCells.Clear();
         HourlyChart.Series = new ObservableCollection<ISeries>();
     }
 
@@ -271,6 +284,82 @@ public partial class DashboardPage : Page
         if (m > 0)
             return $"{m} dk";
         return $"{seconds} sn";
+    }
+
+    private static readonly System.Windows.Media.Brush HeatMapLabelDark =
+        (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#1E293B")!;
+    private static readonly System.Windows.Media.Brush HeatMapLabelLight =
+        (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#F8FAFC")!;
+
+    private static bool IsDarkTheme()
+    {
+        var app = System.Windows.Application.Current?.Resources;
+        if (app?.MergedDictionaries.Count > 0 && app.MergedDictionaries[0].Source != null)
+            return app.MergedDictionaries[0].Source.ToString().IndexOf("Dark.xaml", StringComparison.OrdinalIgnoreCase) >= 0;
+        return false;
+    }
+
+    private static System.Windows.Media.Brush[] GetHeatMapBrushes()
+    {
+        var card = System.Windows.Application.Current.Resources["CardBrush"] as System.Windows.Media.Brush;
+        var primary = System.Windows.Application.Current.Resources["PrimaryBrush"] as System.Windows.Media.SolidColorBrush;
+        var color = primary?.Color ?? System.Windows.Media.Color.FromRgb(59, 130, 246);
+        var fallbackCard = (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#EBEDF0")!;
+        return
+        [
+            card ?? fallbackCard,
+            new System.Windows.Media.SolidColorBrush(color) { Opacity = 0.25 },
+            new System.Windows.Media.SolidColorBrush(color) { Opacity = 0.5 },
+            new System.Windows.Media.SolidColorBrush(color) { Opacity = 0.75 },
+            primary ?? new System.Windows.Media.SolidColorBrush(color)
+        ];
+    }
+
+    private void UpdateHeatMap(IReadOnlyList<DailyTotalByDate> dailyTotals, DateTime startOfMonth, DateTime endOfMonth, DateTime selectedDate)
+    {
+        var brushes = GetHeatMapBrushes();
+        var dict = dailyTotals.ToDictionary(x => x.Date, x => x.TotalSeconds);
+        var daysInMonth = endOfMonth.Day;
+        var firstDay = startOfMonth.DayOfWeek;
+        var startOffset = firstDay == DayOfWeek.Sunday ? 6 : (int)firstDay - 1;
+        var maxSeconds = dict.Values.DefaultIfEmpty(0).Max();
+
+        _heatMapCells.Clear();
+        for (var i = 0; i < 42; i++)
+        {
+            if (i < startOffset || i >= startOffset + daysInMonth)
+            {
+                _heatMapCells.Add(new HeatMapDayCell(brushes[0], "", "", System.Windows.Media.Brushes.Transparent));
+                continue;
+            }
+            var dayNum = i - startOffset + 1;
+            var dateStr = $"{startOfMonth.Year}-{startOfMonth.Month:D2}-{dayNum:D2}";
+            var secs = dict.GetValueOrDefault(dateStr, 0L);
+            var level = maxSeconds > 0 ? (int)Math.Min(3, (double)secs / maxSeconds * 3.99) : 0;
+            var fill = brushes[level + 1];
+            var dayDate = new DateTime(startOfMonth.Year, startOfMonth.Month, dayNum);
+            var tooltip = $"{dayDate:dd MMMM} · {FormatDuration(secs)}";
+            var labelForeground = IsDarkTheme()
+                ? HeatMapLabelLight
+                : (level <= 1 ? HeatMapLabelDark : HeatMapLabelLight);
+            _heatMapCells.Add(new HeatMapDayCell(fill, tooltip, dayNum.ToString(), labelForeground));
+        }
+    }
+
+    private sealed class HeatMapDayCell
+    {
+        public System.Windows.Media.Brush Fill { get; }
+        public string TooltipText { get; }
+        public string DayLabel { get; }
+        public System.Windows.Media.Brush DayLabelForeground { get; }
+
+        public HeatMapDayCell(System.Windows.Media.Brush fill, string tooltipText, string dayLabel, System.Windows.Media.Brush dayLabelForeground)
+        {
+            Fill = fill;
+            TooltipText = tooltipText;
+            DayLabel = dayLabel;
+            DayLabelForeground = dayLabelForeground;
+        }
     }
 
     private class AppUsageItem
