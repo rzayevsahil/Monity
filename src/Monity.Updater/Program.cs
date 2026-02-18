@@ -53,10 +53,28 @@ internal static class Program
                 try
                 {
                     using var parent = Process.GetProcessById(parentPid);
-                    parent.WaitForExit(25000);
+                    if (!parent.WaitForExit(5000))
+                    {
+                        Log("Ana uygulama zamanında kapanmadı, zorla sonlandırılıyor...");
+                        parent.Kill();
+                        parent.WaitForExit(5000);
+                    }
                 }
                 catch { /* process zaten kapanmis */ }
             }
+
+            Log("Tüm Monity.App process'leri sonlandırılıyor...");
+            foreach (var proc in Process.GetProcessesByName("Monity.App"))
+            {
+                try
+                {
+                    proc.Kill();
+                    proc.WaitForExit(3000);
+                    proc.Dispose();
+                }
+                catch { /* zaten kapanmis veya erisim yok */ }
+            }
+
             Thread.Sleep(3000);
 
             Log("Dosyalar kopyalanıyor...");
