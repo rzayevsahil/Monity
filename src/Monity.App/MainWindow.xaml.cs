@@ -3,9 +3,12 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
+using Monity.App.Helpers;
 using Monity.App.Services;
 using Monity.App.Views;
+using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
 
 namespace Monity.App;
@@ -14,7 +17,9 @@ public partial class MainWindow : Window
 {
     private readonly UsageTrackingService _trackingService;
     private readonly UpdateService _updateService;
+    private readonly IUsageRepository _repository;
     private System.Windows.Forms.NotifyIcon? _trayIcon;
+    private DispatcherTimer? _trayUsageTimer;
     private UpdateService.UpdateCheckResult? _pendingUpdate;
 
     public MainWindow()
@@ -23,6 +28,7 @@ public partial class MainWindow : Window
         var services = ((App)System.Windows.Application.Current).Services;
         _trackingService = services.GetRequiredService<UsageTrackingService>();
         _updateService = services.GetRequiredService<UpdateService>();
+        _repository = services.GetRequiredService<IUsageRepository>();
         Loaded += MainWindow_Loaded;
         SetWindowIcon();
     }
@@ -110,6 +116,14 @@ public partial class MainWindow : Window
             Text = "Monity - App Usage Tracker",
             Visible = true
         };
+        _ = UpdateTrayTooltipAsync();
+
+        _trayUsageTimer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMinutes(1)
+        };
+        _trayUsageTimer.Tick += async (_, _) => await UpdateTrayTooltipAsync();
+        _trayUsageTimer.Start();
         _trayIcon.DoubleClick += (_, _) =>
         {
             Show();
@@ -159,7 +173,28 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        _trayUsageTimer?.Stop();
+        _trayUsageTimer = null;
         _trayIcon?.Dispose();
         base.OnClosed(e);
+    }
+
+    private async System.Threading.Tasks.Task UpdateTrayTooltipAsync()
+    {
+        if (_trayIcon == null) return;
+        try
+        {
+            var today = DateTime.Today.ToString("yyyy-MM-dd");
+            var total = await _repository.GetDailyTotalAsync(today);
+            var formatted = DurationAndPeriodHelper.FormatDuration(total.TotalSeconds);
+            await Dispatcher.InvokeAsync(() =>
+            {
+                _trayIcon!.Text = $"Monity – Bugün: {formatted}";
+            });
+        }
+        catch
+        {
+            // Ignore - tray text will stay as-is
+        }
     }
 }
