@@ -72,6 +72,16 @@
                 </Border>
             </Grid>
 
+            <!-- Haftalık karşılaştırma özeti -->
+            <TextBlock Text="Haftalık karşılaştırma" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock x:Name="TxtWeeklyThisWeek" Text="Bu hafta: —" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="TxtWeeklyLastWeek" Text="Geçen hafta: —" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="TxtWeeklyDiff" Text="Fark: —" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
+                </StackPanel>
+            </Border>
+
             <!-- Zaman dağılımı grafiği (saatlik veya günlük) -->
             <TextBlock x:Name="TxtTimeChartTitle" Text="Saatlik Kullanım" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Height="220">

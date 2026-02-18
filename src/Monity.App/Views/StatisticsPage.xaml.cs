@@ -189,6 +189,12 @@ public partial class StatisticsPage : Page
             var totalTask = _repository.GetRangeTotalAsync(start, end, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
             var appsTask = _repository.GetWeeklyUsageAsync(start, end, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
 
+            var (startThisWeek, endThisWeek, _) = DurationAndPeriodHelper.GetPeriodRange(DurationAndPeriodHelper.PeriodKind.Weekly, DateTime.Today);
+            var startLastWeek = startThisWeek.AddDays(-7);
+            var endLastWeek = endThisWeek.AddDays(-7);
+            var totalThisWeekTask = _repository.GetRangeTotalAsync(startThisWeek, endThisWeek, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
+            var totalLastWeekTask = _repository.GetRangeTotalAsync(startLastWeek, endLastWeek, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
+
             System.Threading.Tasks.Task<IReadOnlyList<HourlyUsage>>? hourlyTask = null;
             System.Threading.Tasks.Task<IReadOnlyList<DailyTotalByDate>>? dailyTotalsTask = null;
 
@@ -198,17 +204,20 @@ public partial class StatisticsPage : Page
                 dailyTotalsTask = _repository.GetDailyTotalsInRangeAsync(start, end, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
 
             await System.Threading.Tasks.Task.WhenAll(
-                new System.Threading.Tasks.Task[] { totalTask, appsTask }
+                new System.Threading.Tasks.Task[] { totalTask, appsTask, totalThisWeekTask, totalLastWeekTask }
                     .Concat(hourlyTask != null ? [hourlyTask] : dailyTotalsTask != null ? [dailyTotalsTask] : []));
 
             var total = await totalTask;
             var apps = await appsTask;
+            var totalThisWeek = await totalThisWeekTask;
+            var totalLastWeek = await totalLastWeekTask;
             IReadOnlyList<HourlyUsage>? hourly = hourlyTask != null ? await hourlyTask : null;
             IReadOnlyList<DailyTotalByDate>? dailyTotals = dailyTotalsTask != null ? await dailyTotalsTask : null;
 
             await Dispatcher.InvokeAsync(() =>
             {
                 ApplyData(total.TotalSeconds, total.SessionCount, apps, dayCount, hourly, dailyTotals, period);
+                ApplyWeeklyComparison(totalThisWeek.TotalSeconds, totalLastWeek.TotalSeconds);
                 if (start.Date == end.Date && period == DurationAndPeriodHelper.PeriodKind.Daily && !dateEnd.HasValue)
                     TxtDateRange.Text = "";
                 else
@@ -364,12 +373,28 @@ public partial class StatisticsPage : Page
         AppDistributionChart.Series = new ObservableCollection<ISeries>(pieSeries);
     }
 
+    private void ApplyWeeklyComparison(long thisWeekSeconds, long lastWeekSeconds)
+    {
+        TxtWeeklyThisWeek.Text = "Bu hafta: " + DurationAndPeriodHelper.FormatDuration(thisWeekSeconds);
+        TxtWeeklyLastWeek.Text = "Geçen hafta: " + DurationAndPeriodHelper.FormatDuration(lastWeekSeconds);
+        var diffSeconds = thisWeekSeconds - lastWeekSeconds;
+        var diffFormatted = DurationAndPeriodHelper.FormatDuration(Math.Abs(diffSeconds));
+        var pct = lastWeekSeconds > 0 ? (double)diffSeconds / lastWeekSeconds * 100 : (diffSeconds > 0 ? 100.0 : 0.0);
+        var pctStr = pct >= 0 ? $"%+{pct:F0}" : $"%{pct:F0}";
+        TxtWeeklyDiff.Text = diffSeconds >= 0
+            ? $"Fark: +{diffFormatted} ({pctStr})"
+            : $"Fark: -{diffFormatted} ({pctStr})";
+    }
+
     private void ClearData()
     {
         TxtTotal.Text = "0 sa 0 dk";
         TxtAverage.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
         TxtDateRange.Text = "";
+        TxtWeeklyThisWeek.Text = "Bu hafta: —";
+        TxtWeeklyLastWeek.Text = "Geçen hafta: —";
+        TxtWeeklyDiff.Text = "Fark: —";
         _appItems.Clear();
         TimeDistributionChart.Series = new ObservableCollection<ISeries>();
         AppDistributionChart.Series = new ObservableCollection<ISeries>();
