@@ -40,12 +40,21 @@
             <TextBlock Text="Takip hariç tutulacak uygulamalar" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Aşağıdaki listeden takip etmek istemediğiniz uygulamaları işaretleyin. Listede yalnızca daha önce kullanılmış uygulamalar görünür. Monity ve Windows Gezgini zaten takip dışıdır." 
                        FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
-            <Border Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
-                <TextBox x:Name="TxtAppSearch" Padding="10,8" BorderThickness="0" Background="Transparent"
-                         Foreground="{DynamicResource TextBrush}" FontSize="13" VerticalContentAlignment="Center"
-                         GotFocus="TxtAppSearch_GotFocus" LostFocus="TxtAppSearch_LostFocus"
-                         TextChanged="TxtAppSearch_TextChanged"/>
-            </Border>
+            <Grid Margin="0,0,0,8" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Margin="0,0,8,0" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                    <TextBox x:Name="TxtAppSearch" Padding="10,8" BorderThickness="0" Background="Transparent"
+                             Foreground="{DynamicResource TextBrush}" FontSize="13" VerticalContentAlignment="Center"
+                             GotFocus="TxtAppSearch_GotFocus" LostFocus="TxtAppSearch_LostFocus"
+                             TextChanged="TxtAppSearch_TextChanged"/>
+                </Border>
+                <Button Grid.Column="1" x:Name="BtnAppExcludeSelectAll" Content="Hepsini seç" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnAppExcludeSelectAll_Click"/>
+                <Button Grid.Column="2" x:Name="BtnAppExcludeDeselectAll" Content="Hepsini sil" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnAppExcludeDeselectAll_Click"/>
+            </Grid>
             <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="220">
                 <Grid>
                     <ListBox x:Name="AppExcludeList" BorderThickness="0" Background="Transparent">
@@ -73,14 +82,16 @@
             </Border>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
                 <TextBlock Text="Kısıtlı süre (dakika):" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" Margin="0,0,8,0"/>
-                <Border Width="100" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                <Border Width="100" Margin="0,0,8,0" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                     <TextBox x:Name="TxtDailyLimitMinutes" Padding="8,6" BorderThickness="0" Background="Transparent"
                              Foreground="{DynamicResource TextBrush}" VerticalContentAlignment="Center"
                              PreviewTextInput="TxtDailyLimitMinutes_PreviewTextInput"
                              LostFocus="TxtDailyLimitMinutes_LostFocus"
                              ToolTip="Seçili uygulamalara uygulanacak dakika (1-1440 = 24 saat)"/>
                 </Border>
-                <TextBlock Text="1-1440 arası değer giriniz." VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="8,0,0,0"/>
+                <TextBlock Text="1-1440 arası değer giriniz." VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="0,0,16,0"/>
+                <Button x:Name="BtnDailyLimitSelectAll" Content="Hepsini seç" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnDailyLimitSelectAll_Click"/>
+                <Button x:Name="BtnDailyLimitDeselectAll" Content="Hepsini sil" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDailyLimitDeselectAll_Click"/>
             </StackPanel>
             <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="260">
                 <Grid Grid.IsSharedSizeScope="True">

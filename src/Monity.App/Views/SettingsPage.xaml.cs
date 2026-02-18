@@ -199,6 +199,30 @@ public partial class SettingsPage : Page
             };
     }
 
+    private void BtnAppExcludeSelectAll_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in _appExcludeItems)
+            item.IsExcluded = true;
+    }
+
+    private void BtnAppExcludeDeselectAll_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in _appExcludeItems)
+            item.IsExcluded = false;
+    }
+
+    private void BtnDailyLimitSelectAll_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in _dailyLimitItems)
+            item.IsSelected = true;
+    }
+
+    private void BtnDailyLimitDeselectAll_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in _dailyLimitItems)
+            item.IsSelected = false;
+    }
+
     private void TxtIdleThreshold_PreviewTextInput(object sender, TextCompositionEventArgs e)
     {
         if (!Regex.IsMatch(e.Text, "^[0-9]+$")) { e.Handled = true; return; }
