@@ -25,6 +25,9 @@
                 <RadioButton x:Name="RbThemeDark" Content="Koyu" GroupName="Theme" Foreground="{DynamicResource TextBrush}"/>
             </StackPanel>
 
+            <!-- Windows başlangıcında otomatik başlat -->
+            <CheckBox x:Name="CbStartWithWindows" Content="Windows başlangıcında otomatik başlat" Margin="0,0,0,24" Foreground="{DynamicResource TextBrush}"/>
+
             <!-- Idle threshold -->
             <TextBlock Text="Boşta kalma süresi (saniye)" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Bu süre boyunca klavye veya fareye hiç dokunmazsanız, artık süre sayılmaz (örneğin ekrandan uzaklaştığınızda). 10 ile 600 saniye arası bir değer girin (60 = 1 dakika)." 

@@ -90,6 +90,7 @@ public partial class App : System.Windows.Application
         });
         services.AddSingleton<UpdateService>();
         services.AddSingleton<ThemeService>();
+        services.AddSingleton<StartupService>();
         services.AddTransient<MainWindow>();
     }
 

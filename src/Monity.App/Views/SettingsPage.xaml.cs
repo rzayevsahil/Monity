@@ -27,6 +27,7 @@ public partial class SettingsPage : Page
     private readonly UsageTrackingService _trackingService;
     private readonly IUsageRepository _repository;
     private readonly ThemeService _themeService;
+    private readonly StartupService _startupService;
     private readonly ObservableCollection<AppExcludeItem> _appExcludeItems = [];
     private readonly ObservableCollection<DailyLimitItem> _dailyLimitItems = [];
     private readonly ICollectionView _appExcludeView;
@@ -45,6 +46,7 @@ public partial class SettingsPage : Page
         _trackingService = services.GetRequiredService<UsageTrackingService>();
         _repository = services.GetRequiredService<IUsageRepository>();
         _themeService = services.GetRequiredService<ThemeService>();
+        _startupService = services.GetRequiredService<StartupService>();
         _appExcludeView = CollectionViewSource.GetDefaultView(_appExcludeItems);
         _dailyLimitView = CollectionViewSource.GetDefaultView(_dailyLimitItems);
         AppExcludeList.ItemsSource = _appExcludeView;
@@ -59,6 +61,9 @@ public partial class SettingsPage : Page
         var theme = await _themeService.GetThemeAsync();
         RbThemeDark.IsChecked = theme == "dark";
         RbThemeLight.IsChecked = theme != "dark";
+
+        var startWithWindows = await _startupService.GetIsEnabledAsync();
+        CbStartWithWindows.IsChecked = startWithWindows;
 
         var idleSeconds = _trackingService.IdleThresholdMs / 1000;
         TxtIdleThreshold.Text = idleSeconds.ToString();
@@ -328,6 +333,8 @@ public partial class SettingsPage : Page
         var theme = RbThemeDark.IsChecked == true ? "dark" : "light";
         _themeService.ApplyTheme(theme);
         await _themeService.SaveThemeAsync(theme);
+
+        await _startupService.SetEnabledAsync(CbStartWithWindows.IsChecked == true);
 
         var ignored = string.Join(",", _appExcludeItems.Where(x => x.IsExcluded).Select(x => x.ProcessName));
         await _repository.SetSettingAsync("ignored_processes", ignored);
