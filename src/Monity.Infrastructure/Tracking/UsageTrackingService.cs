@@ -68,10 +68,18 @@ public sealed class UsageTrackingService
         set => _engine.IdleThresholdMs = value;
     }
 
+    /// <summary>
+    /// Minimum session duration in seconds. Sessions shorter than this are not saved. 0 = disabled.
+    /// </summary>
+    public uint MinSessionSeconds { get; set; }
+
     private async void OnSessionEnded(object? sender, SessionEndedEventArgs e)
     {
         try
         {
+            if (MinSessionSeconds > 0 && e.DurationSeconds < MinSessionSeconds)
+                return;
+
             var appId = await _repository.GetOrCreateAppIdAsync(e.ProcessName, e.ExePath);
 
             var startedLocal = e.StartedAt.ToLocalTime();

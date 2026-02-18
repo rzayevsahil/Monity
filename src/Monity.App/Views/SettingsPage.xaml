@@ -39,6 +39,17 @@
                          LostFocus="TxtIdleThreshold_LostFocus"/>
             </Border>
 
+            <!-- Minimum oturum süresi -->
+            <TextBlock Text="Minimum oturum süresi (saniye)" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Bu süreden kısa oturumlar kaydedilmez (ör. 5 sn'lik geçişler gürültü oluşturur). 0 = kapalı, 1-600 arası değer girin." 
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,24" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                <TextBox x:Name="TxtMinSessionSeconds" Padding="10,8" BorderThickness="0" Background="Transparent"
+                         Foreground="{DynamicResource TextBrush}"
+                         PreviewTextInput="TxtMinSessionSeconds_PreviewTextInput"
+                         LostFocus="TxtMinSessionSeconds_LostFocus"/>
+            </Border>
+
             <!-- Ignore list -->
             <TextBlock Text="Takip hariç tutulacak uygulamalar" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Aşağıdaki listeden takip etmek istemediğiniz uygulamaları işaretleyin. Listede yalnızca daha önce kullanılmış uygulamalar görünür. Monity ve Windows Gezgini zaten takip dışıdır." 

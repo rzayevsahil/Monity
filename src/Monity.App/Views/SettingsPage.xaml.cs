@@ -34,6 +34,7 @@ public partial class SettingsPage : Page
     private readonly ICollectionView _dailyLimitView;
     private const int IdleMinSeconds = 10;
     private const int IdleMaxSeconds = 600;
+    private const int MinSessionMaxSeconds = 600;
     private const int DailyLimitMinMinutes = 1;
     private const int DailyLimitMaxMinutes = 1440;
     private const string AppSearchPlaceholder = "Ara";
@@ -52,6 +53,7 @@ public partial class SettingsPage : Page
         AppExcludeList.ItemsSource = _appExcludeView;
         DailyLimitList.ItemsSource = _dailyLimitView;
         System.Windows.DataObject.AddPastingHandler(TxtIdleThreshold, TxtIdleThreshold_OnPaste);
+        System.Windows.DataObject.AddPastingHandler(TxtMinSessionSeconds, TxtMinSessionSeconds_OnPaste);
         System.Windows.DataObject.AddPastingHandler(TxtDailyLimitMinutes, TxtDailyLimitMinutes_OnPaste);
         Loaded += SettingsPage_Loaded;
     }
@@ -67,6 +69,8 @@ public partial class SettingsPage : Page
 
         var idleSeconds = _trackingService.IdleThresholdMs / 1000;
         TxtIdleThreshold.Text = idleSeconds.ToString();
+
+        TxtMinSessionSeconds.Text = _trackingService.MinSessionSeconds.ToString();
 
         var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";
         var ignoredSet = new HashSet<string>(ignoredStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), StringComparer.OrdinalIgnoreCase);
@@ -272,6 +276,48 @@ public partial class SettingsPage : Page
             TxtIdleThreshold.Text = IdleMaxSeconds.ToString();
     }
 
+    private void TxtMinSessionSeconds_PreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        if (!Regex.IsMatch(e.Text, "^[0-9]+$")) { e.Handled = true; return; }
+        var current = TxtMinSessionSeconds.Text ?? "";
+        var start = Math.Min(TxtMinSessionSeconds.SelectionStart, current.Length);
+        var len = TxtMinSessionSeconds.SelectionLength;
+        var proposed = current[..Math.Max(0, start)] + e.Text + current[Math.Min(current.Length, start + len)..];
+        if (proposed.Length > 0 && uint.TryParse(proposed, out var value) && value > MinSessionMaxSeconds)
+            e.Handled = true;
+    }
+
+    private void TxtMinSessionSeconds_OnPaste(object sender, DataObjectPastingEventArgs e)
+    {
+        var text = e.SourceDataObject.GetData(System.Windows.DataFormats.Text) as string;
+        if (string.IsNullOrEmpty(text)) return;
+        var digits = new string(text.Where(char.IsDigit).ToArray());
+        if (digits.Length == 0) { e.CancelCommand(); return; }
+        e.CancelCommand();
+        var current = TxtMinSessionSeconds.Text ?? "";
+        var start = Math.Min(TxtMinSessionSeconds.SelectionStart, current.Length);
+        var len = TxtMinSessionSeconds.SelectionLength;
+        var newText = current[..Math.Max(0, start)] + digits + current[Math.Min(current.Length, start + len)..];
+        if (uint.TryParse(newText, out var value) && value > MinSessionMaxSeconds)
+            newText = MinSessionMaxSeconds.ToString();
+        TxtMinSessionSeconds.Text = newText;
+        TxtMinSessionSeconds.SelectionStart = TxtMinSessionSeconds.SelectionLength = 0;
+        TxtMinSessionSeconds.SelectionStart = newText.Length;
+    }
+
+    private void TxtMinSessionSeconds_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(TxtMinSessionSeconds.Text))
+        {
+            TxtMinSessionSeconds.Text = "0";
+            return;
+        }
+        if (!uint.TryParse(TxtMinSessionSeconds.Text, out var value))
+            return;
+        if (value > MinSessionMaxSeconds)
+            TxtMinSessionSeconds.Text = MinSessionMaxSeconds.ToString();
+    }
+
     private void TxtDailyLimitMinutes_PreviewTextInput(object sender, TextCompositionEventArgs e)
     {
         if (!Regex.IsMatch(e.Text, "^[0-9]+$")) { e.Handled = true; return; }
@@ -370,6 +416,11 @@ public partial class SettingsPage : Page
 
         _trackingService.IdleThresholdMs = seconds * 1000;
         await _repository.SetSettingAsync("idle_threshold_seconds", seconds.ToString());
+
+        if (!uint.TryParse(TxtMinSessionSeconds.Text, out var minSession) || minSession > MinSessionMaxSeconds)
+            minSession = 0;
+        _trackingService.MinSessionSeconds = minSession;
+        await _repository.SetSettingAsync("min_session_seconds", minSession.ToString());
 
         var theme = RbThemeDark.IsChecked == true ? "dark" : "light";
         _themeService.ApplyTheme(theme);

@@ -41,6 +41,10 @@ public partial class App : System.Windows.Application
         if (uint.TryParse(idleStr, out var idleSec) && idleSec >= 10 && idleSec <= 600)
             _trackingService.IdleThresholdMs = idleSec * 1000;
 
+        var minSessionStr = await repo.GetSettingAsync("min_session_seconds") ?? "0";
+        if (uint.TryParse(minSessionStr, out var minSession) && minSession <= 600)
+            _trackingService.MinSessionSeconds = minSession;
+
         var ignored = await repo.GetSettingAsync("ignored_processes") ?? "";
         var userList = ignored.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var engine = _services.GetRequiredService<ITrackingEngine>();
