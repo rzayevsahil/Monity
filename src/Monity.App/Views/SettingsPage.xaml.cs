@@ -33,6 +33,7 @@ public partial class SettingsPage : Page
     private readonly ObservableCollection<CategoryItem> _categoryItems = [];
     private readonly ICollectionView _appExcludeView;
     private readonly ICollectionView _dailyLimitView;
+    private readonly ICollectionView _categoryView;
     private const int IdleMinSeconds = 10;
     private const int IdleMaxSeconds = 600;
     private const int MinSessionMaxSeconds = 600;
@@ -40,6 +41,7 @@ public partial class SettingsPage : Page
     private const int DailyLimitMaxMinutes = 1440;
     private const string AppSearchPlaceholder = "Ara";
     private const string DailyLimitSearchPlaceholder = "Ara";
+    private const string CategorySearchPlaceholder = "Ara";
 
     public SettingsPage(IServiceProvider services)
     {
@@ -51,9 +53,14 @@ public partial class SettingsPage : Page
         _startupService = services.GetRequiredService<StartupService>();
         _appExcludeView = CollectionViewSource.GetDefaultView(_appExcludeItems);
         _dailyLimitView = CollectionViewSource.GetDefaultView(_dailyLimitItems);
+        _categoryView = CollectionViewSource.GetDefaultView(_categoryItems);
         AppExcludeList.ItemsSource = _appExcludeView;
         DailyLimitList.ItemsSource = _dailyLimitView;
-        CategoryList.ItemsSource = _categoryItems;
+        CategoryList.ItemsSource = _categoryView;
+        CategoryComboBox.ItemsSource = CategoryItem.CategoryOptionsList;
+        CategoryComboBox.DisplayMemberPath = "Display";
+        CategoryComboBox.SelectedValuePath = "Value";
+        CategoryComboBox.SelectedIndex = 0;
         System.Windows.DataObject.AddPastingHandler(TxtIdleThreshold, TxtIdleThreshold_OnPaste);
         System.Windows.DataObject.AddPastingHandler(TxtMinSessionSeconds, TxtMinSessionSeconds_OnPaste);
         System.Windows.DataObject.AddPastingHandler(TxtDailyLimitMinutes, TxtDailyLimitMinutes_OnPaste);
@@ -133,6 +140,8 @@ public partial class SettingsPage : Page
         foreach (var app in appsWithCategory)
             _categoryItems.Add(new CategoryItem(app.AppId, app.DisplayName ?? app.ProcessName, app.CategoryName ?? ""));
         EmptyCategoryMessage.Visibility = _categoryItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        ShowCategorySearchPlaceholder();
+        ApplyCategorySearchFilter();
     }
 
     private void TxtDailyLimitSearch_GotFocus(object sender, RoutedEventArgs e)
@@ -238,6 +247,67 @@ public partial class SettingsPage : Page
     private void BtnDailyLimitDeselectAll_Click(object sender, RoutedEventArgs e)
     {
         foreach (var item in _dailyLimitItems)
+            item.IsSelected = false;
+    }
+
+    private void TxtCategorySearch_GotFocus(object sender, RoutedEventArgs e)
+    {
+        if (TxtCategorySearch.Text == CategorySearchPlaceholder)
+        {
+            TxtCategorySearch.Text = "";
+            TxtCategorySearch.SetResourceReference(ForegroundProperty, "TextBrush");
+        }
+    }
+
+    private void TxtCategorySearch_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(TxtCategorySearch.Text))
+            ShowCategorySearchPlaceholder();
+    }
+
+    private void ShowCategorySearchPlaceholder()
+    {
+        TxtCategorySearch.Text = CategorySearchPlaceholder;
+        TxtCategorySearch.SetResourceReference(ForegroundProperty, "TextMutedBrush");
+    }
+
+    private void TxtCategorySearch_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        ApplyCategorySearchFilter();
+    }
+
+    private void ApplyCategorySearchFilter()
+    {
+        var raw = TxtCategorySearch?.Text ?? "";
+        var query = (raw == CategorySearchPlaceholder ? "" : raw).Trim();
+        _categoryView.Filter = string.IsNullOrEmpty(query)
+            ? null
+            : obj =>
+            {
+                if (obj is not CategoryItem item) return false;
+                var ci = CultureInfo.CurrentCulture.CompareInfo;
+                return ci.IndexOf(item.DisplayName, query, CompareOptions.IgnoreCase) >= 0;
+            };
+        _categoryView.Refresh();
+    }
+
+    private void BtnApplyCategory_Click(object sender, RoutedEventArgs e)
+    {
+        var selectedOption = CategoryComboBox.SelectedItem as CategoryOption;
+        var categoryValue = selectedOption?.Value ?? "";
+        foreach (var item in _categoryItems.Where(x => x.IsSelected))
+            item.CategoryName = categoryValue;
+    }
+
+    private void BtnCategorySelectAll_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in _categoryItems)
+            item.IsSelected = true;
+    }
+
+    private void BtnCategoryDeselectAll_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var item in _categoryItems)
             item.IsSelected = false;
     }
 
@@ -415,14 +485,13 @@ public partial class SettingsPage : Page
         }
     }
 
-    private async void BtnSave_Click(object sender, RoutedEventArgs e)
+    private async void BtnSaveGeneral_Click(object sender, RoutedEventArgs e)
     {
         if (!uint.TryParse(TxtIdleThreshold.Text, out var seconds) || seconds < IdleMinSeconds || seconds > IdleMaxSeconds)
         {
-            System.Windows.MessageBox.Show("Idle eşiği 10-600 saniye arasında olmalıdır.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show("Boşta kalma süresi 10–600 saniye arasında olmalıdır.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
-
         _trackingService.IdleThresholdMs = seconds * 1000;
         await _repository.SetSettingAsync("idle_threshold_seconds", seconds.ToString());
 
@@ -436,16 +505,22 @@ public partial class SettingsPage : Page
         await _themeService.SaveThemeAsync(theme);
 
         await _startupService.SetEnabledAsync(CbStartWithWindows.IsChecked == true);
+        System.Windows.MessageBox.Show("Genel ayarlar kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
+    private async void BtnSaveAppExclude_Click(object sender, RoutedEventArgs e)
+    {
         var ignored = string.Join(",", _appExcludeItems.Where(x => x.IsExcluded).Select(x => x.ProcessName));
         await _repository.SetSettingAsync("ignored_processes", ignored);
-
         var engine = _services.GetRequiredService<ITrackingEngine>();
         var userList = ignored.Length > 0 ? ignored.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [];
         engine.SetIgnoredProcesses(["Monity.App", "explorer"], userList);
+        System.Windows.MessageBox.Show("Takip hariç listesi kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
-        // Günlük süre kısıtları: seçilen uygulamalara input değerini uygula, sonra hepsini kaydet; kısıtlı süre sütunda görünür
-        const int maxMinutesPerDay = 24 * 60; // 1440
+    private async void BtnSaveDailyLimit_Click(object sender, RoutedEventArgs e)
+    {
+        const int maxMinutesPerDay = 24 * 60;
         var inputText = (TxtDailyLimitMinutes?.Text ?? "").Trim();
         if (!string.IsNullOrEmpty(inputText) && long.TryParse(inputText, out var inputMinutes) && inputMinutes > 0)
         {
@@ -465,11 +540,14 @@ public partial class SettingsPage : Page
         await _repository.SetSettingAsync("daily_limits", dailyLimitsJson);
         foreach (var item in _dailyLimitItems)
             item.IsSelected = false;
+        System.Windows.MessageBox.Show("Günlük süre kısıtları kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
 
+    private async void BtnSaveCategory_Click(object sender, RoutedEventArgs e)
+    {
         foreach (var item in _categoryItems)
             await _repository.SetAppCategoryAsync(item.AppId, string.IsNullOrEmpty(item.CategoryName) ? null : item.CategoryName);
-
-        System.Windows.MessageBox.Show("Ayarlar kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show("Uygulama kategorileri kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private static T? FindParent<T>(DependencyObject child) where T : DependencyObject
@@ -541,7 +619,7 @@ public partial class SettingsPage : Page
 
     private sealed class CategoryItem : INotifyPropertyChanged
     {
-        private static readonly IReadOnlyList<CategoryOption> CategoryOptionsList =
+        internal static readonly IReadOnlyList<CategoryOption> CategoryOptionsList =
         [
             new CategoryOption("", "Kategorisiz"),
             new CategoryOption("Diğer", "Diğer"),
@@ -560,6 +638,12 @@ public partial class SettingsPage : Page
             set { _categoryName = value ?? ""; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CategoryName))); }
         }
         public IReadOnlyList<CategoryOption> CategoryOptions => CategoryOptionsList;
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set { _isSelected = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected))); }
+        }
         public CategoryItem(int appId, string displayName, string categoryName)
         {
             AppId = appId;
