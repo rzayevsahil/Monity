@@ -366,4 +366,33 @@ public sealed class UsageRepository : IUsageRepository
             new { AppId = appId, Today = today });
         return total ?? 0;
     }
+
+    public async Task DeleteDataOlderThanAsync(DateTime cutoff, CancellationToken ct = default)
+    {
+        var cutoffStr = cutoff.Date.ToString("yyyy-MM-dd");
+        await using var conn = OpenConnection();
+        using var tx = conn.BeginTransaction();
+        await conn.ExecuteAsync(
+            "DELETE FROM usage_sessions WHERE day_date < @Cutoff",
+            new { Cutoff = cutoffStr },
+            tx);
+        await conn.ExecuteAsync(
+            "DELETE FROM daily_summary WHERE date < @Cutoff",
+            new { Cutoff = cutoffStr },
+            tx);
+        await conn.ExecuteAsync(
+            "DELETE FROM apps WHERE id NOT IN (SELECT DISTINCT app_id FROM usage_sessions)",
+            transaction: tx);
+        tx.Commit();
+    }
+
+    public async Task DeleteAllDataAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        using var tx = conn.BeginTransaction();
+        await conn.ExecuteAsync("DELETE FROM usage_sessions", transaction: tx);
+        await conn.ExecuteAsync("DELETE FROM daily_summary", transaction: tx);
+        await conn.ExecuteAsync("DELETE FROM apps", transaction: tx);
+        tx.Commit();
+    }
 }

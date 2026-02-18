@@ -134,6 +134,17 @@
                 </Grid>
             </Border>
 
+            <!-- Veri yönetimi -->
+            <TextBlock Text="Veri yönetimi" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Eski kullanım verilerini silmek veya tüm verileri temizlemek için aşağıdaki butonları kullanın. Bu işlem geri alınamaz." 
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
+                <Button x:Name="BtnDelete30Days" Content="30 günden eski verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="30" Click="BtnDeleteOldData_Click"/>
+                <Button x:Name="BtnDelete90Days" Content="90 günden eski verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="90" Click="BtnDeleteOldData_Click"/>
+                <Button x:Name="BtnDelete365Days" Content="365 günden eski verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="365" Click="BtnDeleteOldData_Click"/>
+                <Button x:Name="BtnDeleteAll" Content="Tüm verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDeleteAll_Click"/>
+            </StackPanel>
+
             <!-- Save -->
             <Button Content="Kaydet" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Click="BtnSave_Click"/>
         </StackPanel>

@@ -319,6 +319,47 @@ public partial class SettingsPage : Page
         frame?.Navigate(new DashboardPage(_services));
     }
 
+    private async void BtnDeleteOldData_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.Button btn || btn.Tag is not string tagStr || !int.TryParse(tagStr, out var days))
+            return;
+        var result = System.Windows.MessageBox.Show(
+            $"{days} günden eski tüm kullanım verileri silinecektir. Bu işlem geri alınamaz. Emin misiniz?",
+            "Veri Silme",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes) return;
+        try
+        {
+            var cutoff = DateTime.Today.AddDays(-days);
+            await _repository.DeleteDataOlderThanAsync(cutoff);
+            System.Windows.MessageBox.Show($"{days} günden eski veriler silindi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Veri silinirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async void BtnDeleteAll_Click(object sender, RoutedEventArgs e)
+    {
+        var result = System.Windows.MessageBox.Show(
+            "Tüm kullanım verileri (oturumlar, özetler, uygulama kayıtları) silinecektir. Ayarlarınız korunacaktır. Bu işlem geri alınamaz. Emin misiniz?",
+            "Tüm Verileri Sil",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+        if (result != MessageBoxResult.Yes) return;
+        try
+        {
+            await _repository.DeleteAllDataAsync();
+            System.Windows.MessageBox.Show("Tüm veriler silindi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"Veri silinirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     private async void BtnSave_Click(object sender, RoutedEventArgs e)
     {
         if (!uint.TryParse(TxtIdleThreshold.Text, out var seconds) || seconds < IdleMinSeconds || seconds > IdleMaxSeconds)

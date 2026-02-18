@@ -20,6 +20,8 @@ public interface IUsageRepository
     Task<IReadOnlyList<AppListItem>> GetTrackedAppsAsync(CancellationToken ct = default);
     Task<string?> GetProcessNameByAppIdAsync(int appId, CancellationToken ct = default);
     Task<long> GetTodayTotalSecondsForAppIdAsync(int appId, CancellationToken ct = default);
+    Task DeleteDataOlderThanAsync(DateTime cutoff, CancellationToken ct = default);
+    Task DeleteAllDataAsync(CancellationToken ct = default);
 }
 
 public record AppListItem(string ProcessName, string? DisplayName);
