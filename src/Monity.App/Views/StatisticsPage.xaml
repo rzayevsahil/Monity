@@ -38,6 +38,9 @@
                 <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
                     <DatePicker x:Name="DatePickerEnd" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
                 </Border>
+                <TextBlock Text="Kategori:" VerticalAlignment="Center" Margin="12,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <ComboBox x:Name="CategoryFilter" Width="120" VerticalAlignment="Center" SelectionChanged="CategoryFilter_SelectionChanged"
+                          Foreground="{DynamicResource TextBrush}"/>
                 <Button x:Name="BtnRefresh" Content="Yenile" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
                 <TextBlock x:Name="TxtDateRange" VerticalAlignment="Center" Margin="16,0,0,0" FontSize="13" Foreground="{DynamicResource TextMutedBrush}"/>
             </StackPanel>

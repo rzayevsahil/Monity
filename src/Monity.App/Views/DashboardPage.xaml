@@ -41,12 +41,15 @@
                 </Border>
             </Grid>
 
-            <!-- Date selector -->
+            <!-- Date and category -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
                 <TextBlock Text="Tarih:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
                 <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
                     <DatePicker x:Name="DatePicker" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
                 </Border>
+                <TextBlock Text="Kategori:" VerticalAlignment="Center" Margin="16,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <ComboBox x:Name="CategoryFilter" Width="130" VerticalAlignment="Center" SelectionChanged="CategoryFilter_SelectionChanged"
+                          Foreground="{DynamicResource TextBrush}"/>
                 <Button x:Name="BtnRefresh" Content="Yenile" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
             </StackPanel>
 

@@ -30,6 +30,7 @@ public partial class SettingsPage : Page
     private readonly StartupService _startupService;
     private readonly ObservableCollection<AppExcludeItem> _appExcludeItems = [];
     private readonly ObservableCollection<DailyLimitItem> _dailyLimitItems = [];
+    private readonly ObservableCollection<CategoryItem> _categoryItems = [];
     private readonly ICollectionView _appExcludeView;
     private readonly ICollectionView _dailyLimitView;
     private const int IdleMinSeconds = 10;
@@ -52,6 +53,7 @@ public partial class SettingsPage : Page
         _dailyLimitView = CollectionViewSource.GetDefaultView(_dailyLimitItems);
         AppExcludeList.ItemsSource = _appExcludeView;
         DailyLimitList.ItemsSource = _dailyLimitView;
+        CategoryList.ItemsSource = _categoryItems;
         System.Windows.DataObject.AddPastingHandler(TxtIdleThreshold, TxtIdleThreshold_OnPaste);
         System.Windows.DataObject.AddPastingHandler(TxtMinSessionSeconds, TxtMinSessionSeconds_OnPaste);
         System.Windows.DataObject.AddPastingHandler(TxtDailyLimitMinutes, TxtDailyLimitMinutes_OnPaste);
@@ -124,6 +126,13 @@ public partial class SettingsPage : Page
         EmptyDailyLimitMessage.Visibility = _dailyLimitItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowDailyLimitSearchPlaceholder();
         ApplyDailyLimitSearchFilter();
+
+        // Uygulama kategorileri listesi
+        var appsWithCategory = await _repository.GetTrackedAppsWithCategoryAsync();
+        _categoryItems.Clear();
+        foreach (var app in appsWithCategory)
+            _categoryItems.Add(new CategoryItem(app.AppId, app.DisplayName ?? app.ProcessName, app.CategoryName ?? ""));
+        EmptyCategoryMessage.Visibility = _categoryItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void TxtDailyLimitSearch_GotFocus(object sender, RoutedEventArgs e)
@@ -457,6 +466,9 @@ public partial class SettingsPage : Page
         foreach (var item in _dailyLimitItems)
             item.IsSelected = false;
 
+        foreach (var item in _categoryItems)
+            await _repository.SetAppCategoryAsync(item.AppId, string.IsNullOrEmpty(item.CategoryName) ? null : item.CategoryName);
+
         System.Windows.MessageBox.Show("Ayarlar kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
@@ -526,4 +538,36 @@ public partial class SettingsPage : Page
         }
         public event PropertyChangedEventHandler? PropertyChanged;
     }
+
+    private sealed class CategoryItem : INotifyPropertyChanged
+    {
+        private static readonly IReadOnlyList<CategoryOption> CategoryOptionsList =
+        [
+            new CategoryOption("", "Kategorisiz"),
+            new CategoryOption("Diğer", "Diğer"),
+            new CategoryOption("Tarayıcı", "Tarayıcı"),
+            new CategoryOption("Geliştirme", "Geliştirme"),
+            new CategoryOption("Sosyal", "Sosyal"),
+            new CategoryOption("Eğlence", "Eğlence"),
+            new CategoryOption("Ofis", "Ofis")
+        ];
+        public int AppId { get; }
+        public string DisplayName { get; }
+        private string _categoryName;
+        public string CategoryName
+        {
+            get => _categoryName;
+            set { _categoryName = value ?? ""; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CategoryName))); }
+        }
+        public IReadOnlyList<CategoryOption> CategoryOptions => CategoryOptionsList;
+        public CategoryItem(int appId, string displayName, string categoryName)
+        {
+            AppId = appId;
+            DisplayName = displayName;
+            _categoryName = categoryName ?? "";
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
+    }
+
+    private sealed record CategoryOption(string Value, string Display);
 }

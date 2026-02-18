@@ -33,6 +33,7 @@ public partial class StatisticsPage : Page
 
         _appListView = CollectionViewSource.GetDefaultView(_appItems);
         AppListView.ItemsSource = _appListView;
+        SetupCategoryFilter();
 
         Loaded += async (_, _) => await LoadDataAsync();
         SetupTimeChartAxes();
@@ -81,9 +82,37 @@ public partial class StatisticsPage : Page
         return null;
     }
 
+    private void SetupCategoryFilter()
+    {
+        var options = new List<StatCategoryFilterOption>
+        {
+            new(null, "Tümü"),
+            new("", "Kategorisiz"),
+            new("Diğer", "Diğer"),
+            new("Tarayıcı", "Tarayıcı"),
+            new("Geliştirme", "Geliştirme"),
+            new("Sosyal", "Sosyal"),
+            new("Eğlence", "Eğlence"),
+            new("Ofis", "Ofis")
+        };
+        CategoryFilter.ItemsSource = options;
+        CategoryFilter.DisplayMemberPath = "Display";
+        CategoryFilter.SelectedValuePath = "Value";
+        CategoryFilter.SelectedIndex = 0;
+    }
+
+    private string? GetSelectedCategoryName()
+    {
+        return CategoryFilter.SelectedValue as string;
+    }
+
+    private sealed record StatCategoryFilterOption(string? Value, string Display);
+
     private void Period_Changed(object sender, RoutedEventArgs e) => _ = LoadDataAsync();
 
     private async void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => await LoadDataAsync();
+
+    private async void CategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e) => await LoadDataAsync();
 
     private async void BtnRefresh_Click(object sender, RoutedEventArgs e)
     {
@@ -156,16 +185,17 @@ public partial class StatisticsPage : Page
             var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";
             var excluded = ignoredStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
-            var totalTask = _repository.GetRangeTotalAsync(start, end, excludeIdle: true, excludedProcessNames: excluded);
-            var appsTask = _repository.GetWeeklyUsageAsync(start, end, excludeIdle: true, excludedProcessNames: excluded);
+            var categoryName = GetSelectedCategoryName();
+            var totalTask = _repository.GetRangeTotalAsync(start, end, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
+            var appsTask = _repository.GetWeeklyUsageAsync(start, end, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
 
             System.Threading.Tasks.Task<IReadOnlyList<HourlyUsage>>? hourlyTask = null;
             System.Threading.Tasks.Task<IReadOnlyList<DailyTotalByDate>>? dailyTotalsTask = null;
 
             if (useHourly)
-                hourlyTask = _repository.GetHourlyUsageAsync(start.ToString("yyyy-MM-dd"), excludeIdle: true);
+                hourlyTask = _repository.GetHourlyUsageAsync(start.ToString("yyyy-MM-dd"), excludeIdle: true, categoryName: categoryName);
             else
-                dailyTotalsTask = _repository.GetDailyTotalsInRangeAsync(start, end, excludeIdle: true, excludedProcessNames: excluded);
+                dailyTotalsTask = _repository.GetDailyTotalsInRangeAsync(start, end, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
 
             await System.Threading.Tasks.Task.WhenAll(
                 new System.Threading.Tasks.Task[] { totalTask, appsTask }

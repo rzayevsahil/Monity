@@ -8,16 +8,18 @@ public interface IUsageRepository
     Task AddSessionAsync(UsageSession session, CancellationToken ct = default);
     Task AddSessionsAsync(IReadOnlyList<UsageSession> sessions, CancellationToken ct = default);
     Task UpdateDailySummaryAsync(string date, CancellationToken ct = default);
-    Task<IReadOnlyList<AppUsageSummary>> GetDailyUsageAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
-    Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
-    Task<IReadOnlyList<HourlyUsage>> GetHourlyUsageAsync(string date, bool excludeIdle = true, CancellationToken ct = default);
-    Task<DailyTotal> GetDailyTotalAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
-    Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
-    Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
+    Task<IReadOnlyList<AppUsageSummary>> GetDailyUsageAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
+    Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
+    Task<IReadOnlyList<HourlyUsage>> GetHourlyUsageAsync(string date, bool excludeIdle = true, string? categoryName = null, CancellationToken ct = default);
+    Task<DailyTotal> GetDailyTotalAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
+    Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
+    Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
     Task<DateTime?> GetFirstSessionStartedAtAsync(string date, CancellationToken ct = default);
     Task<string?> GetSettingAsync(string key, CancellationToken ct = default);
     Task SetSettingAsync(string key, string value, CancellationToken ct = default);
     Task<IReadOnlyList<AppListItem>> GetTrackedAppsAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<AppListItemWithCategory>> GetTrackedAppsWithCategoryAsync(CancellationToken ct = default);
+    Task SetAppCategoryAsync(int appId, string? categoryName, CancellationToken ct = default);
     Task<string?> GetProcessNameByAppIdAsync(int appId, CancellationToken ct = default);
     Task<long> GetTodayTotalSecondsForAppIdAsync(int appId, CancellationToken ct = default);
     Task DeleteDataOlderThanAsync(DateTime cutoff, CancellationToken ct = default);
@@ -25,6 +27,8 @@ public interface IUsageRepository
 }
 
 public record AppListItem(string ProcessName, string? DisplayName);
+
+public record AppListItemWithCategory(int AppId, string ProcessName, string? DisplayName, string? CategoryName);
 
 /// <summary>Dapper materialization: parameterless ctor + settable properties (SQLite INTEGER → long).</summary>
 public class AppUsageSummary

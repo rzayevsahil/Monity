@@ -161,7 +161,7 @@ public sealed class UsageRepository : IUsageRepository
             tx);
     }
 
-    public async Task<IReadOnlyList<AppUsageSummary>> GetDailyUsageAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default)
+    public async Task<IReadOnlyList<AppUsageSummary>> GetDailyUsageAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
         await EnsureDisplayNamesFilledAsync(conn);
@@ -169,23 +169,33 @@ public sealed class UsageRepository : IUsageRepository
         var excludeFilter = excludedProcessNames is { Count: > 0 }
             ? " AND a.process_name NOT IN @Excluded"
             : "";
+        var categoryFilter = categoryName != null
+            ? (categoryName.Length == 0 ? " AND (a.category IS NULL OR a.category = '')" : " AND a.category = @CategoryName")
+            : "";
         var sql = $"""
             SELECT a.id AS AppId, a.process_name AS ProcessName, a.display_name AS DisplayName,
                    ds.total_seconds AS TotalSeconds,
                    ds.session_count AS SessionCount
             FROM daily_summary ds
             JOIN apps a ON a.id = ds.app_id
-            WHERE ds.date = @Date AND ds.total_seconds > 0{excludeFilter}
+            WHERE ds.date = @Date AND ds.total_seconds > 0{excludeFilter}{categoryFilter}
             ORDER BY ds.total_seconds DESC
             """;
 
-        var rows = excludedProcessNames is { Count: > 0 }
-            ? await conn.QueryAsync<AppUsageSummary>(sql, new { Date = date, Excluded = excludedProcessNames })
-            : await conn.QueryAsync<AppUsageSummary>(sql, new { Date = date });
+        object param;
+        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
+            param = new { Date = date, Excluded = excludedProcessNames, CategoryName = categoryName };
+        else if (excludedProcessNames is { Count: > 0 })
+            param = new { Date = date, Excluded = excludedProcessNames };
+        else if (categoryName != null && categoryName.Length > 0)
+            param = new { Date = date, CategoryName = categoryName };
+        else
+            param = new { Date = date };
+        var rows = await conn.QueryAsync<AppUsageSummary>(sql, param);
         return rows.ToList();
     }
 
-    public async Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default)
+    public async Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
@@ -193,122 +203,166 @@ public sealed class UsageRepository : IUsageRepository
         var excludeFilter = excludedProcessNames is { Count: > 0 }
             ? " AND a.process_name NOT IN @Excluded"
             : "";
+        var categoryFilter = categoryName != null
+            ? (categoryName.Length == 0 ? " AND (a.category IS NULL OR a.category = '')" : " AND a.category = @CategoryName")
+            : "";
         var sql = $"""
             SELECT a.id AS AppId, a.process_name AS ProcessName, a.display_name AS DisplayName,
                    SUM(CASE WHEN s.is_idle = 0 THEN s.duration_seconds ELSE 0 END) AS TotalSeconds,
                    COUNT(*) AS SessionCount
             FROM usage_sessions s
             JOIN apps a ON a.id = s.app_id
-            WHERE s.day_date >= @Start AND s.day_date <= @End {idleFilter}{excludeFilter}
+            WHERE s.day_date >= @Start AND s.day_date <= @End {idleFilter}{excludeFilter}{categoryFilter}
             GROUP BY a.id, a.process_name, a.display_name
             ORDER BY TotalSeconds DESC
             """;
 
-        var param = new
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
+        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
         {
-            Start = startDate.ToString("yyyy-MM-dd"),
-            End = endDate.ToString("yyyy-MM-dd"),
-            Excluded = excludedProcessNames is { Count: > 0 } ? excludedProcessNames : null
-        };
-        var rows = param.Excluded != null
-            ? await conn.QueryAsync<AppUsageSummary>(sql, param)
-            : await conn.QueryAsync<AppUsageSummary>(sql, new { param.Start, param.End });
-        return rows.ToList();
+            var rows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName });
+            return rows.ToList();
+        }
+        if (excludedProcessNames is { Count: > 0 })
+        {
+            var rows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames });
+            return rows.ToList();
+        }
+        if (categoryName != null && categoryName.Length > 0)
+        {
+            var rows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr, CategoryName = categoryName });
+            return rows.ToList();
+        }
+        var allRows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr });
+        return allRows.ToList();
     }
 
-    public async Task<IReadOnlyList<HourlyUsage>> GetHourlyUsageAsync(string date, bool excludeIdle = true, CancellationToken ct = default)
+    public async Task<IReadOnlyList<HourlyUsage>> GetHourlyUsageAsync(string date, bool excludeIdle = true, string? categoryName = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
         var idleFilter = excludeIdle ? "AND is_idle = 0" : "";
+        var categoryFilter = categoryName != null
+            ? (categoryName.Length == 0 ? " AND app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
+            : "";
         var sql = $"""
             SELECT CAST(substr(started_at, 12, 2) AS INTEGER) AS Hour,
                    SUM(duration_seconds) AS TotalSeconds
             FROM usage_sessions
-            WHERE day_date = @Date {idleFilter}
+            WHERE day_date = @Date {idleFilter}{categoryFilter}
             GROUP BY Hour
             ORDER BY Hour
             """;
 
-        var rows = await conn.QueryAsync<HourlyUsage>(sql, new { Date = date });
+        object param = categoryName != null && categoryName.Length > 0
+            ? new { Date = date, CategoryName = categoryName }
+            : new { Date = date };
+        var rows = await conn.QueryAsync<HourlyUsage>(sql, param);
         return rows.ToList();
     }
 
-    public async Task<DailyTotal> GetDailyTotalAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default)
+    public async Task<DailyTotal> GetDailyTotalAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
         var excludeFilter = excludedProcessNames is { Count: > 0 }
             ? " AND app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
             : "";
+        var categoryFilter = categoryName != null
+            ? (categoryName.Length == 0 ? " AND app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
+            : "";
         var sql = $"""
             SELECT COALESCE(SUM(total_seconds), 0) AS TotalSeconds, COALESCE(SUM(session_count), 0) AS SessionCount
             FROM daily_summary
-            WHERE date = @Date{excludeFilter}
+            WHERE date = @Date{excludeFilter}{categoryFilter}
             """;
 
-        dynamic? row = excludedProcessNames is { Count: > 0 }
-            ? await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Date = date, Excluded = excludedProcessNames })
-            : await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Date = date });
+        dynamic? row = null;
+        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Date = date, Excluded = excludedProcessNames, CategoryName = categoryName });
+        else if (excludedProcessNames is { Count: > 0 })
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Date = date, Excluded = excludedProcessNames });
+        else if (categoryName != null && categoryName.Length > 0)
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Date = date, CategoryName = categoryName });
+        else
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Date = date });
         if (row == null)
             return new DailyTotal(0, 0);
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 
-    public async Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default)
+    public async Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
         var excludeFilter = excludedProcessNames is { Count: > 0 }
             ? " AND app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
+            : "";
+        var categoryFilter = categoryName != null
+            ? (categoryName.Length == 0 ? " AND app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
             : "";
         var sql = $"""
             SELECT COALESCE(SUM(CASE WHEN is_idle = 0 THEN duration_seconds ELSE 0 END), 0) AS TotalSeconds,
                    COUNT(*) AS SessionCount
             FROM usage_sessions
-            WHERE day_date >= @Start AND day_date <= @End{excludeFilter}
+            WHERE day_date >= @Start AND day_date <= @End{excludeFilter}{categoryFilter}
             """;
 
-        var param = new
-        {
-            Start = startDate.ToString("yyyy-MM-dd"),
-            End = endDate.ToString("yyyy-MM-dd"),
-            Excluded = excludedProcessNames is { Count: > 0 } ? excludedProcessNames : null
-        };
-        dynamic? row = param.Excluded != null
-            ? await conn.QueryFirstOrDefaultAsync<dynamic>(sql, param)
-            : await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { param.Start, param.End });
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
+        dynamic? row = null;
+        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName });
+        else if (excludedProcessNames is { Count: > 0 })
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames });
+        else if (categoryName != null && categoryName.Length > 0)
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr, CategoryName = categoryName });
+        else
+            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr });
         if (row == null)
             return new DailyTotal(0, 0);
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 
-    public async Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default)
+    public async Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
         var excludeFilter = excludedProcessNames is { Count: > 0 }
             ? " AND app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
             : "";
+        var categoryFilter = categoryName != null
+            ? (categoryName.Length == 0 ? " AND app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
+            : "";
         var sql = $"""
             SELECT day_date AS Date,
                    SUM(CASE WHEN is_idle = 0 THEN duration_seconds ELSE 0 END) AS TotalSeconds
             FROM usage_sessions
-            WHERE day_date >= @Start AND day_date <= @End{excludeFilter}
+            WHERE day_date >= @Start AND day_date <= @End{excludeFilter}{categoryFilter}
             GROUP BY day_date
             ORDER BY day_date
             """;
 
-        var param = new
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
+        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
         {
-            Start = startDate.ToString("yyyy-MM-dd"),
-            End = endDate.ToString("yyyy-MM-dd"),
-            Excluded = excludedProcessNames is { Count: > 0 } ? excludedProcessNames : null
-        };
-        var rows = param.Excluded != null
-            ? await conn.QueryAsync<DailyTotalByDate>(sql, param)
-            : await conn.QueryAsync<DailyTotalByDate>(sql, new { param.Start, param.End });
-        return rows.ToList();
+            var rows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName });
+            return rows.ToList();
+        }
+        if (excludedProcessNames is { Count: > 0 })
+        {
+            var rows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames });
+            return rows.ToList();
+        }
+        if (categoryName != null && categoryName.Length > 0)
+        {
+            var rows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr, CategoryName = categoryName });
+            return rows.ToList();
+        }
+        var allRows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr });
+        return allRows.ToList();
     }
 
     public async Task<DateTime?> GetFirstSessionStartedAtAsync(string date, CancellationToken ct = default)
@@ -343,6 +397,22 @@ public sealed class UsageRepository : IUsageRepository
         var rows = await conn.QueryAsync<AppListItem>(
             "SELECT process_name AS ProcessName, display_name AS DisplayName FROM apps ORDER BY COALESCE(display_name, process_name)");
         return rows.ToList();
+    }
+
+    public async Task<IReadOnlyList<AppListItemWithCategory>> GetTrackedAppsWithCategoryAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var rows = await conn.QueryAsync<(int AppId, string ProcessName, string? DisplayName, string? CategoryName)>(
+            "SELECT id AS AppId, process_name AS ProcessName, display_name AS DisplayName, category AS CategoryName FROM apps ORDER BY COALESCE(display_name, process_name)");
+        return rows.Select(r => new AppListItemWithCategory(r.AppId, r.ProcessName, r.DisplayName, r.CategoryName)).ToList();
+    }
+
+    public async Task SetAppCategoryAsync(int appId, string? categoryName, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        await conn.ExecuteAsync(
+            "UPDATE apps SET category = @CategoryName WHERE id = @AppId",
+            new { AppId = appId, CategoryName = categoryName ?? "" });
     }
 
     public async Task<string?> GetProcessNameByAppIdAsync(int appId, CancellationToken ct = default)

@@ -145,6 +145,32 @@
                 </Grid>
             </Border>
 
+            <!-- Uygulama kategorileri -->
+            <TextBlock Text="Uygulama kategorileri" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Her uygulamaya bir kategori atayın. Dashboard ve İstatistikler'de kategoriye göre filtreleyebilirsiniz." 
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="200">
+                <Grid>
+                    <ListBox x:Name="CategoryList" BorderThickness="0" Background="Transparent">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="140"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis" Margin="0,0,12,0"/>
+                                    <ComboBox Grid.Column="1" ItemsSource="{Binding CategoryOptions}" SelectedValue="{Binding CategoryName, Mode=TwoWay}" SelectedValuePath="Value" DisplayMemberPath="Display" 
+                                              Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock x:Name="EmptyCategoryMessage" Text="Henüz kullanılan uygulama yok." 
+                               Foreground="{DynamicResource TextMutedBrush}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"/>
+                </Grid>
+            </Border>
+
             <!-- Veri yönetimi -->
             <TextBlock Text="Veri yönetimi" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="Eski kullanım verilerini silmek veya tüm verileri temizlemek için aşağıdaki butonları kullanın. Bu işlem geri alınamaz." 

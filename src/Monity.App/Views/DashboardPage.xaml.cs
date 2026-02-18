@@ -35,6 +35,7 @@ public partial class DashboardPage : Page
         _appListView = CollectionViewSource.GetDefaultView(_appItems);
         AppListView.ItemsSource = _appListView;
         SetupHourlyChartAxes();
+        SetupCategoryFilter();
 
         Loaded += async (_, _) =>
         {
@@ -54,7 +55,40 @@ public partial class DashboardPage : Page
         });
     }
 
+    private void SetupCategoryFilter()
+    {
+        var options = new List<CategoryFilterOption>
+        {
+            new(null, "Tümü"),
+            new("", "Kategorisiz"),
+            new("Diğer", "Diğer"),
+            new("Tarayıcı", "Tarayıcı"),
+            new("Geliştirme", "Geliştirme"),
+            new("Sosyal", "Sosyal"),
+            new("Eğlence", "Eğlence"),
+            new("Ofis", "Ofis")
+        };
+        CategoryFilter.ItemsSource = options;
+        CategoryFilter.DisplayMemberPath = "Display";
+        CategoryFilter.SelectedValuePath = "Value";
+        CategoryFilter.SelectedIndex = 0;
+    }
+
+    private string? GetSelectedCategoryName()
+    {
+        if (CategoryFilter.SelectedItem is CategoryFilterOption opt)
+            return opt.Value;
+        return null;
+    }
+
+    private record CategoryFilterOption(string? Value, string Display);
+
     private async void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+    {
+        await LoadDataAsync(GetSelectedDateString());
+    }
+
+    private async void CategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         await LoadDataAsync(GetSelectedDateString());
     }
@@ -105,9 +139,10 @@ public partial class DashboardPage : Page
             var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";
             var excluded = ignoredStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-            var (total, sessionCount) = await _repository.GetDailyTotalAsync(date, excludeIdle: true, excludedProcessNames: excluded);
-            var apps = await _repository.GetDailyUsageAsync(date, excludeIdle: true, excludedProcessNames: excluded);
-            var hourly = await _repository.GetHourlyUsageAsync(date, excludeIdle: true);
+            var categoryName = GetSelectedCategoryName();
+            var (total, sessionCount) = await _repository.GetDailyTotalAsync(date, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
+            var apps = await _repository.GetDailyUsageAsync(date, excludeIdle: true, excludedProcessNames: excluded, categoryName: categoryName);
+            var hourly = await _repository.GetHourlyUsageAsync(date, excludeIdle: true, categoryName: categoryName);
             var firstActivity = await _repository.GetFirstSessionStartedAtAsync(date);
 
             await Dispatcher.InvokeAsync(() =>
