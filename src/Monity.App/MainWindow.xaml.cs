@@ -93,8 +93,8 @@ public partial class MainWindow : Window
         if (ok)
         {
             System.Windows.MessageBox.Show(
-                "Güncelleme indirildi. Uygulama şimdi kapanacak ve yeni sürümle otomatik açılacak.",
-                "Güncelleme",
+                Strings.Get("Msg_UpdateDownloaded"),
+                Strings.Get("Msg_Update"),
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
             await System.Threading.Tasks.Task.Delay(400);
@@ -103,8 +103,8 @@ public partial class MainWindow : Window
         else
         {
             BtnUpdate.IsEnabled = true;
-            BtnUpdate.Content = "Güncelle";
-            System.Windows.MessageBox.Show("Güncelleme indirilemedi. Lütfen internet bağlantınızı kontrol edin veya Releases sayfasından manuel indirin.", "Güncelleme", MessageBoxButton.OK, MessageBoxImage.Warning);
+            BtnUpdate.Content = Strings.Get("Main_Update");
+            System.Windows.MessageBox.Show(Strings.Get("Msg_UpdateFailed"), Strings.Get("Msg_Update"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 
@@ -140,9 +140,9 @@ public partial class MainWindow : Window
         }
 
         var ctx = new System.Windows.Forms.ContextMenuStrip();
-        var openItem = new System.Windows.Forms.ToolStripMenuItem("Aç");
+        var openItem = new System.Windows.Forms.ToolStripMenuItem(Strings.Get("Main_Open"));
         openItem.Click += (_, _) => { Show(); WindowState = WindowState.Normal; Activate(); };
-        var exitItem = new System.Windows.Forms.ToolStripMenuItem("Çıkış");
+        var exitItem = new System.Windows.Forms.ToolStripMenuItem(Strings.Get("Main_Exit"));
         exitItem.Click += (_, _) => System.Windows.Application.Current.Shutdown();
         ctx.Items.Add(openItem);
         ctx.Items.Add(exitItem);

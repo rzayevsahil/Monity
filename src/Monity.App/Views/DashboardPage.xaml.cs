@@ -9,6 +9,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.Extensions.DependencyInjection;
 using Monity.Infrastructure;
+using Monity.App.Helpers;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
 using SkiaSharp;
@@ -176,7 +177,7 @@ public partial class DashboardPage : Page
         TxtTodayTotal.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
         TxtFirstActivity.Text = "Bugün başlangıç: —";
-        TxtHeatMapTitle.Text = "Aylık kullanım yoğunluğu";
+        TxtHeatMapTitle.Text = Strings.Get("Dashboard_HeatMapTitle");
         _appItems.Clear();
         _heatMapCells.Clear();
         HourlyChart.Series = new ObservableCollection<ISeries>();

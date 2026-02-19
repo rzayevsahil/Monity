@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="600"
-      Title="Ayarlar"
+      Title="{DynamicResource Settings_Title}"
       Background="{DynamicResource BackgroundBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
@@ -14,20 +14,25 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Ayarlar" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
-                <Button Grid.Column="1" Content="← Geri" Style="{DynamicResource SecondaryButtonStyle}" Foreground="{DynamicResource TextBrush}" Click="BtnBack_Click"/>
+                <TextBlock Text="{DynamicResource Settings_Title}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="{DynamicResource Settings_Back}" Style="{DynamicResource SecondaryButtonStyle}" Foreground="{DynamicResource TextBrush}" Click="BtnBack_Click"/>
             </Grid>
 
-            <!-- Genel ayarlar: Tema, Windows başlangıcı, Boşta kalma, Min oturum -->
-            <TextBlock Text="Genel ayarlar" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
-            <TextBlock Text="Tema" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+            <!-- Genel ayarlar: Tema, Dil, Windows başlangıcı, Boşta kalma, Min oturum -->
+            <TextBlock Text="{DynamicResource Settings_General}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_Theme}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                <RadioButton x:Name="RbThemeLight" Content="Açık" GroupName="Theme" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}"/>
-                <RadioButton x:Name="RbThemeDark" Content="Koyu" GroupName="Theme" Foreground="{DynamicResource TextBrush}"/>
+                <RadioButton x:Name="RbThemeLight" Content="{DynamicResource Settings_ThemeLight}" GroupName="Theme" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}"/>
+                <RadioButton x:Name="RbThemeDark" Content="{DynamicResource Settings_ThemeDark}" GroupName="Theme" Foreground="{DynamicResource TextBrush}"/>
             </StackPanel>
-            <CheckBox x:Name="CbStartWithWindows" Content="Windows başlangıcında otomatik başlat" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
-            <TextBlock Text="Boşta kalma süresi (saniye)" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
-            <TextBlock Text="Bu süre boyunca klavye veya fareye hiç dokunmazsanız, artık süre sayılmaz. 10–600 arası (60 = 1 dk)." 
+            <TextBlock Text="{DynamicResource Settings_Language}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <RadioButton x:Name="RbLanguageTr" Content="{DynamicResource Settings_LanguageTurkish}" GroupName="Language" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}"/>
+                <RadioButton x:Name="RbLanguageEn" Content="{DynamicResource Settings_LanguageEnglish}" GroupName="Language" Foreground="{DynamicResource TextBrush}"/>
+            </StackPanel>
+            <CheckBox x:Name="CbStartWithWindows" Content="{DynamicResource Settings_StartWithWindows}" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
+            <TextBlock Text="{DynamicResource Settings_IdleLabel}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+            <TextBlock Text="{DynamicResource Settings_IdleHint}" 
                        FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4" TextWrapping="Wrap"/>
             <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,12" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtIdleThreshold" Padding="10,8" BorderThickness="0" Background="Transparent"
@@ -35,8 +40,8 @@
                          PreviewTextInput="TxtIdleThreshold_PreviewTextInput"
                          LostFocus="TxtIdleThreshold_LostFocus"/>
             </Border>
-            <TextBlock Text="Minimum oturum süresi (saniye)" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
-            <TextBlock Text="Bu süreden kısa oturumlar kaydedilmez. 0 = kapalı, 1–600 arası." 
+            <TextBlock Text="{DynamicResource Settings_MinSessionLabel}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+            <TextBlock Text="{DynamicResource Settings_MinSessionHint}" 
                        FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4" TextWrapping="Wrap"/>
             <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtMinSessionSeconds" Padding="10,8" BorderThickness="0" Background="Transparent"
@@ -44,12 +49,12 @@
                          PreviewTextInput="TxtMinSessionSeconds_PreviewTextInput"
                          LostFocus="TxtMinSessionSeconds_LostFocus"/>
             </Border>
-            <Button x:Name="BtnSaveGeneral" Content="Kaydet" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveGeneral_Click"/>
+            <Button x:Name="BtnSaveGeneral" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveGeneral_Click"/>
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
             <!-- Ignore list -->
-            <TextBlock Text="Takip hariç tutulacak uygulamalar" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
-            <TextBlock Text="Aşağıdaki listeden takip etmek istemediğiniz uygulamaları işaretleyin. Listede yalnızca daha önce kullanılmış uygulamalar görünür. Monity ve Windows Gezgini zaten takip dışıdır." 
+            <TextBlock Text="{DynamicResource Settings_ExcludeTitle}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_ExcludeHint}" 
                        FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
             <Grid Margin="0,0,0,8" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
@@ -63,8 +68,8 @@
                              GotFocus="TxtAppSearch_GotFocus" LostFocus="TxtAppSearch_LostFocus"
                              TextChanged="TxtAppSearch_TextChanged"/>
                 </Border>
-                <Button Grid.Column="1" x:Name="BtnAppExcludeSelectAll" Content="Hepsini seç" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnAppExcludeSelectAll_Click"/>
-                <Button Grid.Column="2" x:Name="BtnAppExcludeDeselectAll" Content="Hepsini sil" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnAppExcludeDeselectAll_Click"/>
+                <Button Grid.Column="1" x:Name="BtnAppExcludeSelectAll" Content="{DynamicResource Settings_SelectAll}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnAppExcludeSelectAll_Click"/>
+                <Button Grid.Column="2" x:Name="BtnAppExcludeDeselectAll" Content="{DynamicResource Settings_DeselectAll}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnAppExcludeDeselectAll_Click"/>
             </Grid>
             <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="220">
                 <Grid>
@@ -75,20 +80,20 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <TextBlock x:Name="EmptyAppListMessage" Text="Henüz kullanılan uygulama yok. Uygulamaları kullandıkça burada listelenecektir." 
+                    <TextBlock x:Name="EmptyAppListMessage" Text="{DynamicResource Settings_EmptyAppList}" 
                                Foreground="{DynamicResource TextMutedBrush}" FontSize="12" TextWrapping="Wrap" 
                                VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"/>
                 </Grid>
             </Border>
-            <Button x:Name="BtnSaveAppExclude" Content="Kaydet" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveAppExclude_Click"/>
+            <Button x:Name="BtnSaveAppExclude" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveAppExclude_Click"/>
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
-            <!-- Günlük süre kısıtları (takip hariç listesi gibi: arama + liste + tek input) -->
-            <TextBlock Text="Günlük süre kısıtları" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
-            <TextBlock Text="Listeden uygulama(lar) seçin, dakika girin ve Kaydet'e basın; limit aşıldığında bildirim alırsınız. Kısıtlı süre kaydedildikten sonra sağ sütunda görünür." 
+            <!-- Günlük süre kısıtları -->
+            <TextBlock Text="{DynamicResource Settings_DailyLimits}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_DailyLimitsHint}" 
                        FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
-            <CheckBox x:Name="ChkLimitExceededCloseApp" Content="Limit aşıldığında uygulamayı kapat"
-                      Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8" ToolTip="Açıkken limit aşan uygulama kapatılır (sadece bildirim yerine). Dikkat: Tüm pencereler kapanabilir."/>
+            <CheckBox x:Name="ChkLimitExceededCloseApp" Content="{DynamicResource Settings_LimitExceededClose}"
+                      Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8" ToolTip="{DynamicResource Settings_LimitExceededCloseTooltip}"/>
             <Border Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtDailyLimitSearch" Padding="10,8" BorderThickness="0" Background="Transparent"
                          Foreground="{DynamicResource TextBrush}" FontSize="13" VerticalContentAlignment="Center"
@@ -96,17 +101,17 @@
                          TextChanged="TxtDailyLimitSearch_TextChanged"/>
             </Border>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
-                <TextBlock Text="Kısıtlı süre (dakika):" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" Margin="0,0,8,0"/>
+                <TextBlock Text="{DynamicResource Settings_LimitMinutes}" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" Margin="0,0,8,0"/>
                 <Border Width="100" Margin="0,0,8,0" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                     <TextBox x:Name="TxtDailyLimitMinutes" Padding="8,6" BorderThickness="0" Background="Transparent"
                              Foreground="{DynamicResource TextBrush}" VerticalContentAlignment="Center"
                              PreviewTextInput="TxtDailyLimitMinutes_PreviewTextInput"
                              LostFocus="TxtDailyLimitMinutes_LostFocus"
-                             ToolTip="Seçili uygulamalara uygulanacak dakika (1-1440 = 24 saat)"/>
+                             ToolTip="{DynamicResource Settings_LimitMinutesHint}"/>
                 </Border>
-                <TextBlock Text="1-1440 arası değer giriniz." VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="0,0,16,0"/>
-                <Button x:Name="BtnDailyLimitSelectAll" Content="Hepsini seç" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnDailyLimitSelectAll_Click"/>
-                <Button x:Name="BtnDailyLimitDeselectAll" Content="Hepsini sil" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDailyLimitDeselectAll_Click"/>
+                <TextBlock Text="{DynamicResource Settings_LimitRange}" VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" Margin="0,0,16,0"/>
+                <Button x:Name="BtnDailyLimitSelectAll" Content="{DynamicResource Settings_SelectAll}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnDailyLimitSelectAll_Click"/>
+                <Button x:Name="BtnDailyLimitDeselectAll" Content="{DynamicResource Settings_DeselectAll}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDailyLimitDeselectAll_Click"/>
             </StackPanel>
             <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="260">
                 <Grid Grid.IsSharedSizeScope="True">
@@ -121,8 +126,8 @@
                             <ColumnDefinition Width="220" SharedSizeGroup="DailyLimitColName"/>
                             <ColumnDefinition Width="100" SharedSizeGroup="DailyLimitColLimit" MinWidth="80"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.ColumnSpan="2" Text="Uygulama adı" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Kısıtlı süre" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                        <TextBlock Grid.ColumnSpan="2" Text="{DynamicResource Settings_AppName}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource Settings_LimitColumn}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                     </Grid>
                     <ListBox x:Name="DailyLimitList" Grid.Row="1" BorderThickness="0" Background="Transparent" Padding="0">
                         <ListBox.ItemTemplate>
@@ -140,17 +145,17 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <TextBlock x:Name="EmptyDailyLimitMessage" Grid.Row="1" Text="Henüz kullanılan uygulama yok. Uygulamaları kullandıkça burada listelenecektir." 
+                    <TextBlock x:Name="EmptyDailyLimitMessage" Grid.Row="1" Text="{DynamicResource Settings_EmptyDailyLimit}" 
                                Foreground="{DynamicResource TextMutedBrush}" FontSize="12" TextWrapping="Wrap"
                                VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"/>
                 </Grid>
             </Border>
-            <Button x:Name="BtnSaveDailyLimit" Content="Kaydet" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveDailyLimit_Click"/>
+            <Button x:Name="BtnSaveDailyLimit" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveDailyLimit_Click"/>
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
             <!-- Uygulama kategorileri -->
-            <TextBlock Text="Uygulama kategorileri" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
-            <TextBlock Text="Listeden uygulama(lar) seçip üstteki kategoriden Kategori ata ile toplu atayabilir veya her satırdaki kategori kutusundan tek tek değiştirebilirsiniz. Dashboard ve İstatistikler'de kategoriye göre filtreleyebilirsiniz." 
+            <TextBlock Text="{DynamicResource Settings_Categories}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_CategoriesHint}" 
                        FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
             <Border Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtCategorySearch" Padding="10,8" BorderThickness="0" Background="Transparent"
@@ -159,12 +164,12 @@
                          TextChanged="TxtCategorySearch_TextChanged"/>
             </Border>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
-                <TextBlock Text="Kategori:" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" Margin="0,0,8,0"/>
+                <TextBlock Text="{DynamicResource Settings_Category}" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" Margin="0,0,8,0"/>
                 <ComboBox x:Name="CategoryComboBox" Width="140" VerticalAlignment="Center" Margin="0,0,12,0"
                           Foreground="{DynamicResource TextBrush}"/>
-                <Button x:Name="BtnApplyCategory" Content="Kategori ata" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnApplyCategory_Click"/>
-                <Button x:Name="BtnCategorySelectAll" Content="Hepsini seç" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnCategorySelectAll_Click"/>
-                <Button x:Name="BtnCategoryDeselectAll" Content="Hepsini sil" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnCategoryDeselectAll_Click"/>
+                <Button x:Name="BtnApplyCategory" Content="{DynamicResource Settings_ApplyCategory}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnApplyCategory_Click"/>
+                <Button x:Name="BtnCategorySelectAll" Content="{DynamicResource Settings_SelectAll}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnCategorySelectAll_Click"/>
+                <Button x:Name="BtnCategoryDeselectAll" Content="{DynamicResource Settings_DeselectAll}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnCategoryDeselectAll_Click"/>
             </StackPanel>
             <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,24" MaxHeight="260">
                 <Grid Grid.IsSharedSizeScope="True">
@@ -179,8 +184,8 @@
                             <ColumnDefinition Width="140" SharedSizeGroup="CategoryColCombo"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="" Width="24" Margin="0,0,8,0"/>
-                        <TextBlock Grid.Column="1" Text="Uygulama adı" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="2" Text="Kategori" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="{DynamicResource Settings_AppName}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource Settings_CategoryColumn}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center"/>
                     </Grid>
                     <ListBox x:Name="CategoryList" Grid.Row="1" BorderThickness="0" Background="Transparent" Padding="0">
                         <ListBox.ItemTemplate>
@@ -203,18 +208,18 @@
                                Foreground="{DynamicResource TextMutedBrush}" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed"/>
                 </Grid>
             </Border>
-            <Button x:Name="BtnSaveCategory" Content="Kaydet" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveCategory_Click"/>
+            <Button x:Name="BtnSaveCategory" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveCategory_Click"/>
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
             <!-- Veri yönetimi -->
-            <TextBlock Text="Veri yönetimi" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
-            <TextBlock Text="Eski kullanım verilerini silmek veya tüm verileri temizlemek için aşağıdaki butonları kullanın. Bu işlem geri alınamaz." 
+            <TextBlock Text="{DynamicResource Settings_DataManagement}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_DataManagementHint}" 
                        FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" TextWrapping="Wrap"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,24">
-                <Button x:Name="BtnDelete30Days" Content="30 günden eski verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="30" Click="BtnDeleteOldData_Click"/>
-                <Button x:Name="BtnDelete90Days" Content="90 günden eski verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="90" Click="BtnDeleteOldData_Click"/>
-                <Button x:Name="BtnDelete365Days" Content="365 günden eski verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="365" Click="BtnDeleteOldData_Click"/>
-                <Button x:Name="BtnDeleteAll" Content="Tüm verileri sil" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDeleteAll_Click"/>
+                <Button x:Name="BtnDelete30Days" Content="{DynamicResource Settings_Delete30}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="30" Click="BtnDeleteOldData_Click"/>
+                <Button x:Name="BtnDelete90Days" Content="{DynamicResource Settings_Delete90}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="90" Click="BtnDeleteOldData_Click"/>
+                <Button x:Name="BtnDelete365Days" Content="{DynamicResource Settings_Delete365}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="365" Click="BtnDeleteOldData_Click"/>
+                <Button x:Name="BtnDeleteAll" Content="{DynamicResource Settings_DeleteAll}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDeleteAll_Click"/>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

@@ -23,18 +23,18 @@
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Image Source="pack://application:,,,/Monity.App;component/Assets/Logo.png" Width="32" Height="32" Margin="0,0,10,0" Stretch="Uniform"/>
-                    <TextBlock Text="Monity" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource App_Name}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Border x:Name="UpdateBanner" Visibility="Collapsed" Background="{DynamicResource UpdateBannerBrush}" CornerRadius="6" Padding="10,6" Margin="0,0,12,0" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock x:Name="TxtUpdateMessage" Text="Yeni sürüm mevcut" Foreground="{DynamicResource TextBrush}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                            <Button x:Name="BtnUpdate" Content="Güncelle" Style="{DynamicResource PrimaryButtonStyle}" Padding="10,6" Click="BtnUpdate_Click"/>
+                            <TextBlock x:Name="TxtUpdateMessage" Text="{DynamicResource Main_NewVersion}" Foreground="{DynamicResource TextBrush}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <Button x:Name="BtnUpdate" Content="{DynamicResource Main_Update}" Style="{DynamicResource PrimaryButtonStyle}" Padding="10,6" Click="BtnUpdate_Click"/>
                         </StackPanel>
                     </Border>
-                    <Button x:Name="BtnStatistics" Content="İstatistikler" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnStatistics_Click"/>
-                    <Button x:Name="BtnSettings" Content="Ayarlar" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnSettings_Click"/>
-                    <Button x:Name="BtnMinimizeToTray" Content="Pencereyi gizle" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnMinimizeToTray_Click"/>
+                    <Button x:Name="BtnStatistics" Content="{DynamicResource Main_Statistics}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnStatistics_Click"/>
+                    <Button x:Name="BtnSettings" Content="{DynamicResource Main_Settings}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnSettings_Click"/>
+                    <Button x:Name="BtnMinimizeToTray" Content="{DynamicResource Main_HideWindow}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnMinimizeToTray_Click"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -48,7 +48,7 @@
                 <TextBlock x:Name="TxtFooterVersion" FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
                 <TextBlock Text=" · " FontSize="12" Foreground="{DynamicResource TextMutedBrush}"/>
                 <TextBlock FontSize="12" Foreground="{DynamicResource TextMutedBrush}">
-                    <Run Text="Geliştirici: "/>
+                    <Run Text="{DynamicResource Main_Developer}"/>
                     <Hyperlink x:Name="LinkFooterDeveloper" RequestNavigate="LinkFooter_RequestNavigate"/>
                 </TextBlock>
             </StackPanel>

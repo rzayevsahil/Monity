@@ -6,7 +6,7 @@
       xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
       mc:Ignorable="d"
       d:DesignHeight="500" d:DesignWidth="800"
-      Title="İstatistikler"
+      Title="{DynamicResource Stats_Title}"
       Background="{DynamicResource BackgroundBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
@@ -15,33 +15,33 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="İstatistikler" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
-                <Button x:Name="BtnBackHeader" Grid.Column="1" Content="Dashboard'a dön" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnBack_Click"/>
+                <TextBlock Text="{DynamicResource Stats_Title}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                <Button x:Name="BtnBackHeader" Grid.Column="1" Content="{DynamicResource Stats_BackToDashboard}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnBack_Click"/>
             </Grid>
 
             <!-- Dönem seçici -->
-            <TextBlock Text="Dönem:" Foreground="{DynamicResource TextBrush}" FontSize="14" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Stats_Period}" Foreground="{DynamicResource TextBrush}" FontSize="14" Margin="0,0,0,8"/>
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
-                <RadioButton x:Name="RbDaily" Content="Günlük" GroupName="Period" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
-                <RadioButton x:Name="RbWeekly" Content="Haftalık" GroupName="Period" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
-                <RadioButton x:Name="RbMonthly" Content="Aylık" GroupName="Period" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
-                <RadioButton x:Name="RbYearly" Content="Yıllık" GroupName="Period" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
+                <RadioButton x:Name="RbDaily" Content="{DynamicResource Stats_Daily}" GroupName="Period" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
+                <RadioButton x:Name="RbWeekly" Content="{DynamicResource Stats_Weekly}" GroupName="Period" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
+                <RadioButton x:Name="RbMonthly" Content="{DynamicResource Stats_Monthly}" GroupName="Period" Margin="0,0,16,0" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
+                <RadioButton x:Name="RbYearly" Content="{DynamicResource Stats_Yearly}" GroupName="Period" Foreground="{DynamicResource TextBrush}" Checked="Period_Changed"/>
             </StackPanel>
 
             <!-- Tarih seçimi (başlangıç, bitiş, özel aralık) -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
-                <TextBlock x:Name="TxtDateLabel" Text="Başlangıç:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock x:Name="TxtDateLabel" Text="{DynamicResource Stats_Start}" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
                 <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
                     <DatePicker x:Name="DatePicker" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
                 </Border>
-                <TextBlock Text="Bitiş:" VerticalAlignment="Center" Margin="12,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Text="{DynamicResource Stats_End}" VerticalAlignment="Center" Margin="12,0,8,0" Foreground="{DynamicResource TextBrush}"/>
                 <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
                     <DatePicker x:Name="DatePickerEnd" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
                 </Border>
-                <TextBlock Text="Kategori:" VerticalAlignment="Center" Margin="12,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Text="{DynamicResource Settings_Category}" VerticalAlignment="Center" Margin="12,0,8,0" Foreground="{DynamicResource TextBrush}"/>
                 <ComboBox x:Name="CategoryFilter" Width="120" VerticalAlignment="Center" SelectionChanged="CategoryFilter_SelectionChanged"
                           Foreground="{DynamicResource TextBrush}"/>
-                <Button x:Name="BtnRefresh" Content="Yenile" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
+                <Button x:Name="BtnRefresh" Content="{DynamicResource Dashboard_Refresh}" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
                 <TextBlock x:Name="TxtDateRange" VerticalAlignment="Center" Margin="16,0,0,0" FontSize="13" Foreground="{DynamicResource TextMutedBrush}"/>
             </StackPanel>
 
@@ -54,36 +54,36 @@
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Toplam süre" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                        <TextBlock Text="{DynamicResource Stats_TotalDuration}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         <TextBlock x:Name="TxtTotal" Text="0 sa 0 dk" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="1" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="4,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Günde ortalama" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                        <TextBlock Text="{DynamicResource Stats_DailyAverage}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         <TextBlock x:Name="TxtAverage" Text="0 sa 0 dk" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="8,0,0,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Kullanım kaydı" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                        <TextBlock Text="{DynamicResource Stats_UsageRecords}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         <TextBlock x:Name="TxtSessionCount" Text="0" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                     </StackPanel>
                 </Border>
             </Grid>
 
             <!-- Haftalık karşılaştırma özeti -->
-            <TextBlock Text="Haftalık karşılaştırma" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <TextBlock Text="{DynamicResource Stats_WeeklyComparison}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                 <StackPanel>
-                    <TextBlock x:Name="TxtWeeklyThisWeek" Text="Bu hafta: —" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
-                    <TextBlock x:Name="TxtWeeklyLastWeek" Text="Geçen hafta: —" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
-                    <TextBlock x:Name="TxtWeeklyDiff" Text="Fark: —" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
+                    <TextBlock x:Name="TxtWeeklyThisWeek" Text="{DynamicResource Stats_ThisWeek}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="TxtWeeklyLastWeek" Text="{DynamicResource Stats_LastWeek}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                    <TextBlock x:Name="TxtWeeklyDiff" Text="{DynamicResource Stats_Diff}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                 </StackPanel>
             </Border>
 
             <!-- Zaman dağılımı grafiği (saatlik veya günlük) -->
-            <TextBlock x:Name="TxtTimeChartTitle" Text="Saatlik Kullanım" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <TextBlock x:Name="TxtTimeChartTitle" Text="{DynamicResource Stats_HourlyUsage}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Height="220">
                 <lvc:CartesianChart x:Name="TimeDistributionChart" DrawMarginFrame="{x:Null}"/>
             </Border>
@@ -95,14 +95,14 @@
             </Border>
 
             <!-- Uygulama listesi -->
-            <TextBlock Text="Uygulama Kullanımı" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <TextBlock Text="{DynamicResource Stats_AppUsage}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Margin="0,0,0,12" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <Grid>
                     <TextBox x:Name="AppSearchBox" Padding="10,8" FontSize="13" VerticalAlignment="Stretch"
                              Foreground="{DynamicResource TextBrush}" BorderThickness="0" Background="Transparent"
                              TextChanged="AppSearchBox_TextChanged"
-                             ToolTip="Uygulama adına göre filtrele"/>
-                    <TextBlock x:Name="AppSearchPlaceholder" Text="Ara" Padding="10,8" FontSize="13"
+                             ToolTip="{DynamicResource Dashboard_SearchTooltip}"/>
+                    <TextBlock x:Name="AppSearchPlaceholder" Text="{DynamicResource Dashboard_Search}" Padding="10,8" FontSize="13"
                                Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False"
                                VerticalAlignment="Center"/>
                 </Grid>
@@ -122,7 +122,7 @@
                     </ListView.Resources>
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Uygulama" Width="200">
+                            <GridViewColumn Header="{DynamicResource Stats_App}" Width="200">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="200" Padding="8,0">
@@ -131,7 +131,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Toplam" Width="100">
+                            <GridViewColumn Header="{DynamicResource Stats_Total}" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="100" Padding="8,0">
@@ -140,7 +140,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Ortalama" Width="100">
+                            <GridViewColumn Header="{DynamicResource Stats_Average}" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="100" Padding="8,0">
@@ -149,7 +149,7 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="Yüzde" Width="80">
+                            <GridViewColumn Header="{DynamicResource Stats_Percent}" Width="80">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="80" Padding="8,0">
@@ -164,7 +164,7 @@
             </Border>
 
             <!-- Geri -->
-            <Button x:Name="BtnBack" Content="Dashboard'a dön" Style="{DynamicResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,24,0,0" Click="BtnBack_Click"/>
+            <Button x:Name="BtnBack" Content="{DynamicResource Stats_BackToDashboard}" Style="{DynamicResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,24,0,0" Click="BtnBack_Click"/>
         </StackPanel>
     </ScrollViewer>
 </Page>

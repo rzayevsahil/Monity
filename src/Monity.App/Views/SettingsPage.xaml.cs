@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Microsoft.Extensions.DependencyInjection;
+using Monity.App.Helpers;
 using Monity.App.Views;
 using Monity.App.Services;
 using Monity.Infrastructure.InstalledApps;
@@ -27,6 +28,7 @@ public partial class SettingsPage : Page
     private readonly UsageTrackingService _trackingService;
     private readonly IUsageRepository _repository;
     private readonly ThemeService _themeService;
+    private readonly LanguageService _languageService;
     private readonly StartupService _startupService;
     private readonly ObservableCollection<AppExcludeItem> _appExcludeItems = [];
     private readonly ObservableCollection<DailyLimitItem> _dailyLimitItems = [];
@@ -50,6 +52,7 @@ public partial class SettingsPage : Page
         _trackingService = services.GetRequiredService<UsageTrackingService>();
         _repository = services.GetRequiredService<IUsageRepository>();
         _themeService = services.GetRequiredService<ThemeService>();
+        _languageService = services.GetRequiredService<LanguageService>();
         _startupService = services.GetRequiredService<StartupService>();
         _appExcludeView = CollectionViewSource.GetDefaultView(_appExcludeItems);
         _dailyLimitView = CollectionViewSource.GetDefaultView(_dailyLimitItems);
@@ -72,6 +75,10 @@ public partial class SettingsPage : Page
         var theme = await _themeService.GetThemeAsync();
         RbThemeDark.IsChecked = theme == "dark";
         RbThemeLight.IsChecked = theme != "dark";
+
+        var lang = await _languageService.GetLanguageAsync();
+        RbLanguageEn.IsChecked = lang == "en";
+        RbLanguageTr.IsChecked = lang != "en";
 
         var startWithWindows = await _startupService.GetIsEnabledAsync();
         CbStartWithWindows.IsChecked = startWithWindows;
@@ -450,9 +457,10 @@ public partial class SettingsPage : Page
     {
         if (sender is not System.Windows.Controls.Button btn || btn.Tag is not string tagStr || !int.TryParse(tagStr, out var days))
             return;
+        var msg = string.Format(Strings.Get("Msg_ConfirmDeleteDays"), days);
         var result = System.Windows.MessageBox.Show(
-            $"{days} günden eski tüm kullanım verileri silinecektir. Bu işlem geri alınamaz. Emin misiniz?",
-            "Veri Silme",
+            msg,
+            Strings.Get("Msg_AppName"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning);
         if (result != MessageBoxResult.Yes) return;
@@ -460,30 +468,30 @@ public partial class SettingsPage : Page
         {
             var cutoff = DateTime.Today.AddDays(-days);
             await _repository.DeleteDataOlderThanAsync(cutoff);
-            System.Windows.MessageBox.Show($"{days} günden eski veriler silindi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show(days + Strings.Get("Msg_DataDeleted"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show($"Veri silinirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Windows.MessageBox.Show(Strings.Get("Msg_DeleteError") + ex.Message, Strings.Get("Msg_Error"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     private async void BtnDeleteAll_Click(object sender, RoutedEventArgs e)
     {
         var result = System.Windows.MessageBox.Show(
-            "Tüm kullanım verileri (oturumlar, özetler, uygulama kayıtları) silinecektir. Ayarlarınız korunacaktır. Bu işlem geri alınamaz. Emin misiniz?",
-            "Tüm Verileri Sil",
+            Strings.Get("Msg_ConfirmDeleteAll"),
+            Strings.Get("Msg_AppName"),
             MessageBoxButton.YesNo,
             MessageBoxImage.Warning);
         if (result != MessageBoxResult.Yes) return;
         try
         {
             await _repository.DeleteAllDataAsync();
-            System.Windows.MessageBox.Show("Tüm veriler silindi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+            System.Windows.MessageBox.Show(Strings.Get("Msg_AllDataDeleted"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show($"Veri silinirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Windows.MessageBox.Show(Strings.Get("Msg_DeleteError") + ex.Message, Strings.Get("Msg_Error"), MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
@@ -491,7 +499,7 @@ public partial class SettingsPage : Page
     {
         if (!uint.TryParse(TxtIdleThreshold.Text, out var seconds) || seconds < IdleMinSeconds || seconds > IdleMaxSeconds)
         {
-            System.Windows.MessageBox.Show("Boşta kalma süresi 10–600 saniye arasında olmalıdır.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+            System.Windows.MessageBox.Show(Strings.Get("Msg_IdleRange"), Strings.Get("Msg_Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
             return;
         }
         _trackingService.IdleThresholdMs = seconds * 1000;
@@ -506,8 +514,12 @@ public partial class SettingsPage : Page
         _themeService.ApplyTheme(theme);
         await _themeService.SaveThemeAsync(theme);
 
+        var language = RbLanguageEn.IsChecked == true ? "en" : "tr";
+        _languageService.ApplyLanguage(language);
+        await _languageService.SaveLanguageAsync(language);
+
         await _startupService.SetEnabledAsync(CbStartWithWindows.IsChecked == true);
-        System.Windows.MessageBox.Show("Genel ayarlar kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show(Strings.Get("Msg_GeneralSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private async void BtnSaveAppExclude_Click(object sender, RoutedEventArgs e)
@@ -517,7 +529,7 @@ public partial class SettingsPage : Page
         var engine = _services.GetRequiredService<ITrackingEngine>();
         var userList = ignored.Length > 0 ? ignored.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) : [];
         engine.SetIgnoredProcesses(["Monity.App", "explorer"], userList);
-        System.Windows.MessageBox.Show("Takip hariç listesi kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show(Strings.Get("Msg_ExcludeSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private async void BtnSaveDailyLimit_Click(object sender, RoutedEventArgs e)
@@ -544,14 +556,14 @@ public partial class SettingsPage : Page
         await _repository.SetSettingAsync("limit_exceeded_action", limitExceededAction);
         foreach (var item in _dailyLimitItems)
             item.IsSelected = false;
-        System.Windows.MessageBox.Show("Günlük süre kısıtları kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show(Strings.Get("Msg_DailyLimitsSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private async void BtnSaveCategory_Click(object sender, RoutedEventArgs e)
     {
         foreach (var item in _categoryItems)
             await _repository.SetAppCategoryAsync(item.AppId, string.IsNullOrEmpty(item.CategoryName) ? null : item.CategoryName);
-        System.Windows.MessageBox.Show("Uygulama kategorileri kaydedildi.", "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Windows.MessageBox.Show(Strings.Get("Msg_CategoriesSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private static T? FindParent<T>(DependencyObject child) where T : DependencyObject

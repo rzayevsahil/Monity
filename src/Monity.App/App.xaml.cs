@@ -53,6 +53,9 @@ public partial class App : System.Windows.Application
         var themeService = _services.GetRequiredService<ThemeService>();
         await themeService.ApplyStoredThemeAsync();
 
+        var languageService = _services.GetRequiredService<LanguageService>();
+        await languageService.ApplyStoredLanguageAsync();
+
         _trackingService.Start();
 
         var mainWindow = _services.GetRequiredService<MainWindow>();
@@ -94,6 +97,7 @@ public partial class App : System.Windows.Application
         });
         services.AddSingleton<UpdateService>();
         services.AddSingleton<ThemeService>();
+        services.AddSingleton<LanguageService>();
         services.AddSingleton<StartupService>();
         services.AddTransient<MainWindow>();
     }

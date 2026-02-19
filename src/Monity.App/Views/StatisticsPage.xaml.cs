@@ -261,7 +261,7 @@ public partial class StatisticsPage : Page
 
         if (hourly != null)
         {
-            TxtTimeChartTitle.Text = "Saatlik Kullanım";
+            TxtTimeChartTitle.Text = Strings.Get("Stats_HourlyUsage");
             var hourlyValues = new double[24];
             foreach (var h in hourly)
                 hourlyValues[(int)h.Hour] = h.TotalSeconds / 60.0;
@@ -290,7 +290,7 @@ public partial class StatisticsPage : Page
         }
         else if (dailyTotals != null)
         {
-            TxtTimeChartTitle.Text = "Günlük Toplamlar";
+            TxtTimeChartTitle.Text = Strings.Get("Stats_DailyTotals");
             var labels = dailyTotals.Select(d => d.Date.Length >= 10 ? d.Date[8..10] + "/" + d.Date[5..7] : d.Date).ToArray();
             var values = dailyTotals.Select(d => d.TotalSeconds / 60.0).ToArray();
             TimeDistributionChart.Series = new ObservableCollection<ISeries>
@@ -317,7 +317,7 @@ public partial class StatisticsPage : Page
         }
         else
         {
-            TxtTimeChartTitle.Text = "Saatlik Kullanım";
+            TxtTimeChartTitle.Text = Strings.Get("Stats_HourlyUsage");
             TimeDistributionChart.Series = new ObservableCollection<ISeries>();
         }
 
@@ -375,15 +375,16 @@ public partial class StatisticsPage : Page
 
     private void ApplyWeeklyComparison(long thisWeekSeconds, long lastWeekSeconds)
     {
-        TxtWeeklyThisWeek.Text = "Bu hafta: " + DurationAndPeriodHelper.FormatDuration(thisWeekSeconds);
-        TxtWeeklyLastWeek.Text = "Geçen hafta: " + DurationAndPeriodHelper.FormatDuration(lastWeekSeconds);
+        TxtWeeklyThisWeek.Text = Strings.Get("Stats_ThisWeekLabel") + DurationAndPeriodHelper.FormatDuration(thisWeekSeconds);
+        TxtWeeklyLastWeek.Text = Strings.Get("Stats_LastWeekLabel") + DurationAndPeriodHelper.FormatDuration(lastWeekSeconds);
         var diffSeconds = thisWeekSeconds - lastWeekSeconds;
         var diffFormatted = DurationAndPeriodHelper.FormatDuration(Math.Abs(diffSeconds));
         var pct = lastWeekSeconds > 0 ? (double)diffSeconds / lastWeekSeconds * 100 : (diffSeconds > 0 ? 100.0 : 0.0);
         var pctStr = pct >= 0 ? $"%+{pct:F0}" : $"%{pct:F0}";
+        var diffPrefix = Strings.Get("Stats_DiffLabel");
         TxtWeeklyDiff.Text = diffSeconds >= 0
-            ? $"Fark: +{diffFormatted} ({pctStr})"
-            : $"Fark: -{diffFormatted} ({pctStr})";
+            ? diffPrefix + "+" + diffFormatted + " (" + pctStr + ")"
+            : diffPrefix + "-" + diffFormatted + " (" + pctStr + ")";
     }
 
     private void ClearData()
@@ -392,9 +393,9 @@ public partial class StatisticsPage : Page
         TxtAverage.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
         TxtDateRange.Text = "";
-        TxtWeeklyThisWeek.Text = "Bu hafta: —";
-        TxtWeeklyLastWeek.Text = "Geçen hafta: —";
-        TxtWeeklyDiff.Text = "Fark: —";
+        TxtWeeklyThisWeek.Text = Strings.Get("Stats_ThisWeek");
+        TxtWeeklyLastWeek.Text = Strings.Get("Stats_LastWeek");
+        TxtWeeklyDiff.Text = Strings.Get("Stats_Diff");
         _appItems.Clear();
         TimeDistributionChart.Series = new ObservableCollection<ISeries>();
         AppDistributionChart.Series = new ObservableCollection<ISeries>();

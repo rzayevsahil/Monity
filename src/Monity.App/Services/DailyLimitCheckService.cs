@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
+using Monity.App.Helpers;
 using Monity.Infrastructure.Persistence;
 
 namespace Monity.App.Services;
@@ -59,8 +60,8 @@ public sealed class DailyLimitCheckService : IDailyLimitCheckService
 
             _notifiedProcessNames.Add(processName);
             var limitText = FormatLimit(limitSeconds);
-            var title = "Günlük kullanım süresi";
-            var text = $"Günlük kullanım sürenizi tamamladınız: {processName} (limit: {limitText}).";
+            var title = Strings.Get("LimitNotification_Title");
+            var text = string.Format(Strings.Get("LimitNotification_Text"), processName, limitText);
             _trayNotifier.ShowBalloonTip(title, text);
 
             if (closeAppWhenExceeded)

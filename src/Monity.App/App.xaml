@@ -9,6 +9,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes/Light.xaml"/>
+                <ResourceDictionary Source="Resources/Strings.tr.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- ListView başlık satırı (GridViewColumnHeader) -->

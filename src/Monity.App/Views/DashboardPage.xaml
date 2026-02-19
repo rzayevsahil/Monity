@@ -6,12 +6,12 @@
       xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Dashboard"
+      Title="{DynamicResource Dashboard_Title}"
       Background="{DynamicResource BackgroundBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
-            <TextBlock Text="Dashboard" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
-            <TextBlock x:Name="TxtFirstActivity" Text="Bugün başlangıç: —" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,16" ToolTip="Seçilen günde kaydedilen ilk kullanım saati"/>
+            <TextBlock Text="{DynamicResource Dashboard_Title}" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock x:Name="TxtFirstActivity" Text="{DynamicResource Dashboard_FirstActivity}" FontSize="13" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,16" ToolTip="{DynamicResource Dashboard_FirstActivityTooltip}"/>
 
             <!-- Summary Cards -->
             <Grid Margin="0,0,0,24">
@@ -22,20 +22,20 @@
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,0,8,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Bugün Toplam" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                        <TextBlock Text="{DynamicResource Dashboard_TodayTotal}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         <TextBlock x:Name="TxtTodayTotal" Text="0 sa 0 dk" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="1" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="4,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Kullanım kaydı" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"
-                                   ToolTip="Seçilen günde kaç adet kullanım dilimi kaydedildi (her uygulama değişiminde yeni kayıt oluşur)"/>
+                        <TextBlock Text="{DynamicResource Dashboard_UsageRecords}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"
+                                   ToolTip="{DynamicResource Dashboard_UsageRecordsTooltip}"/>
                         <TextBlock x:Name="TxtSessionCount" Text="0" FontSize="24" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
                     </StackPanel>
                 </Border>
                 <Border Grid.Column="2" Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20" Margin="8,0,0,0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
                     <StackPanel>
-                        <TextBlock Text="Şu an aktif" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                        <TextBlock Text="{DynamicResource Dashboard_CurrentlyActive}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                         <TextBlock x:Name="TxtCurrentApp" Text="-" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" TextTrimming="CharacterEllipsis"/>
                     </StackPanel>
                 </Border>
@@ -43,29 +43,29 @@
 
             <!-- Date and category -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">
-                <TextBlock Text="Tarih:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Text="{DynamicResource Dashboard_Date}" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource TextBrush}"/>
                 <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" VerticalAlignment="Center">
                     <DatePicker x:Name="DatePicker" SelectedDateChanged="DatePicker_SelectedDateChanged" Width="130" MinWidth="130"/>
                 </Border>
-                <TextBlock Text="Kategori:" VerticalAlignment="Center" Margin="16,0,8,0" Foreground="{DynamicResource TextBrush}"/>
+                <TextBlock Text="{DynamicResource Dashboard_Category}" VerticalAlignment="Center" Margin="16,0,8,0" Foreground="{DynamicResource TextBrush}"/>
                 <ComboBox x:Name="CategoryFilter" Width="130" VerticalAlignment="Center" SelectionChanged="CategoryFilter_SelectionChanged"
                           Foreground="{DynamicResource TextBrush}"/>
-                <Button x:Name="BtnRefresh" Content="Yenile" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
+                <Button x:Name="BtnRefresh" Content="{DynamicResource Dashboard_Refresh}" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
             </StackPanel>
 
             <!-- Aylık kullanım yoğunluğu (ısı haritası) -->
-            <TextBlock x:Name="TxtHeatMapTitle" Text="Aylık kullanım yoğunluğu" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <TextBlock x:Name="TxtHeatMapTitle" Text="{DynamicResource Dashboard_HeatMapTitle}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="20" Margin="0,0,0,24">
                 <StackPanel>
                     <!-- Haftanın günleri başlığı -->
                     <UniformGrid Rows="1" Columns="7" Margin="0,0,0,6">
-                        <TextBlock Text="Pzt" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Text="Sal" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Text="Çar" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Text="Per" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Text="Cum" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Text="Cmt" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <TextBlock Text="Paz" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Dashboard_DayMon}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Dashboard_DayTue}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Dashboard_DayWed}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Dashboard_DayThu}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Dashboard_DayFri}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Dashboard_DaySat}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Dashboard_DaySun}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </UniformGrid>
                     <ItemsControl x:Name="HeatMapItemsControl">
                         <ItemsControl.ItemsPanel>
@@ -86,32 +86,32 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
-                        <TextBlock Text="Az" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="{DynamicResource Dashboard_Less}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <Border Width="14" Height="14" CornerRadius="3" Margin="2" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                         <Border Width="14" Height="14" CornerRadius="3" Margin="2" Background="{DynamicResource PrimaryBrush}" Opacity="0.25" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                         <Border Width="14" Height="14" CornerRadius="3" Margin="2" Background="{DynamicResource PrimaryBrush}" Opacity="0.5" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                         <Border Width="14" Height="14" CornerRadius="3" Margin="2" Background="{DynamicResource PrimaryBrush}" Opacity="0.75" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
                         <Border Width="14" Height="14" CornerRadius="3" Margin="2" Background="{DynamicResource PrimaryBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"/>
-                        <TextBlock Text="Çok" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                        <TextBlock Text="{DynamicResource Dashboard_More}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" VerticalAlignment="Center" Margin="6,0,0,0"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
 
             <!-- Hourly chart -->
-            <TextBlock Text="Saatlik Kullanım" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <TextBlock Text="{DynamicResource Dashboard_HourlyUsage}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Height="240">
                 <lvc:CartesianChart x:Name="HourlyChart" DrawMarginFrame="{x:Null}"/>
             </Border>
 
             <!-- App list -->
-            <TextBlock Text="Uygulama Kullanımı" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <TextBlock Text="{DynamicResource Dashboard_AppUsage}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Margin="0,0,0,12" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <Grid>
                     <TextBox x:Name="AppSearchBox" Padding="10,8" FontSize="13" VerticalAlignment="Stretch"
                              Foreground="{DynamicResource TextBrush}" BorderThickness="0" Background="Transparent"
                              TextChanged="AppSearchBox_TextChanged"
-                             ToolTip="Uygulama adına göre filtrele"/>
-                    <TextBlock x:Name="AppSearchPlaceholder" Text="Ara" Padding="10,8" FontSize="13"
+                             ToolTip="{DynamicResource Dashboard_SearchTooltip}"/>
+                    <TextBlock x:Name="AppSearchPlaceholder" Text="{DynamicResource Dashboard_Search}" Padding="10,8" FontSize="13"
                                Foreground="{DynamicResource TextMutedBrush}" IsHitTestVisible="False"
                                VerticalAlignment="Center"/>
                 </Grid>
