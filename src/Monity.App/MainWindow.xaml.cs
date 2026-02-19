@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
@@ -110,9 +112,14 @@ public partial class MainWindow : Window
 
     private void SetupTrayIcon()
     {
+        System.Drawing.Icon? appIcon = null;
+        var exePath = Environment.ProcessPath ?? Assembly.GetExecutingAssembly().Location;
+        if (!string.IsNullOrEmpty(exePath))
+            appIcon = System.Drawing.Icon.ExtractAssociatedIcon(exePath);
+
         _trayIcon = new System.Windows.Forms.NotifyIcon
         {
-            Icon = System.Drawing.SystemIcons.Application,
+            Icon = appIcon ?? System.Drawing.SystemIcons.Application,
             Text = "Monity - App Usage Tracker",
             Visible = true
         };
