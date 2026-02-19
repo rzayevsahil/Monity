@@ -21,7 +21,7 @@ public class UpdaterForm : Form
 
         _label = new Label
         {
-            Text = "Güncelleme uygulanıyor, lütfen bekleyin. Uygulamayı elle açmayın.",
+            Text = "Güncelleme uygulanıyor, lütfen bekleyin.",
             AutoSize = true,
             Location = new Point(16, 16),
             MaximumSize = new Size(440, 0)

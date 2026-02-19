@@ -31,18 +31,18 @@
                 <RadioButton x:Name="RbLanguageEn" Content="{DynamicResource Settings_LanguageEnglish}" GroupName="Language" Foreground="{DynamicResource TextBrush}"/>
             </StackPanel>
             <CheckBox x:Name="CbStartWithWindows" Content="{DynamicResource Settings_StartWithWindows}" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}"/>
-            <TextBlock Text="{DynamicResource Settings_IdleLabel}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+            <TextBlock Text="{DynamicResource Settings_IdleLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"/>
             <TextBlock Text="{DynamicResource Settings_IdleHint}" 
-                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4" TextWrapping="Wrap"/>
+                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,6" TextWrapping="Wrap"/>
             <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,12" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtIdleThreshold" Padding="10,8" BorderThickness="0" Background="Transparent"
                          Foreground="{DynamicResource TextBrush}"
                          PreviewTextInput="TxtIdleThreshold_PreviewTextInput"
                          LostFocus="TxtIdleThreshold_LostFocus"/>
             </Border>
-            <TextBlock Text="{DynamicResource Settings_MinSessionLabel}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+            <TextBlock Text="{DynamicResource Settings_MinSessionLabel}" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"/>
             <TextBlock Text="{DynamicResource Settings_MinSessionHint}" 
-                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4" TextWrapping="Wrap"/>
+                       FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,6" TextWrapping="Wrap"/>
             <Border Width="120" HorizontalAlignment="Left" Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
                 <TextBox x:Name="TxtMinSessionSeconds" Padding="10,8" BorderThickness="0" Background="Transparent"
                          Foreground="{DynamicResource TextBrush}"
