@@ -93,7 +93,8 @@ public partial class StatisticsPage : Page
             new("Geliştirme", Strings.Get("Category_Development")),
             new("Sosyal", Strings.Get("Category_Social")),
             new("Eğlence", Strings.Get("Category_Entertainment")),
-            new("Ofis", Strings.Get("Category_Office"))
+            new("Ofis", Strings.Get("Category_Office")),
+            new("Eğitim", Strings.Get("Category_Education"))
         };
         CategoryFilter.ItemsSource = options;
         CategoryFilter.DisplayMemberPath = "Display";

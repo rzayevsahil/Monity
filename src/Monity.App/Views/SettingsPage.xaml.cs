@@ -645,7 +645,8 @@ public partial class SettingsPage : Page
             new CategoryOption("Geliştirme", Strings.Get("Category_Development")),
             new CategoryOption("Sosyal", Strings.Get("Category_Social")),
             new CategoryOption("Eğlence", Strings.Get("Category_Entertainment")),
-            new CategoryOption("Ofis", Strings.Get("Category_Office"))
+            new CategoryOption("Ofis", Strings.Get("Category_Office")),
+            new CategoryOption("Eğitim", Strings.Get("Category_Education"))
         ];
         public int AppId { get; }
         public string DisplayName { get; }

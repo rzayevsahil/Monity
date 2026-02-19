@@ -42,6 +42,7 @@
     <sys:String x:Key="Category_Social">Social</sys:String>
     <sys:String x:Key="Category_Entertainment">Entertainment</sys:String>
     <sys:String x:Key="Category_Office">Office</sys:String>
+    <sys:String x:Key="Category_Education">Education</sys:String>
     <sys:String x:Key="Dashboard_HourlyUsage">Hourly Usage</sys:String>
     <sys:String x:Key="Dashboard_AppUsage">App Usage</sys:String>
     <sys:String x:Key="Dashboard_Search">Search</sys:String>
