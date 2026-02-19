@@ -4,10 +4,14 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+      xmlns:local="clr-namespace:Monity.App.Views"
       mc:Ignorable="d"
       d:DesignHeight="500" d:DesignWidth="800"
       Title="{DynamicResource Stats_Title}"
       Background="{DynamicResource BackgroundBrush}">
+    <Page.Resources>
+        <local:RankFromAlternationConverter x:Key="RankFromAlternationConverter"/>
+    </Page.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
             <Grid Margin="0,0,0,16">
@@ -108,7 +112,7 @@
                 </Grid>
             </Border>
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                <ListView x:Name="AppListView" Height="280" BorderThickness="0" Background="Transparent">
+                <ListView x:Name="AppListView" Height="280" BorderThickness="0" Background="Transparent" AlternationCount="9999">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
@@ -122,7 +126,23 @@
                     </ListView.Resources>
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="{DynamicResource Stats_App}" Width="200">
+                            <GridViewColumn Width="40">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Content="{DynamicResource Dashboard_Rank}"/>
+                                </GridViewColumn.Header>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border HorizontalAlignment="Stretch" MinWidth="40" Padding="8,0">
+                                            <TextBlock Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Center"
+                                                       Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ListViewItem}, Converter={StaticResource RankFromAlternationConverter}}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Width="200">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Content="{DynamicResource Stats_App}" Tag="DisplayName" Click="AppListColumnHeader_Click" Cursor="Hand"/>
+                                </GridViewColumn.Header>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="200" Padding="8,0">
@@ -131,7 +151,10 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="{DynamicResource Stats_Total}" Width="100">
+                            <GridViewColumn Width="100">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Content="{DynamicResource Stats_Total}" Tag="TotalSeconds" Click="AppListColumnHeader_Click" Cursor="Hand"/>
+                                </GridViewColumn.Header>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="100" Padding="8,0">
@@ -140,7 +163,10 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="{DynamicResource Stats_Average}" Width="100">
+                            <GridViewColumn Width="100">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Content="{DynamicResource Stats_Average}" Tag="AverageSeconds" Click="AppListColumnHeader_Click" Cursor="Hand"/>
+                                </GridViewColumn.Header>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="100" Padding="8,0">
@@ -149,7 +175,10 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="{DynamicResource Stats_Percent}" Width="80">
+                            <GridViewColumn Width="80">
+                                <GridViewColumn.Header>
+                                    <GridViewColumnHeader Content="{DynamicResource Stats_Percent}" Tag="Percentage" Click="AppListColumnHeader_Click" Cursor="Hand"/>
+                                </GridViewColumn.Header>
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border HorizontalAlignment="Stretch" MinWidth="80" Padding="8,0">

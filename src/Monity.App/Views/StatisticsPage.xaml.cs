@@ -248,11 +248,15 @@ public partial class StatisticsPage : Page
             _appItems.Add(new StatAppItem
             {
                 DisplayName = a.DisplayName ?? a.ProcessName,
+                TotalSeconds = a.TotalSeconds,
+                AverageSeconds = appAvg,
+                Percentage = pct,
                 TotalFormatted = DurationAndPeriodHelper.FormatDuration(a.TotalSeconds),
                 AverageFormatted = DurationAndPeriodHelper.FormatDuration(appAvg),
                 PercentageFormatted = $"{pct:F1}%"
             });
         }
+        ApplyAppListSort();
 
         var primaryColor = new SKColor(37, 99, 235);
         var strokeColor = new SKColor(29, 78, 216);
@@ -432,9 +436,42 @@ public partial class StatisticsPage : Page
         };
     }
 
+    private string _appListSortProperty = nameof(StatAppItem.TotalSeconds);
+    private ListSortDirection _appListSortDirection = ListSortDirection.Descending;
+
+    private void AppListColumnHeader_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not GridViewColumnHeader header || header.Tag is not string tag) return;
+        var prop = tag switch
+        {
+            "DisplayName" => nameof(StatAppItem.DisplayName),
+            "TotalSeconds" => nameof(StatAppItem.TotalSeconds),
+            "AverageSeconds" => nameof(StatAppItem.AverageSeconds),
+            "Percentage" => nameof(StatAppItem.Percentage),
+            _ => _appListSortProperty
+        };
+        if (prop == _appListSortProperty)
+            _appListSortDirection = _appListSortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+        else
+        {
+            _appListSortProperty = prop;
+            _appListSortDirection = prop == nameof(StatAppItem.DisplayName) ? ListSortDirection.Ascending : ListSortDirection.Descending;
+        }
+        ApplyAppListSort();
+    }
+
+    private void ApplyAppListSort()
+    {
+        _appListView.SortDescriptions.Clear();
+        _appListView.SortDescriptions.Add(new SortDescription(_appListSortProperty, _appListSortDirection));
+    }
+
     private class StatAppItem
     {
         public string DisplayName { get; set; } = "";
+        public long TotalSeconds { get; set; }
+        public long AverageSeconds { get; set; }
+        public double Percentage { get; set; }
         public string TotalFormatted { get; set; } = "";
         public string AverageFormatted { get; set; } = "";
         public string PercentageFormatted { get; set; } = "";
