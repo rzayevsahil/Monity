@@ -91,7 +91,7 @@
     <sys:String x:Key="Settings_LanguageEnglish">English</sys:String>
     <!-- Statistics -->
     <sys:String x:Key="Stats_Title">İstatistikler</sys:String>
-    <sys:String x:Key="Stats_BackToDashboard">Dashboard'a dön</sys:String>
+    <sys:String x:Key="Stats_BackToDashboard">← Geri</sys:String>
     <sys:String x:Key="Stats_Period">Dönem:</sys:String>
     <sys:String x:Key="Stats_Daily">Günlük</sys:String>
     <sys:String x:Key="Stats_Weekly">Haftalık</sys:String>

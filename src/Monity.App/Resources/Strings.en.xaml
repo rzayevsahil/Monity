@@ -91,7 +91,7 @@
     <sys:String x:Key="Settings_LanguageEnglish">English</sys:String>
     <!-- Statistics -->
     <sys:String x:Key="Stats_Title">Statistics</sys:String>
-    <sys:String x:Key="Stats_BackToDashboard">Back to Dashboard</sys:String>
+    <sys:String x:Key="Stats_BackToDashboard">← Back</sys:String>
     <sys:String x:Key="Stats_Period">Period:</sys:String>
     <sys:String x:Key="Stats_Daily">Daily</sys:String>
     <sys:String x:Key="Stats_Weekly">Weekly</sys:String>
