@@ -198,6 +198,12 @@ public partial class DashboardPage : Page
         _appListView.Refresh();
     }
 
+    private void AppListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (AppListView.SelectedIndex >= 0)
+            AppListView.SelectedIndex = -1;
+    }
+
     private void ApplyDataToUI(long total, int sessionCount,
         System.Collections.Generic.IReadOnlyList<AppUsageSummary> apps,
         System.Collections.Generic.IReadOnlyList<HourlyUsage> hourly,

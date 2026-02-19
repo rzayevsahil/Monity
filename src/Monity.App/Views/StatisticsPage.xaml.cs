@@ -139,6 +139,12 @@ public partial class StatisticsPage : Page
         _appListView.Refresh();
     }
 
+    private void AppListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (AppListView.SelectedIndex >= 0)
+            AppListView.SelectedIndex = -1;
+    }
+
     private void BtnBack_Click(object sender, RoutedEventArgs e)
     {
         var frame = FindParent<Frame>(this);

@@ -121,7 +121,7 @@
                 </Grid>
             </Border>
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="0" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
-                <ListView x:Name="AppListView" Height="250" BorderThickness="0" Background="Transparent" AlternationCount="9999">
+                <ListView x:Name="AppListView" Height="250" BorderThickness="0" Background="Transparent" AlternationCount="9999" SelectionChanged="AppListView_SelectionChanged">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
@@ -129,6 +129,9 @@
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="{DynamicResource ListViewItemHoverBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
