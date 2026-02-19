@@ -221,6 +221,9 @@
                 <Button x:Name="BtnDelete365Days" Content="{DynamicResource Settings_Delete365}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Tag="365" Click="BtnDeleteOldData_Click"/>
                 <Button x:Name="BtnDeleteAll" Content="{DynamicResource Settings_DeleteAll}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDeleteAll_Click"/>
             </StackPanel>
+
+            <!-- Geri -->
+            <Button x:Name="BtnBackBottom" Content="{DynamicResource Settings_Back}" Style="{DynamicResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,24,0,0" Click="BtnBack_Click"/>
         </StackPanel>
     </ScrollViewer>
 </Page>
