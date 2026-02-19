@@ -207,7 +207,7 @@ public partial class DashboardPage : Page
         TxtTodayTotal.Text = FormatDuration(total);
         TxtSessionCount.Text = sessionCount.ToString();
         TxtFirstActivity.Text = firstActivity.HasValue
-            ? Strings.Get("Dashboard_FirstActivityPrefix") + firstActivity.Value.ToString("HH:mm")
+            ? Strings.Get("Dashboard_FirstActivityPrefix") + " " + firstActivity.Value.ToString("HH:mm")
             : Strings.Get("Dashboard_FirstActivity");
 
         _appItems.Clear();
