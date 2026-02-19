@@ -375,16 +375,16 @@ public partial class StatisticsPage : Page
 
     private void ApplyWeeklyComparison(long thisWeekSeconds, long lastWeekSeconds)
     {
-        TxtWeeklyThisWeek.Text = Strings.Get("Stats_ThisWeekLabel") + DurationAndPeriodHelper.FormatDuration(thisWeekSeconds);
-        TxtWeeklyLastWeek.Text = Strings.Get("Stats_LastWeekLabel") + DurationAndPeriodHelper.FormatDuration(lastWeekSeconds);
+        TxtWeeklyThisWeek.Text = Strings.Get("Stats_ThisWeekLabel")+ " " + DurationAndPeriodHelper.FormatDuration(thisWeekSeconds);
+        TxtWeeklyLastWeek.Text = Strings.Get("Stats_LastWeekLabel") + " " + DurationAndPeriodHelper.FormatDuration(lastWeekSeconds);
         var diffSeconds = thisWeekSeconds - lastWeekSeconds;
         var diffFormatted = DurationAndPeriodHelper.FormatDuration(Math.Abs(diffSeconds));
         var pct = lastWeekSeconds > 0 ? (double)diffSeconds / lastWeekSeconds * 100 : (diffSeconds > 0 ? 100.0 : 0.0);
         var pctStr = pct >= 0 ? $"%+{pct:F0}" : $"%{pct:F0}";
         var diffPrefix = Strings.Get("Stats_DiffLabel");
         TxtWeeklyDiff.Text = diffSeconds >= 0
-            ? diffPrefix + "+" + diffFormatted + " (" + pctStr + ")"
-            : diffPrefix + "-" + diffFormatted + " (" + pctStr + ")";
+            ? diffPrefix + " " + "+" + diffFormatted + " (" + pctStr + ")"
+            : diffPrefix + " " + "-" + diffFormatted + " (" + pctStr + ")";
     }
 
     private void ClearData()
