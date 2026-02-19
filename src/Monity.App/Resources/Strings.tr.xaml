@@ -88,7 +88,7 @@
     <sys:String x:Key="Settings_DeleteAll">Tüm verileri sil</sys:String>
     <sys:String x:Key="Settings_Language">Dil</sys:String>
     <sys:String x:Key="Settings_LanguageTurkish">Türkçe</sys:String>
-    <sys:String x:Key="Settings_LanguageEnglish">English</sys:String>
+    <sys:String x:Key="Settings_LanguageEnglish">İngilizce</sys:String>
     <!-- Statistics -->
     <sys:String x:Key="Stats_Title">İstatistikler</sys:String>
     <sys:String x:Key="Stats_BackToDashboard">← Geri</sys:String>

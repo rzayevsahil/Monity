@@ -87,7 +87,7 @@
     <sys:String x:Key="Settings_Delete365">Delete data older than 365 days</sys:String>
     <sys:String x:Key="Settings_DeleteAll">Delete all data</sys:String>
     <sys:String x:Key="Settings_Language">Language</sys:String>
-    <sys:String x:Key="Settings_LanguageTurkish">Türkçe</sys:String>
+    <sys:String x:Key="Settings_LanguageTurkish">Turkish</sys:String>
     <sys:String x:Key="Settings_LanguageEnglish">English</sys:String>
     <!-- Statistics -->
     <sys:String x:Key="Stats_Title">Statistics</sys:String>
