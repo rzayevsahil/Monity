@@ -15,6 +15,7 @@
     <!-- Dashboard -->
     <sys:String x:Key="Dashboard_Title">Dashboard</sys:String>
     <sys:String x:Key="Dashboard_FirstActivity">Today start: —</sys:String>
+    <sys:String x:Key="Dashboard_FirstActivityPrefix">Today start: </sys:String>
     <sys:String x:Key="Dashboard_FirstActivityTooltip">First usage time recorded on selected day</sys:String>
     <sys:String x:Key="Dashboard_TodayTotal">Today Total</sys:String>
     <sys:String x:Key="Dashboard_UsageRecords">Usage records</sys:String>
@@ -33,6 +34,14 @@
     <sys:String x:Key="Dashboard_DaySun">Sun</sys:String>
     <sys:String x:Key="Dashboard_Less">Less</sys:String>
     <sys:String x:Key="Dashboard_More">More</sys:String>
+    <sys:String x:Key="Category_All">All</sys:String>
+    <sys:String x:Key="Category_Uncategorized">Uncategorized</sys:String>
+    <sys:String x:Key="Category_Other">Other</sys:String>
+    <sys:String x:Key="Category_Browser">Browser</sys:String>
+    <sys:String x:Key="Category_Development">Development</sys:String>
+    <sys:String x:Key="Category_Social">Social</sys:String>
+    <sys:String x:Key="Category_Entertainment">Entertainment</sys:String>
+    <sys:String x:Key="Category_Office">Office</sys:String>
     <sys:String x:Key="Dashboard_HourlyUsage">Hourly Usage</sys:String>
     <sys:String x:Key="Dashboard_AppUsage">App Usage</sys:String>
     <sys:String x:Key="Dashboard_Search">Search</sys:String>

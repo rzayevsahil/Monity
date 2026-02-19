@@ -62,14 +62,14 @@ public partial class DashboardPage : Page
     {
         var options = new List<CategoryFilterOption>
         {
-            new(null, "Tümü"),
-            new("", "Kategorisiz"),
-            new("Diğer", "Diğer"),
-            new("Tarayıcı", "Tarayıcı"),
-            new("Geliştirme", "Geliştirme"),
-            new("Sosyal", "Sosyal"),
-            new("Eğlence", "Eğlence"),
-            new("Ofis", "Ofis")
+            new(null, Strings.Get("Category_All")),
+            new("", Strings.Get("Category_Uncategorized")),
+            new("Diğer", Strings.Get("Category_Other")),
+            new("Tarayıcı", Strings.Get("Category_Browser")),
+            new("Geliştirme", Strings.Get("Category_Development")),
+            new("Sosyal", Strings.Get("Category_Social")),
+            new("Eğlence", Strings.Get("Category_Entertainment")),
+            new("Ofis", Strings.Get("Category_Office"))
         };
         CategoryFilter.ItemsSource = options;
         CategoryFilter.DisplayMemberPath = "Display";
@@ -154,12 +154,13 @@ public partial class DashboardPage : Page
             var excludedList = excluded.ToList();
             var dailyTotalsForMonth = await _repository.GetDailyTotalsInRangeAsync(startOfMonth, endOfMonth, excludeIdle: true, excludedProcessNames: excludedList, categoryName: categoryName);
 
+            var language = (await _repository.GetSettingAsync("language") ?? "tr").Trim().ToLowerInvariant();
+            var titleCulture = language == "en" ? new CultureInfo("en-US") : new CultureInfo("tr-TR");
             await Dispatcher.InvokeAsync(() =>
             {
                 ApplyDataToUI(total, sessionCount, apps, hourly, firstActivity);
                 UpdateHeatMap(dailyTotalsForMonth, startOfMonth, endOfMonth, selectedDate);
-                var ci = CultureInfo.CurrentCulture;
-                TxtHeatMapTitle.Text = $"Aylık kullanım yoğunluğu — {startOfMonth.ToString("MMMM yyyy", ci)}";
+                TxtHeatMapTitle.Text = $"{Strings.Get("Dashboard_HeatMapTitle")} — {startOfMonth.ToString("MMMM yyyy", titleCulture)}";
             }, System.Windows.Threading.DispatcherPriority.Normal);
         }
         catch (Exception ex)
@@ -176,7 +177,7 @@ public partial class DashboardPage : Page
     {
         TxtTodayTotal.Text = "0 sa 0 dk";
         TxtSessionCount.Text = "0";
-        TxtFirstActivity.Text = "Bugün başlangıç: —";
+        TxtFirstActivity.Text = Strings.Get("Dashboard_FirstActivity");
         TxtHeatMapTitle.Text = Strings.Get("Dashboard_HeatMapTitle");
         _appItems.Clear();
         _heatMapCells.Clear();
@@ -205,8 +206,8 @@ public partial class DashboardPage : Page
         TxtTodayTotal.Text = FormatDuration(total);
         TxtSessionCount.Text = sessionCount.ToString();
         TxtFirstActivity.Text = firstActivity.HasValue
-            ? $"Bugün başlangıç: {firstActivity.Value:HH:mm}"
-            : "Bugün başlangıç: —";
+            ? Strings.Get("Dashboard_FirstActivityPrefix") + firstActivity.Value.ToString("HH:mm")
+            : Strings.Get("Dashboard_FirstActivity");
 
         _appItems.Clear();
         foreach (var a in apps)

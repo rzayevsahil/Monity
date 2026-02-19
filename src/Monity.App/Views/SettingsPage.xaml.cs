@@ -60,7 +60,7 @@ public partial class SettingsPage : Page
         AppExcludeList.ItemsSource = _appExcludeView;
         DailyLimitList.ItemsSource = _dailyLimitView;
         CategoryList.ItemsSource = _categoryView;
-        CategoryComboBox.ItemsSource = CategoryItem.CategoryOptionsList;
+        CategoryComboBox.ItemsSource = CategoryItem.GetCategoryOptions();
         CategoryComboBox.DisplayMemberPath = "Display";
         CategoryComboBox.SelectedValuePath = "Value";
         CategoryComboBox.SelectedIndex = 0;
@@ -519,6 +519,8 @@ public partial class SettingsPage : Page
         await _languageService.SaveLanguageAsync(language);
 
         await _startupService.SetEnabledAsync(CbStartWithWindows.IsChecked == true);
+        CategoryComboBox.ItemsSource = CategoryItem.GetCategoryOptions();
+        _categoryView?.Refresh();
         System.Windows.MessageBox.Show(Strings.Get("Msg_GeneralSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
@@ -635,15 +637,15 @@ public partial class SettingsPage : Page
 
     private sealed class CategoryItem : INotifyPropertyChanged
     {
-        internal static readonly IReadOnlyList<CategoryOption> CategoryOptionsList =
+        internal static IReadOnlyList<CategoryOption> GetCategoryOptions() =>
         [
-            new CategoryOption("", "Kategorisiz"),
-            new CategoryOption("Diğer", "Diğer"),
-            new CategoryOption("Tarayıcı", "Tarayıcı"),
-            new CategoryOption("Geliştirme", "Geliştirme"),
-            new CategoryOption("Sosyal", "Sosyal"),
-            new CategoryOption("Eğlence", "Eğlence"),
-            new CategoryOption("Ofis", "Ofis")
+            new CategoryOption("", Strings.Get("Category_Uncategorized")),
+            new CategoryOption("Diğer", Strings.Get("Category_Other")),
+            new CategoryOption("Tarayıcı", Strings.Get("Category_Browser")),
+            new CategoryOption("Geliştirme", Strings.Get("Category_Development")),
+            new CategoryOption("Sosyal", Strings.Get("Category_Social")),
+            new CategoryOption("Eğlence", Strings.Get("Category_Entertainment")),
+            new CategoryOption("Ofis", Strings.Get("Category_Office"))
         ];
         public int AppId { get; }
         public string DisplayName { get; }
@@ -653,7 +655,7 @@ public partial class SettingsPage : Page
             get => _categoryName;
             set { _categoryName = value ?? ""; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CategoryName))); }
         }
-        public IReadOnlyList<CategoryOption> CategoryOptions => CategoryOptionsList;
+        public IReadOnlyList<CategoryOption> CategoryOptions => GetCategoryOptions();
         private bool _isSelected;
         public bool IsSelected
         {

@@ -86,14 +86,14 @@ public partial class StatisticsPage : Page
     {
         var options = new List<StatCategoryFilterOption>
         {
-            new(null, "Tümü"),
-            new("", "Kategorisiz"),
-            new("Diğer", "Diğer"),
-            new("Tarayıcı", "Tarayıcı"),
-            new("Geliştirme", "Geliştirme"),
-            new("Sosyal", "Sosyal"),
-            new("Eğlence", "Eğlence"),
-            new("Ofis", "Ofis")
+            new(null, Strings.Get("Category_All")),
+            new("", Strings.Get("Category_Uncategorized")),
+            new("Diğer", Strings.Get("Category_Other")),
+            new("Tarayıcı", Strings.Get("Category_Browser")),
+            new("Geliştirme", Strings.Get("Category_Development")),
+            new("Sosyal", Strings.Get("Category_Social")),
+            new("Eğlence", Strings.Get("Category_Entertainment")),
+            new("Ofis", Strings.Get("Category_Office"))
         };
         CategoryFilter.ItemsSource = options;
         CategoryFilter.DisplayMemberPath = "Display";

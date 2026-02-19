@@ -15,6 +15,7 @@
     <!-- Dashboard -->
     <sys:String x:Key="Dashboard_Title">Dashboard</sys:String>
     <sys:String x:Key="Dashboard_FirstActivity">Bugün başlangıç: —</sys:String>
+    <sys:String x:Key="Dashboard_FirstActivityPrefix">Bugün başlangıç: </sys:String>
     <sys:String x:Key="Dashboard_FirstActivityTooltip">Seçilen günde kaydedilen ilk kullanım saati</sys:String>
     <sys:String x:Key="Dashboard_TodayTotal">Bugün Toplam</sys:String>
     <sys:String x:Key="Dashboard_UsageRecords">Kullanım kaydı</sys:String>
@@ -33,6 +34,14 @@
     <sys:String x:Key="Dashboard_DaySun">Paz</sys:String>
     <sys:String x:Key="Dashboard_Less">Az</sys:String>
     <sys:String x:Key="Dashboard_More">Çok</sys:String>
+    <sys:String x:Key="Category_All">Tümü</sys:String>
+    <sys:String x:Key="Category_Uncategorized">Kategorisiz</sys:String>
+    <sys:String x:Key="Category_Other">Diğer</sys:String>
+    <sys:String x:Key="Category_Browser">Tarayıcı</sys:String>
+    <sys:String x:Key="Category_Development">Geliştirme</sys:String>
+    <sys:String x:Key="Category_Social">Sosyal</sys:String>
+    <sys:String x:Key="Category_Entertainment">Eğlence</sys:String>
+    <sys:String x:Key="Category_Office">Ofis</sys:String>
     <sys:String x:Key="Dashboard_HourlyUsage">Saatlik Kullanım</sys:String>
     <sys:String x:Key="Dashboard_AppUsage">Uygulama Kullanımı</sys:String>
     <sys:String x:Key="Dashboard_Search">Ara</sys:String>
