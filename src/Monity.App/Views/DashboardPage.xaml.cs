@@ -217,10 +217,13 @@ public partial class DashboardPage : Page
             _appItems.Add(new AppUsageItem
             {
                 DisplayName = a.DisplayName ?? a.ProcessName,
+                TotalSeconds = a.TotalSeconds,
+                Percentage = pct,
                 DurationFormatted = FormatDuration(a.TotalSeconds),
                 PercentageFormatted = $"{pct:F1}%"
             });
         }
+        ApplyAppListSort();
 
         var hourlyValues = new double[24];
         foreach (var h in hourly)
@@ -365,10 +368,55 @@ public partial class DashboardPage : Page
         }
     }
 
+    private string _appListSortProperty = nameof(AppUsageItem.TotalSeconds);
+    private ListSortDirection _appListSortDirection = ListSortDirection.Descending;
+
+    private void AppListColumnHeader_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not GridViewColumnHeader header || header.Tag is not string tag) return;
+        var prop = tag switch
+        {
+            "DisplayName" => nameof(AppUsageItem.DisplayName),
+            "TotalSeconds" => nameof(AppUsageItem.TotalSeconds),
+            "Percentage" => nameof(AppUsageItem.Percentage),
+            _ => _appListSortProperty
+        };
+        if (prop == _appListSortProperty)
+            _appListSortDirection = _appListSortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+        else
+        {
+            _appListSortProperty = prop;
+            _appListSortDirection = prop == nameof(AppUsageItem.DisplayName) ? ListSortDirection.Ascending : ListSortDirection.Descending;
+        }
+        ApplyAppListSort();
+    }
+
+    private void ApplyAppListSort()
+    {
+        _appListView.SortDescriptions.Clear();
+        _appListView.SortDescriptions.Add(new SortDescription(_appListSortProperty, _appListSortDirection));
+    }
+
     private class AppUsageItem
     {
         public string DisplayName { get; set; } = "";
+        public long TotalSeconds { get; set; }
+        public double Percentage { get; set; }
         public string DurationFormatted { get; set; } = "";
         public string PercentageFormatted { get; set; } = "";
     }
+}
+
+/// <summary>AlternationIndex (0,1,2...) değerine 1 ekleyerek sıra numarası (1,2,3...) üretir.</summary>
+public sealed class RankFromAlternationConverter : System.Windows.Data.IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is int i)
+            return (i + 1).ToString(culture);
+        return "1";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => System.Windows.Data.Binding.DoNothing;
 }

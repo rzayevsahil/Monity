@@ -45,6 +45,7 @@
     <sys:String x:Key="Category_Education">Education</sys:String>
     <sys:String x:Key="Dashboard_HourlyUsage">Daily Usage</sys:String>
     <sys:String x:Key="Dashboard_AppUsage">Daily App Usage</sys:String>
+    <sys:String x:Key="Dashboard_Rank">No.</sys:String>
     <sys:String x:Key="Dashboard_Search">Search</sys:String>
     <sys:String x:Key="Dashboard_SearchTooltip">Filter by app name</sys:String>
     <!-- Settings -->

@@ -45,6 +45,7 @@
     <sys:String x:Key="Category_Education">Eğitim</sys:String>
     <sys:String x:Key="Dashboard_HourlyUsage">Günlük Kullanım</sys:String>
     <sys:String x:Key="Dashboard_AppUsage">Günlük Uygulama Kullanımı</sys:String>
+    <sys:String x:Key="Dashboard_Rank">Sıra</sys:String>
     <sys:String x:Key="Dashboard_Search">Ara</sys:String>
     <sys:String x:Key="Dashboard_SearchTooltip">Uygulama adına göre filtrele</sys:String>
     <!-- Settings -->
