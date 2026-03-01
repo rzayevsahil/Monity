@@ -442,7 +442,11 @@ public partial class DashboardPage : Page
             var labelForeground = IsDarkTheme()
                 ? HeatMapLabelLight
                 : (level <= 1 ? HeatMapLabelDark : HeatMapLabelLight);
-            _heatMapCells.Add(new HeatMapDayCell(fill, tooltip, dayNum.ToString(), labelForeground));
+            
+            // Bugünkü günü kontrol et
+            var isToday = dayDate.Date == DateTime.Today;
+            
+            _heatMapCells.Add(new HeatMapDayCell(fill, tooltip, dayNum.ToString(), labelForeground, isToday));
         }
     }
 
@@ -452,13 +456,36 @@ public partial class DashboardPage : Page
         public string TooltipText { get; }
         public string DayLabel { get; }
         public System.Windows.Media.Brush DayLabelForeground { get; }
+        public bool IsToday { get; }
+        public System.Windows.Media.Brush BorderBrush { get; }
+        public double BorderThickness { get; }
+        public double Opacity { get; }
 
-        public HeatMapDayCell(System.Windows.Media.Brush fill, string tooltipText, string dayLabel, System.Windows.Media.Brush dayLabelForeground)
+        public HeatMapDayCell(System.Windows.Media.Brush fill, string tooltipText, string dayLabel, System.Windows.Media.Brush dayLabelForeground, bool isToday = false)
         {
-            Fill = fill;
             TooltipText = tooltipText;
             DayLabel = dayLabel;
-            DayLabelForeground = dayLabelForeground;
+            IsToday = isToday;
+            
+            // Bugünkü gün için özel görünüm
+            if (isToday)
+            {
+                // Bugünkü gün: Parlak mavi arka plan + çok kalın beyaz çizgi
+                Fill = System.Windows.Application.Current.FindResource("PrimaryBrush") as System.Windows.Media.Brush ?? System.Windows.Media.Brushes.Blue;
+                BorderBrush = System.Windows.Media.Brushes.White;
+                BorderThickness = 2.0;
+                DayLabelForeground = System.Windows.Media.Brushes.White;
+                Opacity = 1.0;
+            }
+            else
+            {
+                // Normal günler
+                Fill = fill;
+                BorderBrush = System.Windows.Application.Current.FindResource("BorderBrush") as System.Windows.Media.Brush ?? System.Windows.Media.Brushes.Gray;
+                BorderThickness = 1.0;
+                DayLabelForeground = dayLabelForeground;
+                Opacity = 1.0;
+            }
         }
     }
 

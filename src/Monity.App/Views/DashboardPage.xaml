@@ -81,10 +81,24 @@
                             <DataTemplate>
                                 <Border Margin="3" CornerRadius="4" MinWidth="32" MinHeight="28"
                                         Background="{Binding Fill}" ToolTip="{Binding TooltipText}"
-                                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                                        BorderBrush="{Binding BorderBrush}" BorderThickness="{Binding BorderThickness}"
+                                        Opacity="{Binding Opacity}">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect Color="Blue" BlurRadius="8" ShadowDepth="0" Opacity="0.8"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                     <TextBlock Text="{Binding DayLabel}" FontSize="11" Foreground="{Binding DayLabelForeground}"
                                                HorizontalAlignment="Center" VerticalAlignment="Center"
-                                               FontWeight="SemiBold"/>
+                                               FontWeight="Bold"/>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
