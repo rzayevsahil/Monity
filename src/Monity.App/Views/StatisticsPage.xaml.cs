@@ -5,12 +5,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Threading;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.Extensions.DependencyInjection;
 using Monity.App.Helpers;
 using Monity.Infrastructure.Persistence;
+using Monity.Infrastructure.Tracking;
 using SkiaSharp;
 
 namespace Monity.App.Views;
@@ -21,6 +23,7 @@ public partial class StatisticsPage : Page
     private readonly IUsageRepository _repository;
     private ObservableCollection<StatAppItem> _appItems = [];
     private ICollectionView _appListView = null!;
+    private DispatcherTimer? _midnightTimer;
 
     public StatisticsPage(IServiceProvider services)
     {
@@ -35,7 +38,17 @@ public partial class StatisticsPage : Page
         AppListView.ItemsSource = _appListView;
         SetupCategoryFilter();
 
-        Loaded += async (_, _) => await LoadDataAsync();
+        Loaded += async (_, _) => 
+        {
+            SetupMidnightTimer();
+            await LoadDataAsync();
+        };
+        
+        Unloaded += (_, _) => 
+        {
+            _midnightTimer?.Stop();
+            _midnightTimer = null;
+        };
         SetupTimeChartAxes();
     }
 
@@ -118,14 +131,74 @@ public partial class StatisticsPage : Page
     private async void BtnRefresh_Click(object sender, RoutedEventArgs e)
     {
         BtnRefresh.IsEnabled = false;
+        var originalContent = BtnRefresh.Content;
+        BtnRefresh.Content = Strings.Get("Dashboard_Refreshing");
         try
         {
             BtnRefresh.Focus();
-            await LoadDataAsync();
+            
+            // ZORLA YENİLE: Buffer'ı flush et ve UI'ı tamamen temizle
+            await ForceRefreshData();
         }
         finally
         {
+            BtnRefresh.Content = originalContent;
             BtnRefresh.IsEnabled = true;
+        }
+    }
+
+    private void SetupMidnightTimer()
+    {
+        var now = DateTime.Now;
+        var tomorrow = now.Date.AddDays(1);
+        var timeUntilMidnight = tomorrow - now;
+
+        _midnightTimer = new DispatcherTimer();
+        _midnightTimer.Interval = timeUntilMidnight;
+        _midnightTimer.Tick += async (_, _) =>
+        {
+            // Gece yarısında otomatik yenile
+            await RefreshCurrentData();
+            
+            // Timer'ı 24 saatlik periyoda ayarla
+            _midnightTimer.Interval = TimeSpan.FromDays(1);
+        };
+        _midnightTimer.Start();
+    }
+
+    private async Task RefreshCurrentData()
+    {
+        try
+        {
+            // Verileri yenile
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "İstatistikler gece yarısı otomatik yenileme hatası");
+        }
+    }
+
+    private async Task ForceRefreshData()
+    {
+        try
+        {
+            // 1. Buffer'daki tüm verileri zorla DB'ye yaz (tracking service'i al)
+            var trackingService = _services.GetRequiredService<UsageTrackingService>();
+            await trackingService.FlushBufferAsync();
+            
+            // 2. UI'ı temizle
+            ClearData();
+            
+            // 3. Kısa bir gecikme (UI'ın temizlenmesini garanti et)
+            await Task.Delay(100);
+            
+            // 4. Verileri yeniden yükle
+            await LoadDataAsync();
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "İstatistikler force refresh hatası");
         }
     }
 

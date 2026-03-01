@@ -24,6 +24,7 @@
     <sys:String x:Key="Dashboard_Date">Tarih:</sys:String>
     <sys:String x:Key="Dashboard_Category">Kategori:</sys:String>
     <sys:String x:Key="Dashboard_Refresh">Yenile</sys:String>
+    <sys:String x:Key="Dashboard_Refreshing">Yenileniyor...</sys:String>
     <sys:String x:Key="Dashboard_HeatMapTitle">Aylık kullanım yoğunluğu</sys:String>
     <sys:String x:Key="Dashboard_DayMon">Pzt</sys:String>
     <sys:String x:Key="Dashboard_DayTue">Sal</sys:String>

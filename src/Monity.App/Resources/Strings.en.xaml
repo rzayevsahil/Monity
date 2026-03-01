@@ -24,6 +24,7 @@
     <sys:String x:Key="Dashboard_Date">Date:</sys:String>
     <sys:String x:Key="Dashboard_Category">Category:</sys:String>
     <sys:String x:Key="Dashboard_Refresh">Refresh</sys:String>
+    <sys:String x:Key="Dashboard_Refreshing">Refreshing...</sys:String>
     <sys:String x:Key="Dashboard_HeatMapTitle">Monthly usage intensity</sys:String>
     <sys:String x:Key="Dashboard_DayMon">Mon</sys:String>
     <sys:String x:Key="Dashboard_DayTue">Tue</sys:String>

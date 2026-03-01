@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Threading;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -25,6 +26,7 @@ public partial class DashboardPage : Page
     private ObservableCollection<AppUsageItem> _appItems = [];
     private readonly ObservableCollection<HeatMapDayCell> _heatMapCells = [];
     private ICollectionView _appListView = null!;
+    private DispatcherTimer? _midnightTimer;
 
     public DashboardPage(IServiceProvider services)
     {
@@ -43,10 +45,16 @@ public partial class DashboardPage : Page
         Loaded += async (_, _) =>
         {
             _trackingService.ForegroundChanged += OnForegroundChanged;
+            SetupMidnightTimer();
             await LoadDataAsync(DateTime.Today.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
         };
 
-        Unloaded += (_, _) => _trackingService.ForegroundChanged -= OnForegroundChanged;
+        Unloaded += (_, _) => 
+        {
+            _trackingService.ForegroundChanged -= OnForegroundChanged;
+            _midnightTimer?.Stop();
+            _midnightTimer = null;
+        };
     }
 
     private void OnForegroundChanged(object? sender, ForegroundChangedEventArgs e)
@@ -56,6 +64,41 @@ public partial class DashboardPage : Page
             var displayName = AppDisplayNameResolver.GetDisplayNameFromExe(e.ExePath);
             TxtCurrentApp.Text = !string.IsNullOrEmpty(displayName) ? displayName : e.ProcessName;
         });
+    }
+
+    private void SetupMidnightTimer()
+    {
+        var now = DateTime.Now;
+        var tomorrow = now.Date.AddDays(1);
+        var timeUntilMidnight = tomorrow - now;
+
+        _midnightTimer = new DispatcherTimer();
+        _midnightTimer.Interval = timeUntilMidnight;
+        _midnightTimer.Tick += async (_, _) =>
+        {
+            // Gece yarısında otomatik yenile
+            await RefreshCurrentDayData();
+            
+            // Timer'ı 24 saatlik periyoda ayarla
+            _midnightTimer.Interval = TimeSpan.FromDays(1);
+        };
+        _midnightTimer.Start();
+    }
+
+    private async Task RefreshCurrentDayData()
+    {
+        try
+        {
+            // DatePicker'ı bugüne ayarla
+            DatePicker.SelectedDate = DateTime.Today;
+            
+            // Verileri yenile
+            await LoadDataAsync(DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Gece yarısı otomatik yenileme hatası");
+        }
     }
 
     private void SetupCategoryFilter()
@@ -100,16 +143,61 @@ public partial class DashboardPage : Page
     private async void BtnRefresh_Click(object sender, RoutedEventArgs e)
     {
         BtnRefresh.IsEnabled = false;
+        var originalContent = BtnRefresh.Content;
+        BtnRefresh.Content = Strings.Get("Dashboard_Refreshing");
         try
         {
             // DatePicker'dan yeni seçilen tarihin commit edilmesi için odağı butona al (özellikle yazılan tarih için)
             BtnRefresh.Focus();
-            await LoadDataAsync(GetSelectedDateString());
+            
+            // ZORLA YENİLE: Buffer'ı flush et ve UI'ı tamamen temizle
+            await ForceRefreshData();
         }
         finally
         {
+            BtnRefresh.Content = originalContent;
             BtnRefresh.IsEnabled = true;
         }
+    }
+
+    private async Task ForceRefreshData()
+    {
+        try
+        {
+            // 1. Buffer'daki tüm verileri zorla DB'ye yaz
+            await _trackingService.FlushBufferAsync();
+            
+            // 2. UI'ı temizle
+            ClearUI();
+            
+            // 3. Kısa bir gecikme (UI'ın temizlenmesini garanti et)
+            await Task.Delay(100);
+            
+            // 4. Verileri yeniden yükle
+            await LoadDataAsync(GetSelectedDateString());
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Force refresh hatası");
+        }
+    }
+
+    private void ClearUI()
+    {
+        // Uygulama listesini temizle
+        _appItems.Clear();
+        
+        // Heat map'i temizle
+        _heatMapCells.Clear();
+        
+        // Chart'ları temizle
+        HourlyChart.Series = new ObservableCollection<ISeries>();
+        
+        // Metin alanlarını temizle
+        TxtTodayTotal.Text = "0 sa 0 dk";
+        TxtSessionCount.Text = "0";
+        TxtFirstActivity.Text = Strings.Get("Dashboard_FirstActivity");
+        TxtHeatMapTitle.Text = Strings.Get("Dashboard_HeatMapTitle");
     }
 
     private string GetSelectedDateString()
