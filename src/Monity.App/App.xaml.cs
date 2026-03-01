@@ -3,6 +3,7 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Monity.App.Power;
 using Monity.App.Services;
+using Monity.Infrastructure.Browser;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
 using Monity.Infrastructure.WinApi;
@@ -86,7 +87,8 @@ public partial class App : System.Windows.Application
             var repo = sp.GetRequiredService<IUsageRepository>();
             var buffer = sp.GetRequiredService<SessionBuffer>();
             var wt = sp.GetRequiredService<IWindowTracker>();
-            return new UsageTrackingService(engine, repo, buffer, wt);
+            var browserTracking = sp.GetRequiredService<IBrowserTrackingService>();
+            return new UsageTrackingService(engine, repo, buffer, wt, browserTracking);
         });
         services.AddSingleton<PowerEventHandler>(sp =>
         {
@@ -95,6 +97,7 @@ public partial class App : System.Windows.Application
                 onSuspend: () => engine.HandlePowerSuspend(),
                 onResume: () => engine.HandlePowerResume());
         });
+        services.AddSingleton<IBrowserTrackingService, BrowserTrackingService>();
         services.AddSingleton<UpdateService>();
         services.AddSingleton<ThemeService>();
         services.AddSingleton<LanguageService>();

@@ -465,4 +465,189 @@ public sealed class UsageRepository : IUsageRepository
         await conn.ExecuteAsync("DELETE FROM apps", transaction: tx);
         tx.Commit();
     }
+
+    // Browser session management methods
+    public async Task<int> AddBrowserSessionAsync(BrowserSession session, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        
+        var id = await conn.ExecuteScalarAsync<int>(
+            """
+            INSERT INTO browser_sessions (browser_name, tab_id, url, domain, title, started_at, ended_at, duration_seconds, is_active, day_date, created_at)
+            VALUES (@BrowserName, @TabId, @Url, @Domain, @Title, @StartedAt, @EndedAt, @DurationSeconds, @IsActive, @DayDate, @CreatedAt);
+            SELECT last_insert_rowid();
+            """,
+            new
+            {
+                session.BrowserName,
+                session.TabId,
+                session.Url,
+                session.Domain,
+                session.Title,
+                StartedAt = session.StartedAt.ToString("O"),
+                EndedAt = session.EndedAt?.ToString("O"),
+                session.DurationSeconds,
+                IsActive = session.IsActive ? 1 : 0,
+                session.DayDate,
+                CreatedAt = session.CreatedAt.ToString("O")
+            });
+
+        return id;
+    }
+
+    public async Task UpdateBrowserSessionAsync(int sessionId, DateTime endTime, int durationSeconds, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        
+        await conn.ExecuteAsync(
+            """
+            UPDATE browser_sessions 
+            SET ended_at = @EndTime, duration_seconds = @DurationSeconds, is_active = 0
+            WHERE id = @SessionId
+            """,
+            new
+            {
+                SessionId = sessionId,
+                EndTime = endTime.ToString("O"),
+                DurationSeconds = durationSeconds
+            });
+    }
+
+    public async Task<List<BrowserSession>> GetActiveBrowserSessionsAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        
+        var rows = await conn.QueryAsync<BrowserSessionRaw>(
+            """
+            SELECT id AS Id, browser_name AS BrowserName, tab_id AS TabId, url AS Url, domain AS Domain, 
+                   title AS Title, started_at AS StartedAtStr, ended_at AS EndedAtStr, duration_seconds AS DurationSeconds,
+                   is_active AS IsActiveInt, day_date AS DayDate, created_at AS CreatedAtStr
+            FROM browser_sessions 
+            WHERE is_active = 1
+            """);
+
+        return rows.Select(r => new BrowserSession
+        {
+            Id = r.Id,
+            BrowserName = r.BrowserName,
+            TabId = r.TabId,
+            Url = r.Url,
+            Domain = r.Domain,
+            Title = r.Title,
+            StartedAt = DateTime.Parse(r.StartedAtStr),
+            EndedAt = string.IsNullOrEmpty(r.EndedAtStr) ? null : DateTime.Parse(r.EndedAtStr),
+            DurationSeconds = r.DurationSeconds,
+            IsActive = r.IsActiveInt == 1,
+            DayDate = r.DayDate,
+            CreatedAt = DateTime.Parse(r.CreatedAtStr)
+        }).ToList();
+    }
+
+    // Browser analytics queries
+    public async Task<List<BrowserDomainUsage>> GetBrowserDomainUsageAsync(string date, string? browserName = null, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+
+        var browserFilter = browserName != null ? " AND browser_name = @BrowserName" : "";
+        var sql = $"""
+            SELECT domain AS Domain, browser_name AS BrowserName,
+                   SUM(duration_seconds) AS TotalSeconds,
+                   COUNT(*) AS SessionCount,
+                   COUNT(*) AS PageViews
+            FROM browser_sessions
+            WHERE day_date = @Date{browserFilter}
+            GROUP BY domain, browser_name
+            ORDER BY TotalSeconds DESC
+            """;
+
+        object param = browserName != null 
+            ? new { Date = date, BrowserName = browserName }
+            : new { Date = date };
+
+        var rows = await conn.QueryAsync<BrowserDomainUsage>(sql, param);
+        return rows.ToList();
+    }
+
+    public async Task<List<BrowserHourlyUsage>> GetBrowserHourlyUsageAsync(string date, string? domain = null, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+
+        var domainFilter = domain != null ? " AND domain = @Domain" : "";
+        var sql = $"""
+            SELECT CAST(substr(started_at, 12, 2) AS INTEGER) AS Hour,
+                   SUM(duration_seconds) AS TotalSeconds
+            FROM browser_sessions
+            WHERE day_date = @Date{domainFilter}
+            GROUP BY Hour
+            ORDER BY Hour
+            """;
+
+        object param = domain != null 
+            ? new { Date = date, Domain = domain }
+            : new { Date = date };
+
+        var rows = await conn.QueryAsync<BrowserHourlyUsage>(sql, param);
+        return rows.ToList();
+    }
+
+    public async Task<Dictionary<string, long>> GetTopDomainsAsync(string date, int limit = 10, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        
+        var rows = await conn.QueryAsync<(string Domain, long TotalSeconds)>(
+            """
+            SELECT domain, SUM(duration_seconds) AS TotalSeconds
+            FROM browser_sessions
+            WHERE day_date = @Date
+            GROUP BY domain
+            ORDER BY TotalSeconds DESC
+            LIMIT @Limit
+            """,
+            new { Date = date, Limit = limit });
+
+        return rows.ToDictionary(r => r.Domain, r => r.TotalSeconds);
+    }
+
+    public async Task UpdateBrowserDailySummaryAsync(string date, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        using var tx = conn.BeginTransaction();
+
+        await conn.ExecuteAsync(
+            """
+            INSERT INTO browser_daily_summary (domain, browser_name, date, total_seconds, session_count, page_views)
+            SELECT domain, browser_name, @Date,
+                   SUM(duration_seconds),
+                   COUNT(*),
+                   COUNT(*)
+            FROM browser_sessions
+            WHERE day_date = @Date
+            GROUP BY domain, browser_name
+            ON CONFLICT(domain, browser_name, date) DO UPDATE SET
+                total_seconds = excluded.total_seconds,
+                session_count = excluded.session_count,
+                page_views = excluded.page_views
+            """,
+            new { Date = date },
+            tx);
+
+        tx.Commit();
+    }
+
+    // Helper class for complex query mapping
+    private class BrowserSessionRaw
+    {
+        public int Id { get; set; }
+        public string BrowserName { get; set; } = "";
+        public string TabId { get; set; } = "";
+        public string Url { get; set; } = "";
+        public string Domain { get; set; } = "";
+        public string? Title { get; set; }
+        public string StartedAtStr { get; set; } = "";
+        public string? EndedAtStr { get; set; }
+        public int DurationSeconds { get; set; }
+        public int IsActiveInt { get; set; }
+        public string DayDate { get; set; } = "";
+        public string CreatedAtStr { get; set; } = "";
+    }
 }

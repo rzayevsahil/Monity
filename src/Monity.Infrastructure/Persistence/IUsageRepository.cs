@@ -24,6 +24,17 @@ public interface IUsageRepository
     Task<long> GetTodayTotalSecondsForAppIdAsync(int appId, CancellationToken ct = default);
     Task DeleteDataOlderThanAsync(DateTime cutoff, CancellationToken ct = default);
     Task DeleteAllDataAsync(CancellationToken ct = default);
+
+    // Browser session management
+    Task<int> AddBrowserSessionAsync(BrowserSession session, CancellationToken ct = default);
+    Task UpdateBrowserSessionAsync(int sessionId, DateTime endTime, int durationSeconds, CancellationToken ct = default);
+    Task<List<BrowserSession>> GetActiveBrowserSessionsAsync(CancellationToken ct = default);
+
+    // Browser analytics queries
+    Task<List<BrowserDomainUsage>> GetBrowserDomainUsageAsync(string date, string? browserName = null, CancellationToken ct = default);
+    Task<List<BrowserHourlyUsage>> GetBrowserHourlyUsageAsync(string date, string? domain = null, CancellationToken ct = default);
+    Task<Dictionary<string, long>> GetTopDomainsAsync(string date, int limit = 10, CancellationToken ct = default);
+    Task UpdateBrowserDailySummaryAsync(string date, CancellationToken ct = default);
 }
 
 public record AppListItem(string ProcessName, string? DisplayName);

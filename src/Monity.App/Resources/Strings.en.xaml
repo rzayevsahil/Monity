@@ -137,4 +137,22 @@
     <sys:String x:Key="Msg_Update">Update</sys:String>
     <sys:String x:Key="LimitNotification_Title">Daily usage limit</sys:String>
     <sys:String x:Key="LimitNotification_Text">You have reached your daily limit: {0} (limit: {1}).</sys:String>
+
+    <!-- Browser Tracking -->
+    <sys:String x:Key="BrowserTracking_Title">Browser Usage</sys:String>
+    <sys:String x:Key="BrowserTracking_TotalTime">Total Browse Time</sys:String>
+    <sys:String x:Key="BrowserTracking_UniqueDomains">Unique Sites</sys:String>
+    <sys:String x:Key="BrowserTracking_PageViews">Page Views</sys:String>
+    <sys:String x:Key="BrowserTracking_TopDomains">Top Domains</sys:String>
+    <sys:String x:Key="BrowserTracking_HourlyUsage">Hourly Browse Activity</sys:String>
+    <sys:String x:Key="BrowserTracking_DomainList">Domain Usage List</sys:String>
+    <sys:String x:Key="BrowserTracking_Domain">Domain</sys:String>
+    <sys:String x:Key="BrowserTracking_Time">Time</sys:String>
+    <sys:String x:Key="BrowserTracking_Visits">Visits</sys:String>
+    <sys:String x:Key="BrowserTracking_SearchDomains">Search domains...</sys:String>
+    <sys:String x:Key="BrowserTracking_Hour">Hour</sys:String>
+    <sys:String x:Key="BrowserTracking_AllBrowsers">All Browsers</sys:String>
+    <sys:String x:Key="BrowserTracking_TimeUnit">(h/m/s)</sys:String>
+    <sys:String x:Key="BrowserTracking_BrowserLabel">Browser:</sys:String>
+    <sys:String x:Key="Navigation_BrowserTracking">Browser Tracking</sys:String>
 </ResourceDictionary>

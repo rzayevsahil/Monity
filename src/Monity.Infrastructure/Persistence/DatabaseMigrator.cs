@@ -56,6 +56,36 @@ public static class DatabaseMigrator
                 key TEXT PRIMARY KEY,
                 value TEXT
             );
+
+            CREATE TABLE IF NOT EXISTS browser_sessions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                browser_name TEXT NOT NULL,
+                tab_id TEXT NOT NULL,
+                url TEXT NOT NULL,
+                domain TEXT NOT NULL,
+                title TEXT,
+                started_at TEXT NOT NULL,
+                ended_at TEXT,
+                duration_seconds INTEGER DEFAULT 0,
+                is_active INTEGER DEFAULT 1,
+                day_date TEXT NOT NULL,
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE INDEX IF NOT EXISTS ix_browser_sessions_domain_date ON browser_sessions(domain, day_date);
+            CREATE INDEX IF NOT EXISTS ix_browser_sessions_browser_date ON browser_sessions(browser_name, day_date);
+            CREATE INDEX IF NOT EXISTS ix_browser_sessions_day_date ON browser_sessions(day_date);
+
+            CREATE TABLE IF NOT EXISTS browser_daily_summary (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                domain TEXT NOT NULL,
+                browser_name TEXT NOT NULL,
+                date TEXT NOT NULL,
+                total_seconds INTEGER DEFAULT 0,
+                session_count INTEGER DEFAULT 0,
+                page_views INTEGER DEFAULT 0,
+                UNIQUE(domain, browser_name, date)
+            );
             
             INSERT OR IGNORE INTO app_settings (key, value) VALUES ('idle_threshold_seconds', '60');
             """;

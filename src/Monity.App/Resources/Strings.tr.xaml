@@ -137,4 +137,22 @@
     <sys:String x:Key="Msg_Update">Güncelleme</sys:String>
     <sys:String x:Key="LimitNotification_Title">Günlük kullanım süresi</sys:String>
     <sys:String x:Key="LimitNotification_Text">Günlük kullanım sürenizi tamamladınız: {0} (limit: {1}).</sys:String>
+
+    <!-- Browser Tracking -->
+    <sys:String x:Key="BrowserTracking_Title">Tarayıcı Kullanımı</sys:String>
+    <sys:String x:Key="BrowserTracking_TotalTime">Toplam Tarama Süresi</sys:String>
+    <sys:String x:Key="BrowserTracking_UniqueDomains">Benzersiz Site</sys:String>
+    <sys:String x:Key="BrowserTracking_PageViews">Sayfa Görüntüleme</sys:String>
+    <sys:String x:Key="BrowserTracking_TopDomains">En Çok Kullanılan Siteler</sys:String>
+    <sys:String x:Key="BrowserTracking_HourlyUsage">Saatlik Tarama Aktivitesi</sys:String>
+    <sys:String x:Key="BrowserTracking_DomainList">Site Kullanım Listesi</sys:String>
+    <sys:String x:Key="BrowserTracking_Domain">Site</sys:String>
+    <sys:String x:Key="BrowserTracking_Time">Süre</sys:String>
+    <sys:String x:Key="BrowserTracking_Visits">Ziyaret</sys:String>
+    <sys:String x:Key="BrowserTracking_SearchDomains">Site ara...</sys:String>
+    <sys:String x:Key="BrowserTracking_Hour">Saat</sys:String>
+    <sys:String x:Key="BrowserTracking_AllBrowsers">Tüm Tarayıcılar</sys:String>
+    <sys:String x:Key="BrowserTracking_TimeUnit">(sa/dk/sn)</sys:String>
+    <sys:String x:Key="BrowserTracking_BrowserLabel">Tarayıcı:</sys:String>
+    <sys:String x:Key="Navigation_BrowserTracking">Tarayıcı Takibi</sys:String>
 </ResourceDictionary>

@@ -32,6 +32,7 @@
                             <Button x:Name="BtnUpdate" Content="{DynamicResource Main_Update}" Style="{DynamicResource PrimaryButtonStyle}" Padding="10,6" Click="BtnUpdate_Click"/>
                         </StackPanel>
                     </Border>
+                    <Button x:Name="BtnBrowserTracking" Content="{DynamicResource Navigation_BrowserTracking}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnBrowserTracking_Click"/>
                     <Button x:Name="BtnStatistics" Content="{DynamicResource Main_Statistics}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnStatistics_Click"/>
                     <Button x:Name="BtnSettings" Content="{DynamicResource Main_Settings}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnSettings_Click"/>
                     <Button x:Name="BtnMinimizeToTray" Content="{DynamicResource Main_HideWindow}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnMinimizeToTray_Click"/>
