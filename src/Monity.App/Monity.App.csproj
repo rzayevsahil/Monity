@@ -13,6 +13,7 @@
   </Target>
 
   <ItemGroup>
+    <Resource Include="Assets\AppIcon.ico" />
     <Resource Include="Assets\MonityLogo.png" />
     <Resource Include="Assets\email-icon.png" />
     <Resource Include="Assets\github-icon.png" />
