@@ -164,6 +164,21 @@
                               Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
                     <StackPanel>
                         <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
+                            <Run Text="v4.9.0" FontWeight="SemiBold"/>
+                            <Run Text=" (Mart 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
+                            <LineBreak/>
+                            <Run Text="    • Hakkında sayfası eklendi"/>
+                            <LineBreak/>
+                            <Run Text="    • Geliştirici iletişim bilgileri"/>
+                            <LineBreak/>
+                            <Run Text="    • Uygulama logosu entegrasyonu"/>
+                            <LineBreak/>
+                            <Run Text="    • Platform ikonları (Email, GitHub, LinkedIn)"/>
+                            <LineBreak/>
+                            <Run Text="    • Versiyon geçmişi görüntüleme"/>
+                        </TextBlock>
+                        
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
                             <Run Text="v4.2.0" FontWeight="SemiBold"/>
                             <Run Text=" (Mart 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
                             <LineBreak/>
