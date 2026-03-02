@@ -1,7 +1,8 @@
 # Build çıktıları
 [Bb]in/
 [Oo]bj/
-installer/Output/
+installer/
+.cursor/plans/
 
 [Ll]og/
 [Ll]ogs/
