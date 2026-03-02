@@ -1,5 +1,7 @@
 # Monity
 
+[Turkish](README.md) | [English](README.en.md)
+
 Windows masaüstünde **uygulama kullanım süresini** takip eden WPF uygulaması. Hangi uygulamada ne kadar vakit geçirdiğinizi günlük özet, saatlik grafik ve uygulama listesiyle gösterir.
 
 ## Ekran Görüntüleri
