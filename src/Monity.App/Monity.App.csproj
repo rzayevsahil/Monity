@@ -13,7 +13,7 @@
   </Target>
 
   <ItemGroup>
-    <Resource Include="Assets\Logo.png" />
+    <Resource Include="Assets\MonityLogo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,7 +32,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <!-- Tek satır: Sürümü sadece burada güncelle. AssemblyVersion/FileVersion/InformationalVersion SDK tarafından bundan türetilir. -->
-    <Version>4.2.0</Version>
+    <Version>4.8.0</Version>
   </PropertyGroup>
 
 </Project>

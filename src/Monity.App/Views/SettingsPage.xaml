@@ -222,6 +222,14 @@
                 <Button x:Name="BtnDeleteAll" Content="{DynamicResource Settings_DeleteAll}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnDeleteAll_Click"/>
             </StackPanel>
 
+            <!-- About Section -->
+            <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
+            <TextBlock Text="{DynamicResource About_Title}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="Uygulama hakkında detaylı bilgi, versiyon geçmişi ve geliştirici bilgileri için Hakkında sayfasını ziyaret edin." 
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" TextWrapping="Wrap"/>
+            <Button x:Name="BtnAbout" Content="{DynamicResource About_Title}" Style="{DynamicResource PrimaryButtonStyle}" 
+                    HorizontalAlignment="Left" Margin="0,0,0,24" Click="BtnAbout_Click"/>
+
             <!-- Geri -->
             <Button x:Name="BtnBackBottom" Content="{DynamicResource Settings_Back}" Style="{DynamicResource SecondaryButtonStyle}" HorizontalAlignment="Left" Margin="0,24,0,0" Click="BtnBack_Click"/>
         </StackPanel>

@@ -155,4 +155,22 @@
     <sys:String x:Key="BrowserTracking_TimeUnit">(h/m/s)</sys:String>
     <sys:String x:Key="BrowserTracking_BrowserLabel">Browser:</sys:String>
     <sys:String x:Key="Navigation_BrowserTracking">Browser Tracking</sys:String>
+    
+    <!-- About Page -->
+    <sys:String x:Key="About_Title">About</sys:String>
+    <sys:String x:Key="About_AppDescription">Digital Usage Tracking Application</sys:String>
+    <sys:String x:Key="About_Purpose">Purpose</sys:String>
+    <sys:String x:Key="About_PurposeDescription">Monity is a comprehensive application that helps you track your computer usage habits. It analyzes which applications you use for how long, your browser activities, and general digital behaviors to provide a more conscious usage experience.</sys:String>
+    <sys:String x:Key="About_Features">Key Features</sys:String>
+    <sys:String x:Key="About_Feature1">Application usage time tracking</sys:String>
+    <sys:String x:Key="About_Feature2">Browser activity monitoring</sys:String>
+    <sys:String x:Key="About_Feature3">Detailed statistical reports</sys:String>
+    <sys:String x:Key="About_Feature4">Usage limits and notifications</sys:String>
+    <sys:String x:Key="About_Developer">Developer Information</sys:String>
+    <sys:String x:Key="About_DeveloperName">Developer:</sys:String>
+    <sys:String x:Key="About_Technology">Technology:</sys:String>
+    <sys:String x:Key="About_Contact">Contact:</sys:String>
+    <sys:String x:Key="About_VersionHistory">Version History</sys:String>
+    <sys:String x:Key="About_Acknowledgments">Acknowledgments</sys:String>
+    <sys:String x:Key="About_Copyright">© 2026 Sahil Rzayev. All rights reserved.</sys:String>
 </ResourceDictionary>

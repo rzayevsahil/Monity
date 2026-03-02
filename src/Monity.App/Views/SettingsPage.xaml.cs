@@ -453,6 +453,12 @@ public partial class SettingsPage : Page
         frame?.Navigate(new DashboardPage(_services));
     }
 
+    private void BtnAbout_Click(object sender, RoutedEventArgs e)
+    {
+        var frame = FindParent<Frame>(this);
+        frame?.Navigate(new AboutPage());
+    }
+
     private async void BtnDeleteOldData_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not System.Windows.Controls.Button btn || btn.Tag is not string tagStr || !int.TryParse(tagStr, out var days))

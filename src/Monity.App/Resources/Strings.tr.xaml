@@ -155,4 +155,22 @@
     <sys:String x:Key="BrowserTracking_TimeUnit">(sa/dk/sn)</sys:String>
     <sys:String x:Key="BrowserTracking_BrowserLabel">Tarayıcı:</sys:String>
     <sys:String x:Key="Navigation_BrowserTracking">Tarayıcı Takibi</sys:String>
+    
+    <!-- About Page -->
+    <sys:String x:Key="About_Title">Hakkında</sys:String>
+    <sys:String x:Key="About_AppDescription">Dijital Kullanım Takip Uygulaması</sys:String>
+    <sys:String x:Key="About_Purpose">Kullanım Amacı</sys:String>
+    <sys:String x:Key="About_PurposeDescription">Monity, bilgisayar kullanım alışkanlıklarınızı takip etmenizi sağlayan kapsamlı bir uygulamadır. Hangi uygulamaları ne kadar süre kullandığınızı, tarayıcı aktivitelerinizi ve genel dijital davranışlarınızı analiz ederek daha bilinçli bir kullanım deneyimi sunar.</sys:String>
+    <sys:String x:Key="About_Features">Ana Özellikler</sys:String>
+    <sys:String x:Key="About_Feature1">Uygulama kullanım süresi takibi</sys:String>
+    <sys:String x:Key="About_Feature2">Tarayıcı aktivite izleme</sys:String>
+    <sys:String x:Key="About_Feature3">Detaylı istatistiksel raporlar</sys:String>
+    <sys:String x:Key="About_Feature4">Kullanım limitleri ve uyarılar</sys:String>
+    <sys:String x:Key="About_Developer">Geliştirici Bilgileri</sys:String>
+    <sys:String x:Key="About_DeveloperName">Geliştirici:</sys:String>
+    <sys:String x:Key="About_Technology">Teknoloji:</sys:String>
+    <sys:String x:Key="About_Contact">İletişim:</sys:String>
+    <sys:String x:Key="About_VersionHistory">Versiyon Geçmişi</sys:String>
+    <sys:String x:Key="About_Acknowledgments">Teşekkürler</sys:String>
+    <sys:String x:Key="About_Copyright">© 2026 Sahil Rzayev. Tüm hakları saklıdır.</sys:String>
 </ResourceDictionary>
