@@ -166,6 +166,11 @@
     <sys:String x:Key="About_Feature2">Tarayıcı aktivite izleme</sys:String>
     <sys:String x:Key="About_Feature3">Detaylı istatistiksel raporlar</sys:String>
     <sys:String x:Key="About_Feature4">Kullanım limitleri ve uyarılar</sys:String>
+    <sys:String x:Key="About_Feature5">Aylık kullanım yoğunluğu ısı haritası</sys:String>
+    <sys:String x:Key="About_Feature6">Saatlik ve günlük grafik görüntüleme</sys:String>
+    <sys:String x:Key="About_Feature7">Açık ve koyu tema desteği</sys:String>
+    <sys:String x:Key="About_Feature8">Çoklu dil desteği (Türkçe/İngilizce)</sys:String>
+    <sys:String x:Key="About_Feature9">Otomatik güncelleme sistemi</sys:String>
     <sys:String x:Key="About_Developer">Geliştirici Bilgileri</sys:String>
     <sys:String x:Key="About_DeveloperName">Geliştirici:</sys:String>
     <sys:String x:Key="About_Technology">Teknoloji:</sys:String>

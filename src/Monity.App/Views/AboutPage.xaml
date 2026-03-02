@@ -84,9 +84,29 @@
                             <Run Text="• "/>
                             <Run Text="{DynamicResource About_Feature3}"/>
                         </TextBlock>
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}">
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
                             <Run Text="• "/>
                             <Run Text="{DynamicResource About_Feature4}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <Run Text="• "/>
+                            <Run Text="{DynamicResource About_Feature5}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <Run Text="• "/>
+                            <Run Text="{DynamicResource About_Feature6}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <Run Text="• "/>
+                            <Run Text="{DynamicResource About_Feature7}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <Run Text="• "/>
+                            <Run Text="{DynamicResource About_Feature8}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}">
+                            <Run Text="• "/>
+                            <Run Text="{DynamicResource About_Feature9}"/>
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>

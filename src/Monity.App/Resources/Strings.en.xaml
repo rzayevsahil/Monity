@@ -166,6 +166,11 @@
     <sys:String x:Key="About_Feature2">Browser activity monitoring</sys:String>
     <sys:String x:Key="About_Feature3">Detailed statistical reports</sys:String>
     <sys:String x:Key="About_Feature4">Usage limits and notifications</sys:String>
+    <sys:String x:Key="About_Feature5">Monthly usage intensity heat map</sys:String>
+    <sys:String x:Key="About_Feature6">Hourly and daily chart visualization</sys:String>
+    <sys:String x:Key="About_Feature7">Light and dark theme support</sys:String>
+    <sys:String x:Key="About_Feature8">Multi-language support (Turkish/English)</sys:String>
+    <sys:String x:Key="About_Feature9">Automatic update system</sys:String>
     <sys:String x:Key="About_Developer">Developer Information</sys:String>
     <sys:String x:Key="About_DeveloperName">Developer:</sys:String>
     <sys:String x:Key="About_Technology">Technology:</sys:String>
