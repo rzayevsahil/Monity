@@ -49,6 +49,12 @@
     <sys:String x:Key="Dashboard_Rank">Sıra</sys:String>
     <sys:String x:Key="Dashboard_Search">Ara</sys:String>
     <sys:String x:Key="Dashboard_SearchTooltip">Uygulama adına göre filtrele</sys:String>
+    <!-- Insights -->
+    <sys:String x:Key="Insight_Title">Akıllı Öneriler</sys:String>
+    <sys:String x:Key="Insight_Trend_Increase">Son 5 günde kullanım süreniz %{0} arttı.</sys:String>
+    <sys:String x:Key="Insight_Trend_Decrease">Son 5 günde kullanım süreniz %{0} azaldı.</sys:String>
+    <sys:String x:Key="Insight_PeakHours">En verimli saatleriniz {0}–{1} arası.</sys:String>
+    <sys:String x:Key="Insight_CategoryShift">Bugün "{0}" kategorisinde alışılmışın dışında bir yoğunluk var.</sys:String>
     <!-- Settings -->
     <sys:String x:Key="Settings_Title">Ayarlar</sys:String>
     <sys:String x:Key="Settings_Back">← Geri</sys:String>

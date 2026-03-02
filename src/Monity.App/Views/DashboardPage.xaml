@@ -115,6 +115,30 @@
                 </StackPanel>
             </Border>
 
+            <!-- Smart Insights -->
+            <StackPanel x:Name="InsightSection" Margin="0,0,0,24" Visibility="Collapsed">
+                <TextBlock Text="{DynamicResource Insight_Title}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+                <ItemsControl x:Name="InsightItemsControl">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,10,10">
+                                <StackPanel Orientation="Horizontal">
+                                    <Viewbox Width="16" Height="16" Margin="0,0,10,0" VerticalAlignment="Center">
+                                        <Path Data="{Binding IconPath}" Fill="{DynamicResource PrimaryBrush}"/>
+                                    </Viewbox>
+                                    <TextBlock Text="{Binding Message}" Foreground="{DynamicResource TextBrush}" FontSize="13" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="300"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
             <!-- Hourly chart -->
             <TextBlock Text="{DynamicResource Dashboard_HourlyUsage}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Height="240">

@@ -14,6 +14,7 @@ using Monity.App.Helpers;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
 using SkiaSharp;
+using Monity.App.Services;
 
 namespace Monity.App.Views;
 
@@ -22,6 +23,7 @@ public partial class DashboardPage : Page
     private readonly IServiceProvider _services;
     private readonly IUsageRepository _repository;
     private readonly UsageTrackingService _trackingService;
+    private readonly IInsightService _insightService;
     private long _totalSeconds;
     private ObservableCollection<AppUsageItem> _appItems = [];
     private readonly ObservableCollection<HeatMapDayCell> _heatMapCells = [];
@@ -34,6 +36,7 @@ public partial class DashboardPage : Page
         _services = services;
         _repository = services.GetRequiredService<IUsageRepository>();
         _trackingService = services.GetRequiredService<UsageTrackingService>();
+        _insightService = services.GetRequiredService<IInsightService>();
 
         DatePicker.SelectedDate = DateTime.Today;
         _appListView = CollectionViewSource.GetDefaultView(_appItems);
@@ -251,6 +254,8 @@ public partial class DashboardPage : Page
                 UpdateHeatMap(dailyTotalsForMonth, startOfMonth, endOfMonth, selectedDate);
                 TxtHeatMapTitle.Text = $"{Strings.Get("Dashboard_HeatMapTitle")} — {startOfMonth.ToString("MMMM yyyy", titleCulture)}";
             }, System.Windows.Threading.DispatcherPriority.Normal);
+
+            await LoadInsightsAsync(selectedDate);
         }
         catch (Exception ex)
         {
@@ -333,6 +338,47 @@ public partial class DashboardPage : Page
                 Rx = 4,
                 Ry = 4
             }
+        };
+    }
+
+    private async Task LoadInsightsAsync(DateTime date)
+    {
+        try
+        {
+            var insights = await _insightService.GetInsightsAsync(date);
+            
+            await Dispatcher.InvokeAsync(() =>
+            {
+                if (insights.Count == 0)
+                {
+                    InsightSection.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                var viewModels = insights.Select(x => new InsightViewModel
+                {
+                    Message = x.Message,
+                    IconPath = GetIconPath(x.Icon)
+                }).ToList();
+
+                InsightItemsControl.ItemsSource = viewModels;
+                InsightSection.Visibility = Visibility.Visible;
+            });
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Failed to load insights");
+        }
+    }
+
+    private string GetIconPath(string iconName)
+    {
+        return iconName switch
+        {
+            "TrendingUp" => "M16,6L18.29,8.29L13.41,13.17L9.41,9.17L2,16.59L3.41,18L9.41,12L13.41,16L19.71,9.71L22,12V6H16Z",
+            "TrendingDown" => "M16,18L18.29,15.71L13.41,10.83L9.41,14.83L2,7.41L3.41,6L9.41,12L13.41,8L19.71,14.29L22,12V18H16Z",
+            "LightningBolt" => "M7,2V13H10V22L17,10H13L17,2H7Z",
+            _ => "M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" // Star / generic
         };
     }
 
@@ -525,6 +571,12 @@ public partial class DashboardPage : Page
         public double Percentage { get; set; }
         public string DurationFormatted { get; set; } = "";
         public string PercentageFormatted { get; set; } = "";
+    }
+
+    private class InsightViewModel
+    {
+        public string Message { get; set; } = "";
+        public string IconPath { get; set; } = "";
     }
 }
 

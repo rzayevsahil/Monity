@@ -49,6 +49,12 @@
     <sys:String x:Key="Dashboard_Rank">No.</sys:String>
     <sys:String x:Key="Dashboard_Search">Search</sys:String>
     <sys:String x:Key="Dashboard_SearchTooltip">Filter by app name</sys:String>
+    <!-- Insights -->
+    <sys:String x:Key="Insight_Title">Smart Insights</sys:String>
+    <sys:String x:Key="Insight_Trend_Increase">Your usage time has increased by {0}% in the last 5 days.</sys:String>
+    <sys:String x:Key="Insight_Trend_Decrease">Your usage time has decreased by {0}% in the last 5 days.</sys:String>
+    <sys:String x:Key="Insight_PeakHours">Your most productive hours are between {0}–{1}.</sys:String>
+    <sys:String x:Key="Insight_CategoryShift">There is an unusual intensity in the "{0}" category today.</sys:String>
     <!-- Settings -->
     <sys:String x:Key="Settings_Title">Settings</sys:String>
     <sys:String x:Key="Settings_Back">← Back</sys:String>

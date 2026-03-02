@@ -117,6 +117,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<ThemeService>();
         services.AddSingleton<LanguageService>();
         services.AddSingleton<StartupService>();
+        services.AddSingleton<IInsightService, InsightService>();
         services.AddTransient<MainWindow>();
     }
 

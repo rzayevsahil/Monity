@@ -35,7 +35,10 @@ public interface IUsageRepository
     Task<List<BrowserHourlyUsage>> GetBrowserHourlyUsageAsync(string date, string? domain = null, CancellationToken ct = default);
     Task<Dictionary<string, long>> GetTopDomainsAsync(string date, int limit = 10, CancellationToken ct = default);
     Task UpdateBrowserDailySummaryAsync(string date, CancellationToken ct = default);
+    Task<IReadOnlyList<CategoryUsageSummary>> GetCategoryUsageInRangeAsync(DateTime startDate, DateTime endDate, CancellationToken ct = default);
 }
+
+public record CategoryUsageSummary(string CategoryName, long TotalSeconds);
 
 public record AppListItem(string ProcessName, string? DisplayName);
 

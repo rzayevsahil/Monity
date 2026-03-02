@@ -634,6 +634,25 @@ public sealed class UsageRepository : IUsageRepository
         tx.Commit();
     }
 
+    public async Task<IReadOnlyList<CategoryUsageSummary>> GetCategoryUsageInRangeAsync(DateTime startDate, DateTime endDate, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var sql = """
+            SELECT COALESCE(a.category, '') AS CategoryName,
+                   SUM(CASE WHEN s.is_idle = 0 THEN s.duration_seconds ELSE 0 END) AS TotalSeconds
+            FROM usage_sessions s
+            JOIN apps a ON a.id = s.app_id
+            WHERE s.day_date >= @Start AND s.day_date <= @End
+            GROUP BY CategoryName
+            HAVING TotalSeconds > 0
+            ORDER BY TotalSeconds DESC
+            """;
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
+        var rows = await conn.QueryAsync<CategoryUsageSummary>(sql, new { Start = startStr, End = endStr });
+        return rows.ToList();
+    }
+
     // Helper class for complex query mapping
     private class BrowserSessionRaw
     {
