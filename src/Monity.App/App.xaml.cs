@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Monity.App.Power;
@@ -17,9 +18,23 @@ public partial class App : System.Windows.Application
     public IServiceProvider Services => _services;
     private UsageTrackingService _trackingService = null!;
     private PowerEventHandler _powerHandler = null!;
+    private Mutex? _mutex;
 
     private async void Application_Startup(object sender, StartupEventArgs e)
     {
+        // Single instance check
+        const string mutexName = "MonityAppMutex";
+        _mutex = new Mutex(true, mutexName, out bool createdNew);
+        
+        if (!createdNew)
+        {
+            // Another instance is already running
+            System.Windows.MessageBox.Show("Monity zaten çalışıyor. Sistem tepsisini kontrol edin.", "Monity", 
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            Current.Shutdown();
+            return;
+        }
+
         var logPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "Monity", "Logs", "monity-.log");
@@ -108,15 +123,20 @@ public partial class App : System.Windows.Application
     private async void Application_Exit(object sender, ExitEventArgs e)
     {
         Log.Information("Monity shutting down");
-        _powerHandler.Detach();
-        await _trackingService.StopAsync();
+        _powerHandler?.Detach();
+        if (_trackingService != null)
+            await _trackingService.StopAsync();
+        _mutex?.ReleaseMutex();
+        _mutex?.Dispose();
         Log.CloseAndFlush();
     }
 
     private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
     {
         Log.Information("Session ending - flushing buffer");
-        _powerHandler.Detach();
-        _trackingService.StopAsync().GetAwaiter().GetResult();
+        _powerHandler?.Detach();
+        _trackingService?.StopAsync().GetAwaiter().GetResult();
+        _mutex?.ReleaseMutex();
+        _mutex?.Dispose();
     }
 }
