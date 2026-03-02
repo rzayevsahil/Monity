@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
@@ -67,6 +68,8 @@ public partial class SettingsPage : Page
         System.Windows.DataObject.AddPastingHandler(TxtIdleThreshold, TxtIdleThreshold_OnPaste);
         System.Windows.DataObject.AddPastingHandler(TxtMinSessionSeconds, TxtMinSessionSeconds_OnPaste);
         System.Windows.DataObject.AddPastingHandler(TxtDailyLimitMinutes, TxtDailyLimitMinutes_OnPaste);
+        CmbReportHour.ItemsSource = Enumerable.Range(0, 24).Select(i => i.ToString("D2")).ToList();
+        CmbReportMinute.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("D2")).ToList();
         Loaded += SettingsPage_Loaded;
     }
 
@@ -151,6 +154,21 @@ public partial class SettingsPage : Page
         EmptyCategoryMessage.Visibility = _categoryItems.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
         ShowCategorySearchPlaceholder();
         ApplyCategorySearchFilter();
+
+        // Günlük rapor ayarları
+        var reportEnabled = (await _repository.GetSettingAsync("daily_report_enabled") ?? "false") == "true";
+        ChkDailyReportEnabled.IsChecked = reportEnabled;
+        var reportTime = await _repository.GetSettingAsync("daily_report_time") ?? "21:00";
+        var timeParts = reportTime.Split(':');
+        if (timeParts.Length == 2)
+        {
+            CmbReportHour.SelectedItem = timeParts[0];
+            CmbReportMinute.SelectedItem = timeParts[1];
+        }
+
+        // Akıllı öneri ayarları
+        var insightsEnabled = (await _repository.GetSettingAsync("smart_insights_enabled") ?? "true") == "true";
+        ChkSmartInsightsEnabled.IsChecked = insightsEnabled;
     }
 
     private void TxtDailyLimitSearch_GotFocus(object sender, RoutedEventArgs e)
@@ -572,6 +590,27 @@ public partial class SettingsPage : Page
         foreach (var item in _categoryItems)
             await _repository.SetAppCategoryAsync(item.AppId, string.IsNullOrEmpty(item.CategoryName) ? null : item.CategoryName);
         System.Windows.MessageBox.Show(Strings.Get("Msg_CategoriesSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private async void BtnSaveDailyReport_Click(object sender, RoutedEventArgs e)
+    {
+        var hour = CmbReportHour.SelectedItem as string ?? "21";
+        var minute = CmbReportMinute.SelectedItem as string ?? "00";
+        var timeStr = $"{hour}:{minute}";
+
+        var enabled = ChkDailyReportEnabled.IsChecked == true;
+        await _repository.SetSettingAsync("daily_report_enabled", enabled ? "true" : "false");
+        await _repository.SetSettingAsync("daily_report_time", timeStr);
+        
+        System.Windows.MessageBox.Show(Strings.Get("Msg_GeneralSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private async void BtnSaveSmartInsights_Click(object sender, RoutedEventArgs e)
+    {
+        var enabled = ChkSmartInsightsEnabled.IsChecked == true;
+        await _repository.SetSettingAsync("smart_insights_enabled", enabled ? "true" : "false");
+        
+        System.Windows.MessageBox.Show(Strings.Get("Msg_GeneralSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
     private static T? FindParent<T>(DependencyObject child) where T : DependencyObject

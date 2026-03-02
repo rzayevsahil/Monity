@@ -211,6 +211,32 @@
             <Button x:Name="BtnSaveCategory" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveCategory_Click"/>
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
+            <!-- Akıllı Öneriler -->
+            <TextBlock Text="{DynamicResource Insight_Title}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_SmartInsightsHint}" 
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" TextWrapping="Wrap"/>
+            <CheckBox x:Name="ChkSmartInsightsEnabled" Content="{DynamicResource Settings_SmartInsightsEnabled}"
+                      Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <Button x:Name="BtnSaveSmartInsights" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveSmartInsights_Click"/>
+            <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
+
+            <!-- Günlük Rapor Bildirimi -->
+            <TextBlock Text="{DynamicResource Settings_ReportTitle}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_ReportHint}" 
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" TextWrapping="Wrap"/>
+            <CheckBox x:Name="ChkDailyReportEnabled" Content="{DynamicResource Settings_ReportEnabled}"
+                      Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <TextBlock Text="{DynamicResource Settings_ReportTimeLabel}" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" Margin="0,0,12,0" FontSize="13"/>
+                <ComboBox x:Name="CmbReportHour" Width="70" Height="38" Style="{DynamicResource DarkComboBoxStyle}" 
+                          ItemTemplate="{StaticResource SimpleComboBoxItemTemplate}" Margin="0,0,8,0"/>
+                <TextBlock Text=":" VerticalAlignment="Center" Foreground="{DynamicResource TextBrush}" Margin="0,0,8,0" FontSize="18" FontWeight="Bold"/>
+                <ComboBox x:Name="CmbReportMinute" Width="70" Height="38" Style="{DynamicResource DarkComboBoxStyle}"
+                          ItemTemplate="{StaticResource SimpleComboBoxItemTemplate}"/>
+            </StackPanel>
+            <Button x:Name="BtnSaveDailyReport" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveDailyReport_Click"/>
+            <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
+
             <!-- Veri yönetimi -->
             <TextBlock Text="{DynamicResource Settings_DataManagement}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
             <TextBlock Text="{DynamicResource Settings_DataManagementHint}" 

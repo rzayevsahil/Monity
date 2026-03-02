@@ -78,6 +78,8 @@ public partial class App : System.Windows.Application
         _powerHandler = _services.GetRequiredService<PowerEventHandler>();
         _powerHandler.Attach(mainWindow);
 
+        _services.GetRequiredService<IDailyReportService>().Start();
+
         mainWindow.Show();
     }
 
@@ -118,6 +120,7 @@ public partial class App : System.Windows.Application
         services.AddSingleton<LanguageService>();
         services.AddSingleton<StartupService>();
         services.AddSingleton<IInsightService, InsightService>();
+        services.AddSingleton<IDailyReportService, DailyReportService>();
         services.AddTransient<MainWindow>();
     }
 

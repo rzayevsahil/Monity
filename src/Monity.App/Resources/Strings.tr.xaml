@@ -144,6 +144,17 @@
     <sys:String x:Key="LimitNotification_Title">Günlük kullanım süresi</sys:String>
     <sys:String x:Key="LimitNotification_Text">Günlük kullanım sürenizi tamamladınız: {0} (limit: {1}).</sys:String>
 
+    <!-- Daily Report -->
+    <sys:String x:Key="ReportNotification_Title">Günlük Kullanım Raporu</sys:String>
+    <sys:String x:Key="ReportNotification_Text">Bugün {0} aktif kaldınız. En çok kullanılan: {1}.</sys:String>
+    <sys:String x:Key="Settings_ReportTitle">Günlük Rapor Bildirimi</sys:String>
+    <sys:String x:Key="Settings_ReportEnabled">Günlük raporu etkinleştir</sys:String>
+    <sys:String x:Key="Settings_ReportTimeLabel">Rapor saati:</sys:String>
+    <sys:String x:Key="Settings_ReportHint">Her akşam belirlediğiniz saatte günlük özet bildirimi alırsınız.</sys:String>
+    <sys:String x:Key="Settings_SmartInsightsEnabled">Akıllı önerileri etkinleştir</sys:String>
+    <sys:String x:Key="Settings_SmartInsightsHint">Kullanım alışkanlıklarınıza dayalı akıllı içgörüler ve öneriler alırsınız.</sys:String>
+    <sys:String x:Key="Msg_ReportTimeInvalid">Geçerli bir saat giriniz (Örn: 21:00).</sys:String>
+
     <!-- Browser Tracking -->
     <sys:String x:Key="BrowserTracking_Title">Tarayıcı Kullanımı</sys:String>
     <sys:String x:Key="BrowserTracking_TotalTime">Toplam Tarama Süresi</sys:String>
@@ -177,6 +188,8 @@
     <sys:String x:Key="About_Feature7">Açık ve koyu tema desteği</sys:String>
     <sys:String x:Key="About_Feature8">Çoklu dil desteği (Türkçe/İngilizce)</sys:String>
     <sys:String x:Key="About_Feature9">Otomatik güncelleme sistemi</sys:String>
+    <sys:String x:Key="About_Feature10">Akıllı öneriler ve içgörü sistemi</sys:String>
+    <sys:String x:Key="About_Feature11">Günlük kullanım rapor bildirimi</sys:String>
     <sys:String x:Key="About_Developer">Geliştirici Bilgileri</sys:String>
     <sys:String x:Key="About_DeveloperName">Geliştirici:</sys:String>
     <sys:String x:Key="About_Technology">Teknoloji:</sys:String>

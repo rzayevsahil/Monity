@@ -345,6 +345,13 @@ public partial class DashboardPage : Page
     {
         try
         {
+            var enabledStr = await _repository.GetSettingAsync("smart_insights_enabled");
+            if (enabledStr == "false")
+            {
+                await Dispatcher.InvokeAsync(() => InsightSection.Visibility = Visibility.Collapsed);
+                return;
+            }
+
             var insights = await _insightService.GetInsightsAsync(date);
             
             await Dispatcher.InvokeAsync(() =>

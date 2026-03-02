@@ -33,6 +33,8 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
 - **Power events:** Sessions are written to the database on Sleep/Wake.
 - **Batch writing:** High-performance SQLite writing with a session buffer (20 records or 5 minutes).
 - **Single instance control:** Only one instance of the application can run at a time.
+- **Smart Suggestion System:** Analyzes usage habits to provide insights on productive hours, usage trends, and unusual activities.
+- **Daily Report Notification:** Sends a notification every evening at a set time with the day's total active time and most used application.
 
 ### Interface
 - **Dashboard:** For the selected day: **start of today** (first usage time or "—"), total duration, number of usage records, "currently active" application; **date** and **category** filters, refresh button. Excluded applications are not shown in the list or totals.
@@ -191,6 +193,8 @@ Data is kept in local time; dashboard queries are performed via `daily_summary`.
 | **Applications to exclude from tracking** | Applications marked in the list are not shown in Dashboard or Statistics. List: apps used in DB + Windows installed programs. |
 | **Daily time limits** | Minute limit per application; tray notification on excess. Optional "Close application when limit is exceeded". |
 | **Application categories** | Categories assigned to apps; category filter used in Dashboard and Statistics. |
+| **Smart Suggestion System** | Analyzes usage habits to provide insights; can be enabled/disabled in Settings. |
+| **Daily Report Notification** | Daily summary notification at a set time; secure time selection via ComboBox. |
 | **Data management** | Delete data older than 30 / 90 / 365 days or all data (with confirmation). |
 
 ---
