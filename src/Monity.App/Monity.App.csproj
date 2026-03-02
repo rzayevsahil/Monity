@@ -14,6 +14,9 @@
 
   <ItemGroup>
     <Resource Include="Assets\MonityLogo.png" />
+    <Resource Include="Assets\email-icon.png" />
+    <Resource Include="Assets\github-icon.png" />
+    <Resource Include="Assets\linkedin-icon.png" />
   </ItemGroup>
 
   <ItemGroup>

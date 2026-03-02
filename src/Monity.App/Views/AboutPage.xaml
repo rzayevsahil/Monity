@@ -100,33 +100,57 @@
                     <TextBlock Text="{DynamicResource About_Developer}" 
                               FontSize="16" FontWeight="SemiBold" 
                               Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                    <StackPanel>
+                        <!-- Developer Name -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="{DynamicResource About_DeveloperName}" 
+                                      FontSize="13" FontWeight="SemiBold" 
+                                      Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Text="Sahil Rzayev" 
+                                      FontSize="13" Foreground="{DynamicResource TextBrush}"/>
+                        </StackPanel>
                         
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource About_DeveloperName}" 
+                        <!-- Contact Section -->
+                        <TextBlock Text="{DynamicResource About_Contact}" 
                                   FontSize="13" FontWeight="SemiBold" 
-                                  Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,4"/>
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="Sahil Rzayev" 
-                                  FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                                  Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
                         
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource About_Contact}" 
-                                  FontSize="13" FontWeight="SemiBold" 
-                                  Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Grid.Row="2" Grid.Column="1">
-                            <Hyperlink NavigateUri="https://github.com/rzayevsahil" RequestNavigate="Hyperlink_RequestNavigate"
-                                      Foreground="{DynamicResource PrimaryBrush}" TextDecorations="None">
-                                <TextBlock Text="GitHub: rzayevsahil" FontSize="13"/>
-                            </Hyperlink>
-                        </TextBlock>
-                    </Grid>
+                        <!-- Contact Links -->
+                        <StackPanel Margin="16,0,0,0">
+                            <!-- Email -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Image Source="pack://application:,,,/Assets/email-icon.png" 
+                                       Width="18" Height="18" Margin="0,0,8,0" 
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="sahilrzayev200d@gmail.com" FontSize="13" 
+                                          Foreground="{DynamicResource PrimaryBrush}" 
+                                          Cursor="Hand" MouseLeftButtonUp="EmailLink_Click"
+                                          VerticalAlignment="Center"/>
+                            </StackPanel>
+                            
+                            <!-- GitHub -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Image Source="pack://application:,,,/Assets/github-icon.png" 
+                                       Width="20" Height="20" Margin="0,0,8,0" 
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="rzayevsahil" FontSize="13" 
+                                          Foreground="{DynamicResource PrimaryBrush}" 
+                                          Cursor="Hand" MouseLeftButtonUp="GitHubLink_Click"
+                                          VerticalAlignment="Center"/>
+                            </StackPanel>
+                            
+                            <!-- LinkedIn -->
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="pack://application:,,,/Assets/linkedin-icon.png" 
+                                       Width="20" Height="20" Margin="0,0,8,0" 
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="sahilrzayev" FontSize="13" 
+                                          Foreground="{DynamicResource PrimaryBrush}" 
+                                          Cursor="Hand" MouseLeftButtonUp="LinkedInLink_Click"
+                                          VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
             </Border>
             

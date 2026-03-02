@@ -171,6 +171,11 @@ public partial class MainWindow : Window
         MainFrame.Navigate(new SettingsPage(Services));
     }
 
+    private void BtnAbout_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigate(new AboutPage());
+    }
+
     private void BtnMinimizeToTray_Click(object sender, RoutedEventArgs e)
     {
         WindowState = WindowState.Minimized;

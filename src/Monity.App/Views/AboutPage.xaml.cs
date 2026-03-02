@@ -34,22 +34,51 @@ namespace Monity.App.Views
             }
         }
 
-        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        private void EmailLink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Open URL in default browser
             try
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = e.Uri.AbsoluteUri,
+                    FileName = "mailto:sahilrzayev200d@gmail.com",
                     UseShellExecute = true
                 });
-                e.Handled = true;
             }
             catch (Exception ex)
             {
-                // Log error if needed
-                System.Diagnostics.Debug.WriteLine($"Failed to open URL: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to open email: {ex.Message}");
+            }
+        }
+
+        private void GitHubLink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://github.com/rzayevsahil",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to open GitHub: {ex.Message}");
+            }
+        }
+
+        private void LinkedInLink_Click(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://linkedin.com/in/sahilrzayev",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to open LinkedIn: {ex.Message}");
             }
         }
     }
