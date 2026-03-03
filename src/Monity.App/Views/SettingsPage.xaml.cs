@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows;
+using Monity.Domain.Entities;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Monity.App.Helpers;
 using Monity.App.Views;
 using Monity.App.Services;
+using Monity.Domain.Entities;
 using Monity.Infrastructure.InstalledApps;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
@@ -31,9 +33,11 @@ public partial class SettingsPage : Page
     private readonly ThemeService _themeService;
     private readonly LanguageService _languageService;
     private readonly StartupService _startupService;
+    private readonly IGoalService _goalService;
     private readonly ObservableCollection<AppExcludeItem> _appExcludeItems = [];
     private readonly ObservableCollection<DailyLimitItem> _dailyLimitItems = [];
     private readonly ObservableCollection<CategoryItem> _categoryItems = [];
+    private readonly ObservableCollection<Goal> _goals = [];
     private readonly ICollectionView _appExcludeView;
     private readonly ICollectionView _dailyLimitView;
     private readonly ICollectionView _categoryView;
@@ -42,9 +46,6 @@ public partial class SettingsPage : Page
     private const int MinSessionMaxSeconds = 600;
     private const int DailyLimitMinMinutes = 1;
     private const int DailyLimitMaxMinutes = 1440;
-    private const string AppSearchPlaceholder = "Ara";
-    private const string DailyLimitSearchPlaceholder = "Ara";
-    private const string CategorySearchPlaceholder = "Ara";
 
     public SettingsPage(IServiceProvider services)
     {
@@ -55,12 +56,14 @@ public partial class SettingsPage : Page
         _themeService = services.GetRequiredService<ThemeService>();
         _languageService = services.GetRequiredService<LanguageService>();
         _startupService = services.GetRequiredService<StartupService>();
+        _goalService = services.GetRequiredService<IGoalService>();
         _appExcludeView = CollectionViewSource.GetDefaultView(_appExcludeItems);
         _dailyLimitView = CollectionViewSource.GetDefaultView(_dailyLimitItems);
         _categoryView = CollectionViewSource.GetDefaultView(_categoryItems);
         AppExcludeList.ItemsSource = _appExcludeView;
         DailyLimitList.ItemsSource = _dailyLimitView;
         CategoryList.ItemsSource = _categoryView;
+        GoalsList.ItemsSource = _goals;
         CategoryComboBox.ItemsSource = CategoryItem.GetCategoryOptions();
         CategoryComboBox.DisplayMemberPath = "Display";
         CategoryComboBox.SelectedValuePath = "Value";
@@ -71,6 +74,56 @@ public partial class SettingsPage : Page
         CmbReportHour.ItemsSource = Enumerable.Range(0, 24).Select(i => i.ToString("D2")).ToList();
         CmbReportMinute.ItemsSource = Enumerable.Range(0, 60).Select(i => i.ToString("D2")).ToList();
         Loaded += SettingsPage_Loaded;
+
+        // Initialize Goal Targets
+        PopulateGoalComboBoxes();
+        _ = PopulateGoalTargetsAsync();
+    }
+
+    private void PopulateGoalComboBoxes()
+    {
+        var prevFreq = CmbGoalFrequency.SelectedValue;
+        var prevLimit = CmbGoalLimitType.SelectedValue;
+        var prevUnit = CmbGoalUnit.SelectedValue;
+        var prevTarget = CmbGoalTargetType.SelectedValue;
+
+        // Frequency
+        CmbGoalFrequency.ItemsSource = new List<ComboBoxOption>
+        {
+            new("Daily", (string)FindResource("Settings_Frequency_Daily")),
+            new("Weekly", (string)FindResource("Settings_Frequency_Weekly")),
+            new("Monthly", (string)FindResource("Settings_Frequency_Monthly"))
+        };
+        if (prevFreq != null) CmbGoalFrequency.SelectedValue = prevFreq;
+        else CmbGoalFrequency.SelectedIndex = 0;
+
+        // Limit Type
+        CmbGoalLimitType.ItemsSource = new List<ComboBoxOption>
+        {
+            new("Max", (string)FindResource("Settings_Limit_Max")),
+            new("Min", (string)FindResource("Settings_Limit_Min"))
+        };
+        if (prevLimit != null) CmbGoalLimitType.SelectedValue = prevLimit;
+        else CmbGoalLimitType.SelectedIndex = 0;
+
+        // Unit
+        CmbGoalUnit.ItemsSource = new List<ComboBoxOption>
+        {
+            new("Minute", (string)FindResource("Settings_Unit_Minute")),
+            new("Hour", (string)FindResource("Settings_Unit_Hour")),
+            new("Day", (string)FindResource("Settings_Unit_Day"))
+        };
+        if (prevUnit != null) CmbGoalUnit.SelectedValue = prevUnit;
+        else CmbGoalUnit.SelectedIndex = 1; // Default to Hour
+
+        // Target Type
+        CmbGoalTargetType.ItemsSource = new List<ComboBoxOption>
+        {
+            new("Category", (string)FindResource("Settings_Target_Category")),
+            new("App", (string)FindResource("Settings_Target_App"))
+        };
+        if (prevTarget != null) CmbGoalTargetType.SelectedValue = prevTarget;
+        else CmbGoalTargetType.SelectedIndex = 1; // Default to App
     }
 
     private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -169,11 +222,13 @@ public partial class SettingsPage : Page
         // Akıllı öneri ayarları
         var insightsEnabled = (await _repository.GetSettingAsync("smart_insights_enabled") ?? "true") == "true";
         ChkSmartInsightsEnabled.IsChecked = insightsEnabled;
+
+        await LoadGoalsAsync();
     }
 
     private void TxtDailyLimitSearch_GotFocus(object sender, RoutedEventArgs e)
     {
-        if (TxtDailyLimitSearch.Text == DailyLimitSearchPlaceholder)
+        if (TxtDailyLimitSearch.Text == Strings.Get("Dashboard_Search"))
         {
             TxtDailyLimitSearch.Text = "";
             TxtDailyLimitSearch.SetResourceReference(ForegroundProperty, "TextBrush");
@@ -188,7 +243,7 @@ public partial class SettingsPage : Page
 
     private void ShowDailyLimitSearchPlaceholder()
     {
-        TxtDailyLimitSearch.Text = DailyLimitSearchPlaceholder;
+        TxtDailyLimitSearch.Text = Strings.Get("Dashboard_Search");
         TxtDailyLimitSearch.SetResourceReference(ForegroundProperty, "TextMutedBrush");
     }
 
@@ -200,7 +255,7 @@ public partial class SettingsPage : Page
     private void ApplyDailyLimitSearchFilter()
     {
         var raw = TxtDailyLimitSearch?.Text ?? "";
-        var query = (raw == DailyLimitSearchPlaceholder ? "" : raw).Trim();
+        var query = (raw == Strings.Get("Dashboard_Search") ? "" : raw).Trim();
         _dailyLimitView.Filter = string.IsNullOrEmpty(query)
             ? null
             : obj =>
@@ -214,7 +269,7 @@ public partial class SettingsPage : Page
 
     private void TxtAppSearch_GotFocus(object sender, RoutedEventArgs e)
     {
-        if (TxtAppSearch.Text == AppSearchPlaceholder)
+        if (TxtAppSearch.Text == Strings.Get("Dashboard_Search"))
         {
             TxtAppSearch.Text = "";
             TxtAppSearch.SetResourceReference(ForegroundProperty, "TextBrush");
@@ -229,7 +284,7 @@ public partial class SettingsPage : Page
 
     private void ShowAppSearchPlaceholder()
     {
-        TxtAppSearch.Text = AppSearchPlaceholder;
+        TxtAppSearch.Text = Strings.Get("Dashboard_Search");
         TxtAppSearch.SetResourceReference(ForegroundProperty, "TextMutedBrush");
     }
 
@@ -241,7 +296,7 @@ public partial class SettingsPage : Page
     private void ApplyAppSearchFilter()
     {
         var raw = TxtAppSearch?.Text ?? "";
-        var query = (raw == AppSearchPlaceholder ? "" : raw).Trim();
+        var query = (raw == Strings.Get("Dashboard_Search") ? "" : raw).Trim();
         _appExcludeView.Filter = string.IsNullOrEmpty(query)
             ? null
             : obj =>
@@ -279,7 +334,7 @@ public partial class SettingsPage : Page
 
     private void TxtCategorySearch_GotFocus(object sender, RoutedEventArgs e)
     {
-        if (TxtCategorySearch.Text == CategorySearchPlaceholder)
+        if (TxtCategorySearch.Text == Strings.Get("Dashboard_Search"))
         {
             TxtCategorySearch.Text = "";
             TxtCategorySearch.SetResourceReference(ForegroundProperty, "TextBrush");
@@ -294,7 +349,7 @@ public partial class SettingsPage : Page
 
     private void ShowCategorySearchPlaceholder()
     {
-        TxtCategorySearch.Text = CategorySearchPlaceholder;
+        TxtCategorySearch.Text = Strings.Get("Dashboard_Search");
         TxtCategorySearch.SetResourceReference(ForegroundProperty, "TextMutedBrush");
     }
 
@@ -306,7 +361,7 @@ public partial class SettingsPage : Page
     private void ApplyCategorySearchFilter()
     {
         var raw = TxtCategorySearch?.Text ?? "";
-        var query = (raw == CategorySearchPlaceholder ? "" : raw).Trim();
+        var query = (raw == Strings.Get("Dashboard_Search") ? "" : raw).Trim();
         _categoryView.Filter = string.IsNullOrEmpty(query)
             ? null
             : obj =>
@@ -320,7 +375,7 @@ public partial class SettingsPage : Page
 
     private void BtnApplyCategory_Click(object sender, RoutedEventArgs e)
     {
-        var selectedOption = CategoryComboBox.SelectedItem as CategoryOption;
+        var selectedOption = CategoryComboBox.SelectedItem as ComboBoxOption;
         var categoryValue = selectedOption?.Value ?? "";
         foreach (var item in _categoryItems.Where(x => x.IsSelected))
             item.CategoryName = categoryValue;
@@ -543,6 +598,17 @@ public partial class SettingsPage : Page
         await _languageService.SaveLanguageAsync(language);
 
         await _startupService.SetEnabledAsync(CbStartWithWindows.IsChecked == true);
+        
+        // Refresh goal-related localized elements
+        PopulateGoalComboBoxes();
+        await PopulateGoalTargetsAsync();
+        CollectionViewSource.GetDefaultView(_goals)?.Refresh();
+
+        // Refresh search placeholders
+        ShowAppSearchPlaceholder();
+        ShowDailyLimitSearchPlaceholder();
+        ShowCategorySearchPlaceholder();
+
         CategoryComboBox.ItemsSource = CategoryItem.GetCategoryOptions();
         _categoryView?.Refresh();
         System.Windows.MessageBox.Show(Strings.Get("Msg_GeneralSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
@@ -669,7 +735,7 @@ public partial class SettingsPage : Page
             get => _limitMinutes;
             private set { _limitMinutes = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LimitMinutes))); PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LimitDisplayText))); }
         }
-        public string LimitDisplayText => LimitMinutes is { } m && m > 0 ? $"{m} dk" : "—";
+        public string LimitDisplayText => LimitMinutes is { } m && m > 0 ? $"{m} {Strings.Get("Settings_Unit_Minute")}" : "—";
         public void SetLimitMinutes(int minutes) => LimitMinutes = minutes;
         public DailyLimitItem(string processName, string displayName, int? limitMinutes)
         {
@@ -682,16 +748,16 @@ public partial class SettingsPage : Page
 
     private sealed class CategoryItem : INotifyPropertyChanged
     {
-        internal static IReadOnlyList<CategoryOption> GetCategoryOptions() =>
+        internal static IReadOnlyList<ComboBoxOption> GetCategoryOptions() =>
         [
-            new CategoryOption("", Strings.Get("Category_Uncategorized")),
-            new CategoryOption("Diğer", Strings.Get("Category_Other")),
-            new CategoryOption("Tarayıcı", Strings.Get("Category_Browser")),
-            new CategoryOption("Geliştirme", Strings.Get("Category_Development")),
-            new CategoryOption("Sosyal", Strings.Get("Category_Social")),
-            new CategoryOption("Eğlence", Strings.Get("Category_Entertainment")),
-            new CategoryOption("Ofis", Strings.Get("Category_Office")),
-            new CategoryOption("Eğitim", Strings.Get("Category_Education"))
+            new ComboBoxOption("", Strings.Get("Category_Uncategorized")),
+            new ComboBoxOption("Diğer", Strings.Get("Category_Other")),
+            new ComboBoxOption("Tarayıcı", Strings.Get("Category_Browser")),
+            new ComboBoxOption("Geliştirme", Strings.Get("Category_Development")),
+            new ComboBoxOption("Sosyal", Strings.Get("Category_Social")),
+            new ComboBoxOption("Eğlence", Strings.Get("Category_Entertainment")),
+            new ComboBoxOption("Ofis", Strings.Get("Category_Office")),
+            new ComboBoxOption("Eğitim", Strings.Get("Category_Education"))
         ];
         public int AppId { get; }
         public string DisplayName { get; }
@@ -701,7 +767,7 @@ public partial class SettingsPage : Page
             get => _categoryName;
             set { _categoryName = value ?? ""; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CategoryName))); }
         }
-        public IReadOnlyList<CategoryOption> CategoryOptions => GetCategoryOptions();
+        public IReadOnlyList<ComboBoxOption> CategoryOptions => GetCategoryOptions();
         private bool _isSelected;
         public bool IsSelected
         {
@@ -717,5 +783,196 @@ public partial class SettingsPage : Page
         public event PropertyChangedEventHandler? PropertyChanged;
     }
 
-    private sealed record CategoryOption(string Value, string Display);
+    private sealed record ComboBoxOption(string Value, string Display);
+
+    private async Task LoadGoalsAsync()
+    {
+        try
+        {
+            var goalProgresses = await _goalService.GetGoalProgressesAsync();
+            _goals.Clear();
+            foreach (var gp in goalProgresses)
+                _goals.Add(gp.Goal);
+
+            EmptyGoalsMessage.Visibility = _goals.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error loading goals");
+        }
+    }
+
+    private async void BtnAddGoal_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(TxtGoalValue.Text)) return;
+            if (!int.TryParse(TxtGoalValue.Text, out int val)) return;
+            
+            var targetValue = CmbGoalTargetValue.SelectedItem?.ToString() ?? CmbGoalTargetValue.Text;
+            if (string.IsNullOrWhiteSpace(targetValue)) return;
+
+            var freqOption = CmbGoalFrequency.SelectedItem as ComboBoxOption;
+            var freqStr = freqOption?.Value ?? "Daily";
+            var freqDisplay = freqOption?.Display ?? "Daily";
+
+            var limitOption = CmbGoalLimitType.SelectedItem as ComboBoxOption;
+            var limitStr = limitOption?.Value ?? "Max";
+            var limitDisplay = limitOption?.Display ?? "Max";
+
+            var unitOption = CmbGoalUnit.SelectedItem as ComboBoxOption;
+            var unitStr = unitOption?.Value ?? "Hour";
+            var unitDisplay = unitOption?.Display ?? "Hour";
+
+            var typeStr = CmbGoalTargetType.SelectedValue?.ToString() ?? "App";
+
+            var frequency = Enum.Parse<GoalFrequency>(freqStr);
+            var limitType = Enum.Parse<GoalLimitType>(limitStr);
+            var targetType = Enum.Parse<GoalTargetType>(typeStr);
+
+            int seconds = val;
+            if (unitStr == "Minute") seconds *= 60;
+            else if (unitStr == "Hour") seconds *= 3600;
+            else if (unitStr == "Day") seconds *= 86400;
+
+            // Localized title generation
+            string title = $"{targetValue} ({freqDisplay} {limitDisplay} {val} {unitDisplay})";
+
+            var id = await _goalService.AddGoalAsync(title, targetType, targetValue, limitType, seconds, frequency);
+            if (id > 0)
+            {
+                TxtGoalValue.Text = "1";
+                await LoadGoalsAsync();
+                System.Windows.MessageBox.Show((string)System.Windows.Application.Current.FindResource("Msg_GoalAdded"), "Monity", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error adding goal");
+        }
+    }
+
+    private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+    {
+        Regex regex = new Regex("[^0-9]+");
+        e.Handled = regex.IsMatch(e.Text);
+    }
+
+    private async void CmbGoalTargetType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        await PopulateGoalTargetsAsync();
+    }
+
+    private async Task PopulateGoalTargetsAsync()
+    {
+        if (CmbGoalTargetType == null || CmbGoalTargetValue == null) return;
+
+        var targetType = CmbGoalTargetType.SelectedValue?.ToString();
+
+        CmbGoalTargetValue.ItemsSource = null;
+
+        if (targetType == "Category")
+        {
+            CmbGoalTargetValue.ItemsSource = CategoryItem.GetCategoryOptions().Select(o => o.Display).ToList();
+        }
+        else if (targetType == "App")
+        {
+            var apps = await _repository.GetTrackedAppsWithCategoryAsync();
+            CmbGoalTargetValue.ItemsSource = apps.Select(a => a.DisplayName ?? a.ProcessName).Distinct().ToList();
+        }
+        
+        if (CmbGoalTargetValue.Items.Count > 0)
+            CmbGoalTargetValue.SelectedIndex = 0;
+    }
+
+    private async void BtnDeleteGoal_Click(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.Button btn && btn.Tag is int goalId)
+        {
+            await _goalService.DeleteGoalAsync(goalId);
+            await LoadGoalsAsync();
+        }
+    }
+}
+
+public class GoalFrequencyConverter : System.Windows.Data.IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        if (value is GoalFrequency freq)
+        {
+            return freq switch
+            {
+                GoalFrequency.Daily => System.Windows.Application.Current.FindResource("Settings_Frequency_Daily"),
+                GoalFrequency.Weekly => System.Windows.Application.Current.FindResource("Settings_Frequency_Weekly"),
+                GoalFrequency.Monthly => System.Windows.Application.Current.FindResource("Settings_Frequency_Monthly"),
+                _ => value.ToString()
+            };
+        }
+        return value?.ToString() ?? "";
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) => throw new NotImplementedException();
+}
+
+public class GoalLimitTypeConverter : System.Windows.Data.IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        if (value is GoalLimitType limit)
+        {
+            return limit switch
+            {
+                GoalLimitType.Max => System.Windows.Application.Current.FindResource("Settings_Limit_Max"),
+                GoalLimitType.Min => System.Windows.Application.Current.FindResource("Settings_Limit_Min"),
+                _ => value.ToString()
+            };
+        }
+        return value?.ToString() ?? "";
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) => throw new NotImplementedException();
+}
+
+public class GoalTitleConverter : System.Windows.Data.IMultiValueConverter
+{
+    public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    {
+        if (values.Length >= 4)
+        {
+            string targetValue = values[0]?.ToString() ?? "";
+            GoalFrequency freq = (values[1] is GoalFrequency f) ? f : GoalFrequency.Daily;
+            GoalLimitType limit = (values[2] is GoalLimitType l) ? l : GoalLimitType.Max;
+            
+            int seconds = 0;
+            if (values[3] != null)
+            {
+                try { seconds = System.Convert.ToInt32(values[3]); }
+                catch { }
+            }
+
+            string freqStr = (string)System.Windows.Application.Current.FindResource($"Settings_Frequency_{freq}");
+            string limitStr = (string)System.Windows.Application.Current.FindResource($"Settings_Limit_{limit}");
+            
+            string unitStr;
+            int val;
+            if (seconds >= 86400 && seconds % 86400 == 0) 
+            { 
+                val = seconds / 86400; 
+                unitStr = (string)System.Windows.Application.Current.FindResource("Settings_Unit_Day"); 
+            }
+            else if (seconds >= 3600 && seconds % 3600 == 0) 
+            { 
+                val = seconds / 3600; 
+                unitStr = (string)System.Windows.Application.Current.FindResource("Settings_Unit_Hour"); 
+            }
+            else 
+            { 
+                val = seconds / 60; 
+                unitStr = (string)System.Windows.Application.Current.FindResource("Settings_Unit_Minute"); 
+            }
+
+            return $"{targetValue} ({freqStr} {limitStr} {val} {unitStr})";
+        }
+        return "";
+    }
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture) => throw new NotImplementedException();
 }

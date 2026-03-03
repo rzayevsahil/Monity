@@ -121,6 +121,8 @@ public partial class App : System.Windows.Application
         services.AddSingleton<StartupService>();
         services.AddSingleton<IInsightService, InsightService>();
         services.AddSingleton<IDailyReportService, DailyReportService>();
+        services.AddSingleton<IGoalParsingService, GoalParsingService>();
+        services.AddSingleton<IGoalService, GoalService>();
         services.AddTransient<MainWindow>();
     }
 

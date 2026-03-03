@@ -3,10 +3,16 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Monity.App.Views"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="600"
       Title="{DynamicResource Settings_Title}"
       Background="{DynamicResource BackgroundBrush}">
+    <Page.Resources>
+        <local:GoalFrequencyConverter x:Key="GoalFrequencyConverter"/>
+        <local:GoalLimitTypeConverter x:Key="GoalLimitTypeConverter"/>
+        <local:GoalTitleConverter x:Key="GoalTitleConverter"/>
+    </Page.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24">
             <Grid Margin="0,0,0,24">
@@ -151,6 +157,119 @@
                 </Grid>
             </Border>
             <Button x:Name="BtnSaveDailyLimit" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveDailyLimit_Click"/>
+            
+            <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
+
+            <!-- Hedef Sistemi -->
+            <TextBlock Text="{DynamicResource Settings_GoalsTitle}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <TextBlock Text="{DynamicResource Settings_GoalsHint}" 
+                       FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,12" TextWrapping="Wrap"/>
+
+            <Grid Margin="0,0,0,16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Frequency, Limit Type, Value, Unit -->
+                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,8,8">
+                    <TextBlock Text="{DynamicResource Settings_GoalFrequency}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                        <ComboBox x:Name="CmbGoalFrequency" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextBrush}" Padding="8,4" 
+                                  DisplayMemberPath="Display" SelectedValuePath="Value"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,8,8">
+                    <TextBlock Text="{DynamicResource Settings_GoalLimitType}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                        <ComboBox x:Name="CmbGoalLimitType" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextBrush}" Padding="8,4"
+                                  DisplayMemberPath="Display" SelectedValuePath="Value"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,8,8">
+                    <TextBlock Text="{DynamicResource Settings_GoalValue}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                        <TextBox x:Name="TxtGoalValue" Padding="10,6" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextBrush}" FontSize="13" 
+                                 PreviewTextInput="NumberValidationTextBox" Text="1"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="3" Margin="0,0,0,8">
+                    <TextBlock Text="{DynamicResource Settings_GoalUnit}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                        <ComboBox x:Name="CmbGoalUnit" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextBrush}" Padding="8,4"
+                                  DisplayMemberPath="Display" SelectedValuePath="Value"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Target Type, Target Value -->
+                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" Margin="0,0,8,8">
+                    <TextBlock Text="{DynamicResource Settings_GoalTarget}" FontSize="11" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+                    <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                        <ComboBox x:Name="CmbGoalTargetType" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextBrush}" Padding="8,4" 
+                                  DisplayMemberPath="Display" SelectedValuePath="Value" SelectionChanged="CmbGoalTargetType_SelectionChanged"/>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,0,8">
+                    <TextBlock Text=" " FontSize="11" Margin="0,0,0,4"/>
+                    <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                        <ComboBox x:Name="CmbGoalTargetValue" BorderThickness="0" Background="Transparent" Foreground="{DynamicResource TextBrush}" Padding="8,4" IsEditable="True"/>
+                    </Border>
+                </StackPanel>
+
+                <Button x:Name="BtnAddGoal" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" 
+                        Content="{DynamicResource Settings_AddGoal}" Style="{DynamicResource PrimaryButtonStyle}" 
+                        Margin="0,4,0,0" Padding="20,10" Click="BtnAddGoal_Click"/>
+            </Grid>
+
+            <Border Margin="0,0,0,8" Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8">
+                <ListBox x:Name="GoalsList" BorderThickness="0" Background="Transparent" Padding="0" MinHeight="40"
+                         HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="12,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Foreground="{DynamicResource TextBrush}" FontWeight="SemiBold">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource GoalTitleConverter}">
+                                                <Binding Path="TargetValue"/>
+                                                <Binding Path="Frequency"/>
+                                                <Binding Path="LimitType"/>
+                                                <Binding Path="LimitSeconds"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                        <TextBlock Text="{Binding TargetValue}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11"/>
+                                        <TextBlock Text=" • " Foreground="{DynamicResource TextMutedBrush}" FontSize="11"/>
+                                        <TextBlock Text="{Binding Frequency, Converter={StaticResource GoalFrequencyConverter}}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="✕" Click="BtnDeleteGoal_Click" Tag="{Binding Id}"
+                                        Style="{DynamicResource SecondaryButtonStyle}" Padding="8,4" FontSize="10" VerticalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+            <TextBlock x:Name="EmptyGoalsMessage" Text="{DynamicResource Settings_NoGoals}" 
+                       Foreground="{DynamicResource TextMutedBrush}" FontSize="12" Margin="0,4,0,24" 
+                       HorizontalAlignment="Center" Visibility="Collapsed"/>
+
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
             <!-- Uygulama kategorileri -->

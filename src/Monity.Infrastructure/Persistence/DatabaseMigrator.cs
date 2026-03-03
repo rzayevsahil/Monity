@@ -86,6 +86,18 @@ public static class DatabaseMigrator
                 page_views INTEGER DEFAULT 0,
                 UNIQUE(domain, browser_name, date)
             );
+
+            CREATE TABLE IF NOT EXISTS goals (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                target_type INTEGER NOT NULL,
+                target_value TEXT NOT NULL,
+                limit_type INTEGER NOT NULL,
+                limit_seconds INTEGER NOT NULL,
+                frequency INTEGER NOT NULL,
+                is_active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL
+            );
             
             INSERT OR IGNORE INTO app_settings (key, value) VALUES ('idle_threshold_seconds', '60');
             """;

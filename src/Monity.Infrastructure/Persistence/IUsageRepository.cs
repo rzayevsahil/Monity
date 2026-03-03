@@ -36,6 +36,14 @@ public interface IUsageRepository
     Task<Dictionary<string, long>> GetTopDomainsAsync(string date, int limit = 10, CancellationToken ct = default);
     Task UpdateBrowserDailySummaryAsync(string date, CancellationToken ct = default);
     Task<IReadOnlyList<CategoryUsageSummary>> GetCategoryUsageInRangeAsync(DateTime startDate, DateTime endDate, CancellationToken ct = default);
+
+    // Goal management
+    Task<IReadOnlyList<Goal>> GetGoalsAsync(CancellationToken ct = default);
+    Task<int> AddGoalAsync(Goal goal, CancellationToken ct = default);
+    Task UpdateGoalAsync(Goal goal, CancellationToken ct = default);
+    Task DeleteGoalAsync(int goalId, CancellationToken ct = default);
+    Task<long> GetUsageSecondsForGoalAsync(Goal goal, DateTime startDate, DateTime endDate, CancellationToken ct = default);
+    Task<IReadOnlyList<string>> GetTrackedDomainsAsync(CancellationToken ct = default);
 }
 
 public record CategoryUsageSummary(string CategoryName, long TotalSeconds);

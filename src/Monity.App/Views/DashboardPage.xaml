@@ -44,6 +44,39 @@
                     </StackPanel>
                 </Border>
             </Grid>
+            
+            <!-- Hedefler -->
+            <TextBlock x:Name="TxtGoalsTitle" Text="{DynamicResource Dashboard_GoalsTitle}" FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12" Visibility="Collapsed"/>
+            <ItemsControl x:Name="GoalsItemsControl" Margin="0,0,0,24">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="16" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Goal.Title}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}"/>
+                                <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ProgressText, Mode=OneWay}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" HorizontalAlignment="Right"/>
+
+                                <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Height="8" Margin="0,4" 
+                                             Value="{Binding ProgressValue, Mode=OneWay}" Minimum="0" Maximum="100"
+                                             Background="{DynamicResource BorderBrush}" 
+                                             Foreground="{Binding ProgressBrush, Mode=OneWay}"
+                                             BorderThickness="0"/>
+                                
+                                <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding StatusText, Mode=OneWay}" FontSize="11" Foreground="{Binding StatusBrush, Mode=OneWay}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <!-- Date and category -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,16" VerticalAlignment="Center">

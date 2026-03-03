@@ -25,7 +25,8 @@
     <sys:String x:Key="Dashboard_Category">Category:</sys:String>
     <sys:String x:Key="Dashboard_Refresh">Refresh</sys:String>
     <sys:String x:Key="Dashboard_Refreshing">Refreshing...</sys:String>
-    <sys:String x:Key="Dashboard_HeatMapTitle">Monthly usage intensity</sys:String>
+    <sys:String x:Key="Dashboard_HeatMapTitle">Usage Intensity (Last 30 Days)</sys:String>
+    <sys:String x:Key="Dashboard_GoalsTitle">Tracked Goals</sys:String>
     <sys:String x:Key="Dashboard_DayMon">Mon</sys:String>
     <sys:String x:Key="Dashboard_DayTue">Tue</sys:String>
     <sys:String x:Key="Dashboard_DayWed">Wed</sys:String>
@@ -155,6 +156,30 @@
     <sys:String x:Key="Settings_SmartInsightsHint">Receive smart insights and suggestions based on your usage habits.</sys:String>
     <sys:String x:Key="Msg_ReportTimeInvalid">Please enter a valid time (e.g., 21:00).</sys:String>
 
+    <!-- Goal System -->
+    <sys:String x:Key="Settings_GoalsTitle">Goal System</sys:String>
+    <sys:String x:Key="Settings_GoalsHint">Define your usage goals. E.g., "Max 2 hours of Social media per day".</sys:String>
+    <sys:String x:Key="Settings_GoalFrequency">Frequency</sys:String>
+    <sys:String x:Key="Settings_GoalLimitType">Limit Type</sys:String>
+    <sys:String x:Key="Settings_GoalValue">Value</sys:String>
+    <sys:String x:Key="Settings_GoalUnit">Time</sys:String>
+    <sys:String x:Key="Settings_GoalTarget">Target</sys:String>
+    <sys:String x:Key="Settings_Frequency_Daily">Daily</sys:String>
+    <sys:String x:Key="Settings_Frequency_Weekly">Weekly</sys:String>
+    <sys:String x:Key="Settings_Frequency_Monthly">Monthly</sys:String>
+    <sys:String x:Key="Settings_Limit_Max">Max</sys:String>
+    <sys:String x:Key="Settings_Limit_Min">Min</sys:String>
+    <sys:String x:Key="Settings_Unit_Minute">Minute</sys:String>
+    <sys:String x:Key="Settings_Unit_Hour">Hour</sys:String>
+    <sys:String x:Key="Settings_Unit_Day">Day</sys:String>
+    <sys:String x:Key="Settings_Target_App">Application</sys:String>
+    <sys:String x:Key="Settings_Target_Category">Category</sys:String>
+    <sys:String x:Key="Settings_Target_Domain">Website</sys:String>
+    <sys:String x:Key="Settings_AddGoal">Add Goal</sys:String>
+    <sys:String x:Key="Settings_NoGoals">You haven't set any goals yet.</sys:String>
+    <sys:String x:Key="Msg_GoalAdded">Goal added successfully.</sys:String>
+    <sys:String x:Key="Msg_GoalParseError">Could not understand the goal. Please use the suggested format (e.g., "Max 3 hours Social daily").</sys:String>
+
     <!-- Browser Tracking -->
     <sys:String x:Key="BrowserTracking_Title">Browser Usage</sys:String>
     <sys:String x:Key="BrowserTracking_TotalTime">Total Browse Time</sys:String>
@@ -190,6 +215,8 @@
     <sys:String x:Key="About_Feature9">Automatic update system</sys:String>
     <sys:String x:Key="About_Feature10">Smart suggestions and insights system</sys:String>
     <sys:String x:Key="About_Feature11">Daily usage report notifications</sys:String>
+    <sys:String x:Key="About_Feature12">Goal System (Natural Language Processing)</sys:String>
+    <sys:String x:Key="About_Feature13">Advanced settings and data management</sys:String>
     <sys:String x:Key="About_Developer">Developer Information</sys:String>
     <sys:String x:Key="About_DeveloperName">Developer:</sys:String>
     <sys:String x:Key="About_Technology">Technology:</sys:String>

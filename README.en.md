@@ -35,9 +35,10 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
 - **Single instance control:** Only one instance of the application can run at a time.
 - **Smart Suggestion System:** Analyzes usage habits to provide insights on productive hours, usage trends, and unusual activities.
 - **Daily Report Notification:** Sends a notification every evening at a set time with the day's total active time and most used application.
+- **Goal System:** Set daily or weekly usage limits (e.g., "Max 3 hours of Social media per day"). Easy goal entry using natural language processing.
 
 ### Interface
-- **Dashboard:** For the selected day: **start of today** (first usage time or "—"), total duration, number of usage records, "currently active" application; **date** and **category** filters, refresh button. Excluded applications are not shown in the list or totals.
+- **Dashboard:** For the selected day: **start of today** (first usage time or "—"), total duration, number of usage records, "currently active" application; **date** and **category** filters, refresh button. Progress bars for active goals can be tracked on the main screen.
 - **Monthly usage intensity (heat map):** Calendar grid (Mon–Sun) for the selected month; each cell shows day number and intensity color (theme compatible), Less–More legend at the bottom.
 - **Hourly chart:** Usage distribution throughout the day (LiveCharts2 bar chart).
 - **Application list:** Daily usage duration and percentage table; filtering with search box.
@@ -63,6 +64,8 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
   - **Applications to exclude from tracking:** Lists both previously used (in DB) and **installed programs** (from Windows Uninstall records); filtering with search box. Monity and Windows Explorer are excluded by default.
   - **Daily time limits:** Minute limit per application (1–1440); tray notification when limit is exceeded. Optional **"Close application when limit is exceeded"** option.
   - **Application categories:** Categories can be assigned to each application (Browser, Development, Social, Entertainment, Office, Other, Uncategorized); filtering by category in Dashboard and Statistics.
+  - **Daily Report Notification:** Daily summary notification at a set time; secure time selection with dropdown lists (ComboBox).
+  - **Goal Management:** Add and delete usage goals. Quick entry with sentences like "Max 2 hours of Social daily", "Min 10 hours of Development weekly".
   - **Data management:** Delete data older than 30 / 90 / 365 days or delete all data (with confirmation dialog).
   - **About:** A separate page accessed from the main menu; app logo, description, features, developer info, contact links (Email, GitHub, LinkedIn), and version history.
 - **Footer:** Version info and developer link in the main window.

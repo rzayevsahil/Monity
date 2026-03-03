@@ -669,4 +669,121 @@ public sealed class UsageRepository : IUsageRepository
         public string DayDate { get; set; } = "";
         public string CreatedAtStr { get; set; } = "";
     }
+
+    public async Task<IReadOnlyList<Goal>> GetGoalsAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var sql = """
+            SELECT id, title, 
+                   target_type AS TargetType, 
+                   target_value AS TargetValue, 
+                   limit_type AS LimitType, 
+                   limit_seconds AS LimitSeconds, 
+                   frequency AS Frequency, 
+                   is_active AS IsActive, 
+                   created_at AS CreatedAt 
+            FROM goals 
+            ORDER BY created_at DESC
+            """;
+        var rows = await conn.QueryAsync<Goal>(sql);
+        return rows.ToList();
+    }
+
+    public async Task<int> AddGoalAsync(Goal goal, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var now = DateTime.UtcNow.ToString("O");
+        var id = await conn.ExecuteScalarAsync<int>(
+            """
+            INSERT INTO goals (title, target_type, target_value, limit_type, limit_seconds, frequency, is_active, created_at)
+            VALUES (@Title, @TargetType, @TargetValue, @LimitType, @LimitSeconds, @Frequency, @IsActive, @Now);
+            SELECT last_insert_rowid();
+            """,
+            new
+            {
+                goal.Title,
+                goal.TargetType,
+                goal.TargetValue,
+                goal.LimitType,
+                goal.LimitSeconds,
+                goal.Frequency,
+                IsActive = goal.IsActive ? 1 : 0,
+                Now = now
+            });
+        return id;
+    }
+
+    public async Task UpdateGoalAsync(Goal goal, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        await conn.ExecuteAsync(
+            """
+            UPDATE goals SET 
+                title = @Title, 
+                target_type = @TargetType, 
+                target_value = @TargetValue, 
+                limit_type = @LimitType, 
+                limit_seconds = @LimitSeconds, 
+                frequency = @Frequency, 
+                is_active = @IsActive 
+            WHERE id = @Id
+            """,
+            new
+            {
+                goal.Title,
+                goal.TargetType,
+                goal.TargetValue,
+                goal.LimitType,
+                goal.LimitSeconds,
+                goal.Frequency,
+                IsActive = goal.IsActive ? 1 : 0,
+                goal.Id
+            });
+    }
+
+    public async Task DeleteGoalAsync(int goalId, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        await conn.ExecuteAsync("DELETE FROM goals WHERE id = @Id", new { Id = goalId });
+    }
+
+    public async Task<long> GetUsageSecondsForGoalAsync(Goal goal, DateTime startDate, DateTime endDate, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
+
+        if (goal.TargetType == GoalTargetType.Category)
+        {
+            return await conn.ExecuteScalarAsync<long>(
+                """
+                SELECT IFNULL(SUM(ds.total_seconds), 0)
+                FROM daily_summary ds
+                JOIN apps a ON ds.app_id = a.id
+                WHERE ds.date >= @Start AND ds.date <= @End AND a.category = @TargetValue
+                """,
+                new { Start = startStr, End = endStr, TargetValue = goal.TargetValue });
+        }
+        else if (goal.TargetType == GoalTargetType.App)
+        {
+            return await conn.ExecuteScalarAsync<long>(
+                """
+                SELECT IFNULL(SUM(ds.total_seconds), 0)
+                FROM daily_summary ds
+                JOIN apps a ON ds.app_id = a.id
+                WHERE ds.date >= @Start AND ds.date <= @End AND (a.process_name = @TargetValue OR a.display_name = @TargetValue)
+                """,
+                new { Start = startStr, End = endStr, TargetValue = goal.TargetValue });
+        }
+
+        return 0;
+    }
+
+    public async Task<IReadOnlyList<string>> GetTrackedDomainsAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var sql = "SELECT DISTINCT domain FROM browser_daily_summary ORDER BY domain";
+        var result = await conn.QueryAsync<string>(sql);
+        return result.ToList();
+    }
 }

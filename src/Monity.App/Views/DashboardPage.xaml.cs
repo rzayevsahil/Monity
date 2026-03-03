@@ -15,6 +15,7 @@ using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
 using SkiaSharp;
 using Monity.App.Services;
+using Monity.Domain.Entities;
 
 namespace Monity.App.Views;
 
@@ -24,9 +25,11 @@ public partial class DashboardPage : Page
     private readonly IUsageRepository _repository;
     private readonly UsageTrackingService _trackingService;
     private readonly IInsightService _insightService;
+    private readonly IGoalService _goalService;
     private long _totalSeconds;
     private ObservableCollection<AppUsageItem> _appItems = [];
     private readonly ObservableCollection<HeatMapDayCell> _heatMapCells = [];
+    private readonly ObservableCollection<DashboardGoalItem> _goalItems = [];
     private ICollectionView _appListView = null!;
     private DispatcherTimer? _midnightTimer;
 
@@ -37,11 +40,13 @@ public partial class DashboardPage : Page
         _repository = services.GetRequiredService<IUsageRepository>();
         _trackingService = services.GetRequiredService<UsageTrackingService>();
         _insightService = services.GetRequiredService<IInsightService>();
+        _goalService = services.GetRequiredService<IGoalService>();
 
         DatePicker.SelectedDate = DateTime.Today;
         _appListView = CollectionViewSource.GetDefaultView(_appItems);
         AppListView.ItemsSource = _appListView;
         HeatMapItemsControl.ItemsSource = _heatMapCells;
+        GoalsItemsControl.ItemsSource = _goalItems;
         SetupHourlyChartAxes();
         SetupCategoryFilter();
 
@@ -230,6 +235,7 @@ public partial class DashboardPage : Page
             // Buffer'daki bekleyen oturumları önce DB'ye yaz; aksi halde henüz flush olmamış veri okunmaz.
             await _trackingService.FlushBufferAsync();
             await _repository.UpdateDailySummaryAsync(date);
+            await LoadGoalsAsync(date);
 
             var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";
             var excluded = ignoredStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -578,6 +584,87 @@ public partial class DashboardPage : Page
         public double Percentage { get; set; }
         public string DurationFormatted { get; set; } = "";
         public string PercentageFormatted { get; set; } = "";
+    }
+
+    private async System.Threading.Tasks.Task LoadGoalsAsync(string date)
+    {
+        try
+        {
+            if (!DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
+                parsedDate = DateTime.Today;
+
+            var progresses = await _goalService.GetGoalProgressesAsync(parsedDate);
+            _goalItems.Clear();
+            foreach (var p in progresses)
+                _goalItems.Add(new DashboardGoalItem(p));
+
+            var hasGoals = _goalItems.Count > 0;
+            TxtGoalsTitle.Visibility = hasGoals ? Visibility.Visible : Visibility.Collapsed;
+            GoalsItemsControl.Visibility = hasGoals ? Visibility.Visible : Visibility.Collapsed;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error loading goals on dashboard");
+        }
+    }
+
+    private class DashboardGoalItem : INotifyPropertyChanged
+    {
+        public GoalProgress Progress { get; }
+        public Goal Goal => Progress.Goal;
+
+        public double ProgressValue => Math.Min(Progress.ProgressPercentage, 100);
+        
+        public string ProgressText => $"{FormatDuration(Progress.CurrentSeconds)} / {FormatDuration((long)Goal.LimitSeconds)}";
+
+        public string StatusText
+        {
+            get
+            {
+                if (Goal.LimitType == GoalLimitType.Max)
+                {
+                    var remaining = Goal.LimitSeconds - Progress.CurrentSeconds;
+                    if (remaining <= 0) return "Sınır aşıldı!";
+                    return $"{FormatDuration(remaining)} kaldı";
+                }
+                else // Min
+                {
+                    var remaining = Goal.LimitSeconds - Progress.CurrentSeconds;
+                    if (remaining <= 0) return "Hedef tamamlandı!";
+                    return $"{FormatDuration(remaining)} daha gerekiyor";
+                }
+            }
+        }
+
+        public System.Windows.Media.Brush ProgressBrush
+        {
+            get
+            {
+                if (Goal.LimitType == GoalLimitType.Max)
+                {
+                    if (Progress.ProgressPercentage >= 100) return System.Windows.Media.Brushes.IndianRed;
+                    if (Progress.ProgressPercentage >= 80) return System.Windows.Media.Brushes.Orange;
+                    return (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("PrimaryBrush");
+                }
+                else // Min
+                {
+                    if (Progress.ProgressPercentage >= 100) return System.Windows.Media.Brushes.MediumSeaGreen;
+                    return System.Windows.Media.Brushes.Orange;
+                }
+            }
+        }
+
+        public System.Windows.Media.Brush StatusBrush => 
+            Progress.ProgressPercentage >= 100 && Goal.LimitType == GoalLimitType.Max 
+                ? System.Windows.Media.Brushes.IndianRed 
+                : (System.Windows.Media.Brush)System.Windows.Application.Current.FindResource("TextMutedBrush");
+
+        public DashboardGoalItem(GoalProgress progress)
+        {
+            Progress = progress;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
     }
 
     private class InsightViewModel
