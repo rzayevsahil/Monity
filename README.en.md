@@ -18,6 +18,9 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
 ![Settings](docs/images/settings.png)
 *Settings page - theme, language, and other preferences*
 
+![Achievements](docs/images/achievements.png)
+*Achievements page - earned rewards and progress*
+
 ![About](docs/images/about.png)
 *About page - application info and developer contact*
 
