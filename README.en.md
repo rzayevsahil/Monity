@@ -115,23 +115,6 @@ dotnet build Monity.sln
 dotnet run --project src/Monity.App/Monity.App.csproj
 ```
 
-Release build and distribution zip:
-
-```bash
-# Application (self-contained, user doesn't need to install .NET)
-dotnet publish src/Monity.App/Monity.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=false
-
-# Updater (single exe, added to release zip)
-dotnet publish src/Monity.Updater/Monity.Updater.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
-```
-
-Application output: `src/Monity.App/bin/Release/net8.0-windows/win-x64/publish/`
-Updater output: `src/Monity.Updater/bin/Release/net8.0/win-x64/publish/Monity.Updater.exe`
-
-**One-command setup:** Run `.\build-release.ps1` (Inno Setup 6 must be installed) to publish App + Updater and compile the Setup exe. Output: `installer/Output/Monity-Setup-1.0.0.exe`.
-
-To create a release zip: Zip the contents of the application publish folder, and add the **Updater.exe** file inside this zip. Zip name: `Monity-1.0.0-win-x64.zip` (with version number). Create a new release on GitHub and add this zip; tag e.g., `v1.0.0`.
-
 ---
 
 ## Project Structure

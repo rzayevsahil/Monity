@@ -116,23 +116,6 @@ dotnet build Monity.sln
 dotnet run --project src/Monity.App/Monity.App.csproj
 ```
 
-Release derlemesi ve dağıtım zip’i:
-
-```bash
-# Uygulama (self-contained, kullanıcı .NET kurmak zorunda kalmaz)
-dotnet publish src/Monity.App/Monity.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=false
-
-# Updater (tek exe, release zip’e eklenecek)
-dotnet publish src/Monity.Updater/Monity.Updater.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true
-```
-
-Uygulama çıktısı: `src/Monity.App/bin/Release/net8.0-windows/win-x64/publish/`  
-Updater çıktısı: `src/Monity.Updater/bin/Release/net8.0/win-x64/publish/Monity.Updater.exe`  
-
-**Tek komutla kurulum:** `.\build-release.ps1` (Inno Setup 6 kurulu olmalı) ile App + Updater publish edilir ve Setup exe derlenir. Çıktı: `installer/Output/Monity-Setup-1.0.0.exe`.
-
-Release zip’i oluşturmak için: Uygulama publish klasörünün içeriğini zip’leyin, **Updater.exe** dosyasını da bu zip’in içine ekleyin. Zip adı: `Monity-1.0.0-win-x64.zip` (sürüm numarasıyla). GitHub’da yeni release açıp bu zip’i ekleyin; tag örn. `v1.0.0`.
-
 ---
 
 ## Proje yapısı
