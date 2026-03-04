@@ -12,6 +12,7 @@ using Monity.App.Services;
 using Monity.App.Views;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
+using Serilog;
 
 namespace Monity.App;
 
@@ -200,9 +201,17 @@ public partial class MainWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        Log.Information("MainWindow closed - Disposing tray icon and timer");
         _trayUsageTimer?.Stop();
         _trayUsageTimer = null;
-        _trayIcon?.Dispose();
+        
+        if (_trayIcon != null)
+        {
+            _trayIcon.Visible = false;
+            _trayIcon.Dispose();
+            _trayIcon = null;
+        }
+        
         base.OnClosed(e);
     }
 

@@ -135,19 +135,45 @@ public partial class App : System.Windows.Application
     {
         Log.Information("Monity shutting down");
         _powerHandler?.Detach();
+        
         if (_trackingService != null)
+        {
             await _trackingService.StopAsync();
-        _mutex?.ReleaseMutex();
-        _mutex?.Dispose();
+        }
+
+        CleanupMutex();
         Log.CloseAndFlush();
     }
 
     private void Application_SessionEnding(object sender, SessionEndingCancelEventArgs e)
     {
-        Log.Information("Session ending - flushing buffer");
+        Log.Information("Session ending (Logout/Shutdown) - flushing buffer and cleaning up");
         _powerHandler?.Detach();
-        _trackingService?.StopAsync().GetAwaiter().GetResult();
-        _mutex?.ReleaseMutex();
-        _mutex?.Dispose();
+        
+        // Use synchronous stop to ensure it completes before Windows kills the process
+        if (_trackingService != null)
+        {
+            _trackingService.StopAsync().GetAwaiter().GetResult();
+        }
+
+        CleanupMutex();
+        Log.CloseAndFlush();
+    }
+
+    private void CleanupMutex()
+    {
+        try
+        {
+            _mutex?.ReleaseMutex();
+        }
+        catch (ApplicationException)
+        {
+            // Mutex was not owned by the calling thread
+        }
+        finally
+        {
+            _mutex?.Dispose();
+            _mutex = null;
+        }
     }
 }
