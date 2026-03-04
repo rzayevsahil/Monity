@@ -59,3 +59,4 @@ ehthumbs.db
 Desktop.ini
 *.log
 .DS_Store
+build-release.ps1
