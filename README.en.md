@@ -36,6 +36,7 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
 - **Smart Suggestion System:** Analyzes usage habits to provide insights on productive hours, usage trends, and unusual activities.
 - **Daily Report Notification:** Sends a notification every evening at a set time with the day's total active time and most used application.
 - **Goal System:** Set daily or weekly usage limits (e.g., "Max 3 hours of Social media per day"). Easy goal entry using natural language processing.
+- **Achievement System:** Earn rewards for healthy digital habits and focus durations (e.g., "Steady Hand", "Deep Focus").
 
 ### Interface
 - **Dashboard:** For the selected day: **start of today** (first usage time or "—"), total duration, number of usage records, "currently active" application; **date** and **category** filters, refresh button. Progress bars for active goals can be tracked on the main screen.
@@ -50,6 +51,7 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
   - **Application distribution chart:** Pie chart of most used applications; slice and tooltip values with 2 decimal places.
   - **Application usage table:** Total, average, and percentage columns; filtering with search box. Excluded applications are not shown in the list or totals.
   - **Back to Dashboard:** Return button next to the page title and at the end of the page.
+- **Achievements:** A dedicated page accessed from the main menu to track earned rewards and progress.
 - **Browser Tracking:** A separate page accessed from the main menu:
   - **Hourly browser activity:** Hourly usage chart for the selected day.
   - **Browser usage:** Filtering by browser and total duration display.
@@ -179,6 +181,8 @@ monity/
 | `browser_sessions`| Browser sessions: browser_name, domain, started_at, ended_at, duration_seconds, day_date. |
 | `browser_daily_summary` | Daily browser summary: domain, date, total_seconds, session_count. |
 | `app_settings`    | Settings: idle_threshold_seconds, min_session_seconds, ignored_processes, theme (light/dark), language (tr/en), daily_limits (JSON), limit_exceeded_action (notify/close_app), start_with_windows. |
+| `achievements`    | Achievement definitions: key, type, goal_value. |
+| `user_achievements` | User progress: achievement_id, current_value, is_unlocked, unlocked_at. |
 
 Data is kept in local time; dashboard queries are performed via `daily_summary`.
 

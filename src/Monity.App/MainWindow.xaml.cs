@@ -156,6 +156,11 @@ public partial class MainWindow : Window
         _trayIcon.ContextMenuStrip = ctx;
     }
 
+    private void BtnDashboard_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigate(new DashboardPage(Services));
+    }
+
     private void BtnBrowserTracking_Click(object sender, RoutedEventArgs e)
     {
         MainFrame.Navigate(new BrowserTrackingPage(Services));
@@ -164,6 +169,11 @@ public partial class MainWindow : Window
     private void BtnStatistics_Click(object sender, RoutedEventArgs e)
     {
         MainFrame.Navigate(new StatisticsPage(Services));
+    }
+
+    private void BtnAchievements_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigate(new AchievementsPage(Services));
     }
 
     private void BtnSettings_Click(object sender, RoutedEventArgs e)

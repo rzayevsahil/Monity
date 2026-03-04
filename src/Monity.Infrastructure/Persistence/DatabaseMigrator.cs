@@ -99,7 +99,30 @@ public static class DatabaseMigrator
                 created_at TEXT NOT NULL
             );
             
+            CREATE TABLE IF NOT EXISTS achievements (
+                key TEXT PRIMARY KEY,
+                type TEXT NOT NULL,
+                goal_value INTEGER NOT NULL,
+                is_active INTEGER NOT NULL DEFAULT 1
+            );
+
+            CREATE TABLE IF NOT EXISTS user_achievements (
+                achievement_key TEXT PRIMARY KEY,
+                current_value INTEGER NOT NULL DEFAULT 0,
+                is_unlocked INTEGER NOT NULL DEFAULT 0,
+                unlocked_at TEXT,
+                last_updated_at TEXT NOT NULL,
+                FOREIGN KEY (achievement_key) REFERENCES achievements(key)
+            );
+            
             INSERT OR IGNORE INTO app_settings (key, value) VALUES ('idle_threshold_seconds', '60');
+
+            -- Seed initial achievements
+            INSERT OR IGNORE INTO achievements (key, type, goal_value) VALUES ('steady_hand', 'streak', 3);
+            INSERT OR IGNORE INTO achievements (key, type, goal_value) VALUES ('deep_focus', 'session_total', 18000); -- 5 hours in seconds
+            INSERT OR IGNORE INTO achievements (key, type, goal_value) VALUES ('early_bird', 'streak', 3);
+            INSERT OR IGNORE INTO achievements (key, type, goal_value) VALUES ('night_owl', 'session_total', 10800); -- 3 hours in seconds
+            INSERT OR IGNORE INTO achievements (key, type, goal_value) VALUES ('balanced_day', 'complex', 1);
             """;
 
         using var cmd = conn.CreateCommand();

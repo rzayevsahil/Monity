@@ -8,6 +8,7 @@
     <sys:String x:Key="Main_Statistics">Statistics</sys:String>
     <sys:String x:Key="Main_Settings">Settings</sys:String>
     <sys:String x:Key="Main_HideWindow">Hide window</sys:String>
+    <sys:String x:Key="Main_Back">← Back</sys:String>
     <sys:String x:Key="Main_Developer">Developer: </sys:String>
     <sys:String x:Key="Main_Open">Open</sys:String>
     <sys:String x:Key="Main_Exit">Exit</sys:String>
@@ -180,6 +181,20 @@
     <sys:String x:Key="Msg_GoalAdded">Goal added successfully.</sys:String>
     <sys:String x:Key="Msg_GoalParseError">Could not understand the goal. Please use the suggested format (e.g., "Max 3 hours Social daily").</sys:String>
 
+    <!-- Achievements -->
+    <sys:String x:Key="Achievement_Unlocked_Title">Achievement Unlocked!</sys:String>
+    <sys:String x:Key="Achievement_Title">Achievements</sys:String>
+    <sys:String x:Key="Achievement_steady_hand_Title">Steady Hand</sys:String>
+    <sys:String x:Key="Achievement_steady_hand_Desc">You haven't exceeded any limits for 3 consecutive days.</sys:String>
+    <sys:String x:Key="Achievement_deep_focus_Title">Deep Focus</sys:String>
+    <sys:String x:Key="Achievement_deep_focus_Desc">Spent more than 5 hours in Development and Office tools.</sys:String>
+    <sys:String x:Key="Achievement_early_bird_Title">Early Bird</sys:String>
+    <sys:String x:Key="Achievement_early_bird_Desc">Started your activity before 08:00 AM for 3 consecutive days.</sys:String>
+    <sys:String x:Key="Achievement_night_owl_Title">Night Owl</sys:String>
+    <sys:String x:Key="Achievement_night_owl_Desc">Worked for more than 3 hours after 21:00 (9 PM).</sys:String>
+    <sys:String x:Key="Achievement_balanced_day_Title">Balanced Day</sys:String>
+    <sys:String x:Key="Achievement_balanced_day_Desc">Kept social media low and had a productive day.</sys:String>
+
     <!-- Browser Tracking -->
     <sys:String x:Key="BrowserTracking_Title">Browser Usage</sys:String>
     <sys:String x:Key="BrowserTracking_TotalTime">Total Browse Time</sys:String>
@@ -217,6 +232,7 @@
     <sys:String x:Key="About_Feature11">Daily usage report notifications</sys:String>
     <sys:String x:Key="About_Feature12">Goal System (Natural Language Processing)</sys:String>
     <sys:String x:Key="About_Feature13">Advanced settings and data management</sys:String>
+    <sys:String x:Key="About_Feature14">Achievement System (Gamification)</sys:String>
     <sys:String x:Key="About_Developer">Developer Information</sys:String>
     <sys:String x:Key="About_DeveloperName">Developer:</sys:String>
     <sys:String x:Key="About_Technology">Technology:</sys:String>

@@ -44,6 +44,13 @@ public interface IUsageRepository
     Task DeleteGoalAsync(int goalId, CancellationToken ct = default);
     Task<long> GetUsageSecondsForGoalAsync(Goal goal, DateTime startDate, DateTime endDate, CancellationToken ct = default);
     Task<IReadOnlyList<string>> GetTrackedDomainsAsync(CancellationToken ct = default);
+
+    // Achievements
+    Task<IReadOnlyList<Achievement>> GetAchievementsAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<UserAchievement>> GetUserAchievementsAsync(CancellationToken ct = default);
+    Task UpsertUserAchievementAsync(UserAchievement ua, CancellationToken ct = default);
+    Task<long> GetDailyUsageSecondsAsync(DateTime date, CancellationToken ct = default);
+    Task<long> GetDailyCategoryUsageSecondsAsync(DateTime date, string categoryName, CancellationToken ct = default);
 }
 
 public record CategoryUsageSummary(string CategoryName, long TotalSeconds);

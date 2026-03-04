@@ -786,4 +786,65 @@ public sealed class UsageRepository : IUsageRepository
         var result = await conn.QueryAsync<string>(sql);
         return result.ToList();
     }
+
+    public async Task<IReadOnlyList<Achievement>> GetAchievementsAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var sql = "SELECT key, type, goal_value AS GoalValue, is_active AS IsActive FROM achievements WHERE is_active = 1";
+        var rows = await conn.QueryAsync<Achievement>(sql);
+        return rows.ToList();
+    }
+
+    public async Task<IReadOnlyList<UserAchievement>> GetUserAchievementsAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var sql = "SELECT achievement_key AS AchievementKey, current_value AS CurrentValue, is_unlocked AS IsUnlocked, unlocked_at AS UnlockedAt, last_updated_at AS LastUpdatedAt FROM user_achievements";
+        var rows = await conn.QueryAsync<UserAchievement>(sql);
+        return rows.ToList();
+    }
+
+    public async Task UpsertUserAchievementAsync(UserAchievement ua, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var sql = """
+            INSERT INTO user_achievements (achievement_key, current_value, is_unlocked, unlocked_at, last_updated_at)
+            VALUES (@AchievementKey, @CurrentValue, @IsUnlocked, @UnlockedAt, @LastUpdatedAt)
+            ON CONFLICT(achievement_key) DO UPDATE SET
+                current_value = excluded.current_value,
+                is_unlocked = excluded.is_unlocked,
+                unlocked_at = excluded.unlocked_at,
+                last_updated_at = excluded.last_updated_at
+            """;
+        await conn.ExecuteAsync(sql, new
+        {
+            ua.AchievementKey,
+            ua.CurrentValue,
+            IsUnlocked = ua.IsUnlocked ? 1 : 0,
+            UnlockedAt = ua.UnlockedAt?.ToString("O"),
+            LastUpdatedAt = ua.LastUpdatedAt.ToString("O")
+        });
+    }
+
+    public async Task<long> GetDailyUsageSecondsAsync(DateTime date, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var dateStr = date.ToString("yyyy-MM-dd");
+        return await conn.ExecuteScalarAsync<long>(
+            "SELECT IFNULL(SUM(total_seconds), 0) FROM daily_summary WHERE date = @Date",
+            new { Date = dateStr });
+    }
+
+    public async Task<long> GetDailyCategoryUsageSecondsAsync(DateTime date, string categoryName, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var dateStr = date.ToString("yyyy-MM-dd");
+        return await conn.ExecuteScalarAsync<long>(
+            """
+            SELECT IFNULL(SUM(ds.total_seconds), 0)
+            FROM daily_summary ds
+            JOIN apps a ON ds.app_id = a.id
+            WHERE ds.date = @Date AND a.category = @CategoryName
+            """,
+            new { Date = dateStr, CategoryName = categoryName });
+    }
 }

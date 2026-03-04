@@ -90,9 +90,14 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IWindowTracker, WindowTracker>();
         services.AddSingleton<ITrayNotifier, TrayNotifier>();
         services.AddSingleton<IDailyLimitCheckService, DailyLimitCheckService>();
+        services.AddSingleton<IAchievementService, AchievementService>();
         services.AddSingleton<SessionBuffer>(sp => new SessionBuffer(
             sp.GetRequiredService<IUsageRepository>(),
-            async (appIds) => { await sp.GetRequiredService<IDailyLimitCheckService>().CheckAndNotifyAsync(appIds); }));
+            async (appIds) => 
+            { 
+                await sp.GetRequiredService<IDailyLimitCheckService>().CheckAndNotifyAsync(appIds);
+                await sp.GetRequiredService<IAchievementService>().CalculateAndNotifyAsync();
+            }));
         services.AddSingleton<ITrackingEngine>(sp =>
         {
             var wt = sp.GetRequiredService<IWindowTracker>();

@@ -8,6 +8,7 @@
     <sys:String x:Key="Main_Statistics">İstatistikler</sys:String>
     <sys:String x:Key="Main_Settings">Ayarlar</sys:String>
     <sys:String x:Key="Main_HideWindow">Pencereyi gizle</sys:String>
+    <sys:String x:Key="Main_Back">← Geri</sys:String>
     <sys:String x:Key="Main_Developer">Geliştirici: </sys:String>
     <sys:String x:Key="Main_Open">Aç</sys:String>
     <sys:String x:Key="Main_Exit">Çıkış</sys:String>
@@ -180,6 +181,20 @@
     <sys:String x:Key="Msg_GoalAdded">Hedef başarıyla eklendi.</sys:String>
     <sys:String x:Key="Msg_GoalParseError">Hedef anlaşılamadı. Lütfen sistemin tanıyabileceği şekilde (örn: "Günde max 3 saat Sosyal") yazın.</sys:String>
 
+    <!-- Achievements -->
+    <sys:String x:Key="Achievement_Unlocked_Title">Başarı Kilidi Açıldı!</sys:String>
+    <sys:String x:Key="Achievement_Title">Başarılar</sys:String>
+    <sys:String x:Key="Achievement_steady_hand_Title">Sarsılmaz El</sys:String>
+    <sys:String x:Key="Achievement_steady_hand_Desc">3 gün boyunca hiçbir limiti aşmadınız.</sys:String>
+    <sys:String x:Key="Achievement_deep_focus_Title">Derin Odaklanma</sys:String>
+    <sys:String x:Key="Achievement_deep_focus_Desc">Geliştirme ve Ofis araçlarında 5 saatten fazla vakit geçirdiniz.</sys:String>
+    <sys:String x:Key="Achievement_early_bird_Title">Erkenci Kuş</sys:String>
+    <sys:String x:Key="Achievement_early_bird_Desc">3 gün boyunca saat 08:00'den önce çalışmaya başladınız.</sys:String>
+    <sys:String x:Key="Achievement_night_owl_Title">Gece Kuşu</sys:String>
+    <sys:String x:Key="Achievement_night_owl_Desc">Gece saat 21:00'den sonra 3 saatten fazla çalıştınız.</sys:String>
+    <sys:String x:Key="Achievement_balanced_day_Title">Dengeli Gün</sys:String>
+    <sys:String x:Key="Achievement_balanced_day_Desc">Sosyal medyayı kısıtlı tutup verimli bir gün geçirdiniz.</sys:String>
+
     <!-- Browser Tracking -->
     <sys:String x:Key="BrowserTracking_Title">Tarayıcı Kullanımı</sys:String>
     <sys:String x:Key="BrowserTracking_TotalTime">Toplam Tarama Süresi</sys:String>
@@ -217,6 +232,7 @@
     <sys:String x:Key="About_Feature11">Günlük kullanım rapor bildirimi</sys:String>
     <sys:String x:Key="About_Feature12">Hedef Sistemi (Doğal dil işleme)</sys:String>
     <sys:String x:Key="About_Feature13">Gelişmiş ayarlar ve veri yönetimi</sys:String>
+    <sys:String x:Key="About_Feature14">Başarım (Achievement) Sistemi</sys:String>
     <sys:String x:Key="About_Developer">Geliştirici Bilgileri</sys:String>
     <sys:String x:Key="About_DeveloperName">Geliştirici:</sys:String>
     <sys:String x:Key="About_Technology">Teknoloji:</sys:String>
