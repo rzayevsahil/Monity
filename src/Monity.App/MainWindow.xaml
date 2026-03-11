@@ -18,28 +18,32 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <Border Grid.Row="0" Background="{DynamicResource CardBrush}" Padding="16,12" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
+        <!-- Header: logo+isim solda, butonlar sağda (çakışmayı önlemek için iki sütun) -->
+        <Border Grid.Row="0" Background="{DynamicResource CardBrush}" Padding="16,10" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1">
             <Grid>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="pack://application:,,,/Assets/AppIcon.ico" Width="32" Height="32" Margin="0,0,10,0" Stretch="Uniform"/>
-                    <TextBlock Text="{DynamicResource App_Name}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" MinWidth="1"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
+                    <Image Source="pack://application:,,,/Assets/AppIcon.ico" Width="28" Height="28" Margin="0,0,8,0" Stretch="Uniform"/>
+                    <TextBlock Text="{DynamicResource App_Name}" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Border x:Name="UpdateBanner" Visibility="Collapsed" Background="{DynamicResource UpdateBannerBrush}" CornerRadius="6" Padding="10,6" Margin="0,0,12,0" VerticalAlignment="Center">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Border x:Name="UpdateBanner" Visibility="Collapsed" Background="{DynamicResource UpdateBannerBrush}" CornerRadius="6" Padding="10,6" Margin="0,0,8,0" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock x:Name="TxtUpdateMessage" Text="{DynamicResource Main_NewVersion}" Foreground="{DynamicResource TextBrush}" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0"/>
                             <Button x:Name="BtnUpdate" Content="{DynamicResource Main_Update}" Style="{DynamicResource PrimaryButtonStyle}" Padding="10,6" Click="BtnUpdate_Click"/>
                         </StackPanel>
                     </Border>
-                    <Button x:Name="BtnDashboard" Content="{DynamicResource Dashboard_Title}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnDashboard_Click"/>
-                    <Button x:Name="BtnBrowserTracking" Content="{DynamicResource Navigation_BrowserTracking}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnBrowserTracking_Click"/>
-                    <Button x:Name="BtnStatistics" Content="{DynamicResource Main_Statistics}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnStatistics_Click"/>
-                    <Button x:Name="BtnAchievements" Content="{DynamicResource Achievement_Title}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnAchievements_Click"/>
-                    <Button x:Name="BtnShare" Content="{DynamicResource Share_Button}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnShare_Click"/>
-                    <Button x:Name="BtnSettings" Content="{DynamicResource Main_Settings}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnSettings_Click"/>
-                    <Button x:Name="BtnAbout" Content="{DynamicResource About_Title}" Style="{DynamicResource SecondaryButtonStyle}" Margin="0,0,8,0" Click="BtnAbout_Click"/>
-                    <Button x:Name="BtnMinimizeToTray" Content="{DynamicResource Main_HideWindow}" Style="{DynamicResource SecondaryButtonStyle}" Click="BtnMinimizeToTray_Click"/>
+                    <Button x:Name="BtnDashboard" Content="{DynamicResource Dashboard_Title}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnDashboard_Click"/>
+                    <Button x:Name="BtnBrowserTracking" Content="{DynamicResource Navigation_BrowserTracking}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnBrowserTracking_Click"/>
+                    <Button x:Name="BtnStatistics" Content="{DynamicResource Main_Statistics}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnStatistics_Click"/>
+                    <Button x:Name="BtnAchievements" Content="{DynamicResource Achievement_Title}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnAchievements_Click"/>
+                    <Button x:Name="BtnShare" Content="{DynamicResource Share_Button}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnShare_Click"/>
+                    <Button x:Name="BtnSettings" Content="{DynamicResource Main_Settings}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnSettings_Click"/>
+                    <Button x:Name="BtnAbout" Content="{DynamicResource About_Title}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnAbout_Click"/>
+                    <Button x:Name="BtnMinimizeToTray" Content="{DynamicResource Main_HideWindow}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Click="BtnMinimizeToTray_Click"/>
                 </StackPanel>
             </Grid>
         </Border>

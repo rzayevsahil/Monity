@@ -55,6 +55,7 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
   - **Application usage table:** Total, average, and percentage columns; filtering with search box. Excluded applications are not shown in the list or totals.
   - **Back to Dashboard:** Return button next to the page title and at the end of the page.
 - **Achievements:** A dedicated page accessed from the main menu to track earned rewards and progress.
+- **Share:** Generate a usage summary card for today, this week, or this month. The card shows period label, date range, total duration, trend vs. previous period (percentage), daily average, most used application, peak productive hours (if available), a single insight highlight, and goal status (if set). The right panel lists category distribution (top 3 categories), top 3 applications (with mini bar chart), and highlights. The layout is clean and focused; the image can be copied to the clipboard or shared externally.
 - **Browser Tracking:** A separate page accessed from the main menu:
   - **Hourly browser activity:** Hourly usage chart for the selected day.
   - **Browser usage:** Filtering by browser and total duration display.
@@ -73,6 +74,7 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
   - **Goal Management:** Add and delete usage goals. Quick entry with sentences like "Max 2 hours of Social daily", "Min 10 hours of Development weekly".
   - **Data management:** Delete data older than 30 / 90 / 365 days or delete all data (with confirmation dialog).
   - **About:** A separate page accessed from the main menu; app logo, description, features, developer info, contact links (Email, GitHub, LinkedIn), and version history.
+- **Header:** Logo and app name on the left, navigation buttons on the right in a two-column layout so they do not overlap in small window mode. Buttons use compact padding to save space.
 - **Footer:** Version info and developer link in the main window.
 - **Tray:** Hide window, double-click to reopen; notification texts change based on selected language.
 
@@ -135,7 +137,7 @@ monity/
     │   ├── Services/            # UpdateService, ThemeService, LanguageService, StartupService, DailyLimitCheckService
     │   ├── Resources/           # Strings.tr.xaml, Strings.en.xaml (i18n)
     │   ├── Themes/              # Light.xaml, Dark.xaml (ResourceDictionary)
-    │   ├── Views/               # DashboardPage, StatisticsPage, SettingsPage, BrowserTrackingPage, AboutPage
+    │   ├── Views/               # DashboardPage, StatisticsPage, SettingsPage, BrowserTrackingPage, AchievementsPage, ShareCard, AboutPage
     │   ├── Helpers/             # DurationAndPeriodHelper, Strings (resource lookup)
     │   ├── Power/               # PowerEventHandler (WM_POWERBROADCAST)
     │   └── App.xaml(.cs)
