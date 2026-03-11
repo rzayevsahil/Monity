@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Threading;
@@ -192,6 +193,12 @@ public partial class MainWindow : Window
     private void BtnAbout_Click(object sender, RoutedEventArgs e)
     {
         MainFrame.Navigate(new AboutPage());
+    }
+
+    private void BtnScreenshot_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new ScreenshotDialog { Owner = this };
+        dialog.ShowDialog();
     }
 
     private void BtnMinimizeToTray_Click(object sender, RoutedEventArgs e)

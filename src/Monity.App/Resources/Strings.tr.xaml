@@ -8,6 +8,17 @@
     <sys:String x:Key="Main_Statistics">İstatistikler</sys:String>
     <sys:String x:Key="Main_Settings">Ayarlar</sys:String>
     <sys:String x:Key="Main_HideWindow">Pencereyi gizle</sys:String>
+    <sys:String x:Key="Main_Cancel">İptal</sys:String>
+    <sys:String x:Key="Main_Screenshot">Ekran görüntüsü al</sys:String>
+    <sys:String x:Key="Main_ScreenshotCopied">Ekran görüntüsü panoya kopyalandı.</sys:String>
+    <sys:String x:Key="Main_ScreenshotFailed">Ekran görüntüsü alınamadı.</sys:String>
+    <sys:String x:Key="Screenshot_Title">Ekran görüntüsü</sys:String>
+    <sys:String x:Key="Screenshot_VisibleArea">Görünen kısım</sys:String>
+    <sys:String x:Key="Screenshot_FullPage">Tam sayfa (kaydırılabilir içerik)</sys:String>
+    <sys:String x:Key="Screenshot_Preview">Önizleme</sys:String>
+    <sys:String x:Key="Screenshot_Copy">Panoya kopyala</sys:String>
+    <sys:String x:Key="Screenshot_Save">Kaydet</sys:String>
+    <sys:String x:Key="Screenshot_Saved">Görüntü kaydedildi.</sys:String>
     <sys:String x:Key="Main_Back">← Geri</sys:String>
     <sys:String x:Key="Main_Developer">Geliştirici: </sys:String>
     <sys:String x:Key="Main_Open">Aç</sys:String>

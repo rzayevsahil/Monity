@@ -8,6 +8,17 @@
     <sys:String x:Key="Main_Statistics">Statistics</sys:String>
     <sys:String x:Key="Main_Settings">Settings</sys:String>
     <sys:String x:Key="Main_HideWindow">Hide window</sys:String>
+    <sys:String x:Key="Main_Cancel">Cancel</sys:String>
+    <sys:String x:Key="Main_Screenshot">Take screenshot</sys:String>
+    <sys:String x:Key="Main_ScreenshotCopied">Screenshot copied to clipboard.</sys:String>
+    <sys:String x:Key="Main_ScreenshotFailed">Screenshot could not be taken.</sys:String>
+    <sys:String x:Key="Screenshot_Title">Screenshot</sys:String>
+    <sys:String x:Key="Screenshot_VisibleArea">Visible area</sys:String>
+    <sys:String x:Key="Screenshot_FullPage">Full page (scrollable content)</sys:String>
+    <sys:String x:Key="Screenshot_Preview">Preview</sys:String>
+    <sys:String x:Key="Screenshot_Copy">Copy to clipboard</sys:String>
+    <sys:String x:Key="Screenshot_Save">Save</sys:String>
+    <sys:String x:Key="Screenshot_Saved">Image saved.</sys:String>
     <sys:String x:Key="Main_Back">← Back</sys:String>
     <sys:String x:Key="Main_Developer">Developer: </sys:String>
     <sys:String x:Key="Main_Open">Open</sys:String>

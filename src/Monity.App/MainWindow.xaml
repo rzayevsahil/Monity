@@ -43,6 +43,11 @@
                     <Button x:Name="BtnShare" Content="{DynamicResource Share_Button}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnShare_Click"/>
                     <Button x:Name="BtnSettings" Content="{DynamicResource Main_Settings}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnSettings_Click"/>
                     <Button x:Name="BtnAbout" Content="{DynamicResource About_Title}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnAbout_Click"/>
+                    <Button x:Name="BtnScreenshot" ToolTip="{DynamicResource Main_Screenshot}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnScreenshot_Click">
+                        <Button.Content>
+                            <TextBlock Text="&#xE722;" FontFamily="Segoe MDL2 Assets" FontSize="16" Foreground="{DynamicResource TextBrush}"/>
+                        </Button.Content>
+                    </Button>
                     <Button x:Name="BtnMinimizeToTray" Content="{DynamicResource Main_HideWindow}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Click="BtnMinimizeToTray_Click"/>
                 </StackPanel>
             </Grid>
