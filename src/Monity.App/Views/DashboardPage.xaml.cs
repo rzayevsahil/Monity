@@ -362,17 +362,20 @@ public partial class DashboardPage : Page
             
             await Dispatcher.InvokeAsync(() =>
             {
-                if (insights.Count == 0)
-                {
-                    InsightSection.Visibility = Visibility.Collapsed;
-                    return;
-                }
-
-                var viewModels = insights.Select(x => new InsightViewModel
-                {
-                    Message = x.Message,
-                    IconPath = GetIconPath(x.Icon)
-                }).ToList();
+                var viewModels = insights.Count > 0
+                    ? insights.Select(x => new InsightViewModel
+                    {
+                        Message = x.Message,
+                        IconPath = GetIconPath(x.Icon)
+                    }).ToList()
+                    : new List<InsightViewModel>
+                    {
+                        new InsightViewModel
+                        {
+                            Message = Strings.Get("Insight_NeedMoreData"),
+                            IconPath = GetIconPath("Star")
+                        }
+                    };
 
                 InsightItemsControl.ItemsSource = viewModels;
                 InsightSection.Visibility = Visibility.Visible;

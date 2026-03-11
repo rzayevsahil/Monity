@@ -177,6 +177,13 @@ public partial class MainWindow : Window
         MainFrame.Navigate(new AchievementsPage(Services));
     }
 
+    private void BtnShare_Click(object sender, RoutedEventArgs e)
+    {
+        var shareService = Services.GetRequiredService<IShareService>();
+        var dialog = new ShareDialog(shareService) { Owner = this };
+        dialog.ShowDialog();
+    }
+
     private void BtnSettings_Click(object sender, RoutedEventArgs e)
     {
         MainFrame.Navigate(new SettingsPage(Services));

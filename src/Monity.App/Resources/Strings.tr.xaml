@@ -57,6 +57,9 @@
     <sys:String x:Key="Insight_Trend_Decrease">Son 5 günde kullanım süreniz %{0} azaldı.</sys:String>
     <sys:String x:Key="Insight_PeakHours">En verimli saatleriniz {0}–{1} arası.</sys:String>
     <sys:String x:Key="Insight_CategoryShift">Bugün "{0}" kategorisinde alışılmışın dışında bir yoğunluk var.</sys:String>
+    <sys:String x:Key="Insight_Trend_Category_Increase">Son 5 günde {0} süren %{1} arttı.</sys:String>
+    <sys:String x:Key="Insight_Trend_Category_Decrease">Son 5 günde {0} süren %{1} azaldı.</sys:String>
+    <sys:String x:Key="Insight_NeedMoreData">Birkaç gün daha kullanım sonrası öneriler burada görünecek.</sys:String>
     <!-- Settings -->
     <sys:String x:Key="Settings_Title">Ayarlar</sys:String>
     <sys:String x:Key="Settings_Back">← Geri</sys:String>
@@ -240,4 +243,39 @@
     <sys:String x:Key="About_VersionHistory">Versiyon Geçmişi</sys:String>
     <sys:String x:Key="About_Acknowledgments">Teşekkürler</sys:String>
     <sys:String x:Key="About_Copyright">© 2026 Sahil Rzayev. Tüm hakları saklıdır.</sys:String>
+    <!-- Share card -->
+    <sys:String x:Key="Share_NoData">Henüz veri yok</sys:String>
+    <sys:String x:Key="Share_Button">Paylaş</sys:String>
+    <sys:String x:Key="Share_Title">Sosyal medyada paylaş</sys:String>
+    <sys:String x:Key="Share_Period">Dönem</sys:String>
+    <sys:String x:Key="Share_PeriodToday">Bugün</sys:String>
+    <sys:String x:Key="Share_PeriodWeek">Bu hafta</sys:String>
+    <sys:String x:Key="Share_PeriodMonth">Bu ay</sys:String>
+    <sys:String x:Key="Share_Preview">Önizleme</sys:String>
+    <sys:String x:Key="Share_CaptionPreview">Paylaşım metni</sys:String>
+    <sys:String x:Key="Share_Loading">Yükleniyor…</sys:String>
+    <sys:String x:Key="Share_TopApp">En çok kullanılan:</sys:String>
+    <sys:String x:Key="Share_Stat_AvgPerDay">Günlük ortalama: {0}</sys:String>
+    <sys:String x:Key="Share_Stat_Sessions">Oturum: {0}</sys:String>
+    <sys:String x:Key="Share_Stat_TopCategory">En çok kategori</sys:String>
+    <sys:String x:Key="Share_Stat_TopApps">Top 3 uygulama</sys:String>
+    <sys:String x:Key="Share_Stat_Highlights">Öne çıkanlar</sys:String>
+    <sys:String x:Key="Share_Trend_VsPrevious">Önceki döneme göre %{0}</sys:String>
+    <sys:String x:Key="Share_Stat_CategoryDistribution">Kategori dağılımı</sys:String>
+    <sys:String x:Key="Share_PeakHours">En verimli saatler</sys:String>
+    <sys:String x:Key="Share_Goal">Hedef</sys:String>
+    <sys:String x:Key="Share_GoalExceeded">Hedef aşıldı</sys:String>
+    <sys:String x:Key="Share_Achievements">Başarım</sys:String>
+    <sys:String x:Key="Share_Developer">Geliştirici</sys:String>
+    <sys:String x:Key="Share_CopyImage">Görüntüyü panoya kopyala</sys:String>
+    <sys:String x:Key="Share_CopyText">Metni panoya kopyala</sys:String>
+    <sys:String x:Key="Share_SaveImage">Görüntüyü kaydet</sys:String>
+    <sys:String x:Key="Share_Created">Görüntü ve paylaşım metni panoya kopyalandı.</sys:String>
+    <sys:String x:Key="Share_ImageCopied">Görüntü panoya kopyalandı.</sys:String>
+    <sys:String x:Key="Share_TextCopied">Paylaşım metni panoya kopyalandı.</sys:String>
+    <sys:String x:Key="Share_Saved">Kaydedildi: {0}</sys:String>
+    <sys:String x:Key="ShareCaption_Today">Bugün {0} odaklandım. Monity ile takip ediyorum. #Monity #Productivity</sys:String>
+    <sys:String x:Key="ShareCaption_Week">Bu hafta {0} odaklandım. Monity ile takip ediyorum. #Monity #Productivity</sys:String>
+    <sys:String x:Key="ShareCaption_Month">Bu ay {0} odaklandım. Monity ile takip ediyorum. #Monity #Productivity</sys:String>
+    <sys:String x:Key="ShareCaption_NoData">Monity ile kullanımımı takip ediyorum. #Monity</sys:String>
 </ResourceDictionary>

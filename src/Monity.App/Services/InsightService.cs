@@ -34,6 +34,10 @@ public class InsightService : IInsightService
             // 3. Category Shift Insight
             var shiftInsight = await GetCategoryShiftInsightAsync(date, ct);
             if (shiftInsight != null) insights.Add(shiftInsight);
+
+            // 4. Category-based trend (e.g. "Son 5 günde oyun süren %35 arttı")
+            var categoryTrendInsight = await GetCategoryTrendInsightAsync(date, ct);
+            if (categoryTrendInsight != null) insights.Add(categoryTrendInsight);
         }
         catch (Exception ex)
         {
@@ -132,7 +136,51 @@ public class InsightService : IInsightService
 
     private string GetCategoryDisplayName(string categoryName)
     {
-        if (string.IsNullOrEmpty(categoryName)) return Strings.Get("Category_Uncategorized");
-        return Strings.Get($"Category_{categoryName}");
+        if (string.IsNullOrWhiteSpace(categoryName)) return Strings.Get("Category_Uncategorized");
+
+        var key = categoryName switch
+        {
+            "Diğer" => "Category_Other",
+            "Tarayıcı" => "Category_Browser",
+            "Geliştirme" => "Category_Development",
+            "Sosyal" => "Category_Social",
+            "Eğlence" => "Category_Entertainment",
+            "Ofis" => "Category_Office",
+            "Eğitim" => "Category_Education",
+            _ => null
+        };
+
+        return key != null ? Strings.Get(key) : categoryName;
+    }
+
+    /// <summary>
+    /// Compare last 5 days vs previous 5 days per category; return insight for significant change (e.g. Eğlence/Oyun).
+    /// </summary>
+    private async Task<InsightItem?> GetCategoryTrendInsightAsync(DateTime date, CancellationToken ct)
+    {
+        var categoriesToCheck = new[] { "Eğlence", "Geliştirme", "Sosyal", "Tarayıcı", "Ofis" };
+        var end1 = date.AddDays(-1);
+        var start1 = date.AddDays(-5);
+        var end2 = date.AddDays(-6);
+        var start2 = date.AddDays(-10);
+
+        foreach (var cat in categoriesToCheck)
+        {
+            var period1 = await _repository.GetCategoryUsageInRangeAsync(start1, end1, ct);
+            var period2 = await _repository.GetCategoryUsageInRangeAsync(start2, end2, ct);
+            var sum1 = period1.Where(x => x.CategoryName == cat).Sum(x => x.TotalSeconds);
+            var sum2 = period2.Where(x => x.CategoryName == cat).Sum(x => x.TotalSeconds);
+            if (sum2 == 0 || sum1 < 1800) continue;
+            var diff = sum1 - sum2;
+            var percent = (double)Math.Abs(diff) / sum2 * 100;
+            if (percent >= 15)
+            {
+                var categoryDisplayName = GetCategoryDisplayName(cat);
+                var key = diff > 0 ? "Insight_Trend_Category_Increase" : "Insight_Trend_Category_Decrease";
+                var message = string.Format(Strings.Get(key), categoryDisplayName, Math.Round(percent, 0));
+                return new InsightItem(message, diff > 0 ? "TrendingUp" : "TrendingDown", "Trend");
+            }
+        }
+        return null;
     }
 }

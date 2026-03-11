@@ -57,6 +57,9 @@
     <sys:String x:Key="Insight_Trend_Decrease">Your usage time has decreased by {0}% in the last 5 days.</sys:String>
     <sys:String x:Key="Insight_PeakHours">Your most productive hours are between {0}–{1}.</sys:String>
     <sys:String x:Key="Insight_CategoryShift">There is an unusual intensity in the "{0}" category today.</sys:String>
+    <sys:String x:Key="Insight_Trend_Category_Increase">Your {0} time increased by {1}% in the last 5 days.</sys:String>
+    <sys:String x:Key="Insight_Trend_Category_Decrease">Your {0} time decreased by {1}% in the last 5 days.</sys:String>
+    <sys:String x:Key="Insight_NeedMoreData">Insights will appear here after a few more days of usage.</sys:String>
     <!-- Settings -->
     <sys:String x:Key="Settings_Title">Settings</sys:String>
     <sys:String x:Key="Settings_Back">← Back</sys:String>
@@ -240,4 +243,39 @@
     <sys:String x:Key="About_VersionHistory">Version History</sys:String>
     <sys:String x:Key="About_Acknowledgments">Acknowledgments</sys:String>
     <sys:String x:Key="About_Copyright">© 2026 Sahil Rzayev. All rights reserved.</sys:String>
+    <!-- Share card -->
+    <sys:String x:Key="Share_NoData">No data yet</sys:String>
+    <sys:String x:Key="Share_Button">Share</sys:String>
+    <sys:String x:Key="Share_Title">Share on social media</sys:String>
+    <sys:String x:Key="Share_Period">Period</sys:String>
+    <sys:String x:Key="Share_PeriodToday">Today</sys:String>
+    <sys:String x:Key="Share_PeriodWeek">This week</sys:String>
+    <sys:String x:Key="Share_PeriodMonth">This month</sys:String>
+    <sys:String x:Key="Share_Preview">Preview</sys:String>
+    <sys:String x:Key="Share_CaptionPreview">Share caption</sys:String>
+    <sys:String x:Key="Share_Loading">Loading…</sys:String>
+    <sys:String x:Key="Share_TopApp">Top app:</sys:String>
+    <sys:String x:Key="Share_Stat_AvgPerDay">Daily average: {0}</sys:String>
+    <sys:String x:Key="Share_Stat_Sessions">Sessions: {0}</sys:String>
+    <sys:String x:Key="Share_Stat_TopCategory">Top category</sys:String>
+    <sys:String x:Key="Share_Stat_TopApps">Top 3 apps</sys:String>
+    <sys:String x:Key="Share_Stat_Highlights">Highlights</sys:String>
+    <sys:String x:Key="Share_Trend_VsPrevious">vs previous period: %{0}</sys:String>
+    <sys:String x:Key="Share_Stat_CategoryDistribution">Category distribution</sys:String>
+    <sys:String x:Key="Share_PeakHours">Peak hours</sys:String>
+    <sys:String x:Key="Share_Goal">Goal</sys:String>
+    <sys:String x:Key="Share_GoalExceeded">Goal exceeded</sys:String>
+    <sys:String x:Key="Share_Achievements">Achievements</sys:String>
+    <sys:String x:Key="Share_Developer">Developer</sys:String>
+    <sys:String x:Key="Share_CopyImage">Copy image to clipboard</sys:String>
+    <sys:String x:Key="Share_CopyText">Copy text to clipboard</sys:String>
+    <sys:String x:Key="Share_SaveImage">Save image</sys:String>
+    <sys:String x:Key="Share_Created">Image and caption copied to clipboard.</sys:String>
+    <sys:String x:Key="Share_ImageCopied">Image copied to clipboard.</sys:String>
+    <sys:String x:Key="Share_TextCopied">Caption copied to clipboard.</sys:String>
+    <sys:String x:Key="Share_Saved">Saved: {0}</sys:String>
+    <sys:String x:Key="ShareCaption_Today">Focused for {0} today. Tracking with Monity. #Monity #Productivity</sys:String>
+    <sys:String x:Key="ShareCaption_Week">Focused for {0} this week. Tracking with Monity. #Monity #Productivity</sys:String>
+    <sys:String x:Key="ShareCaption_Month">Focused for {0} this month. Tracking with Monity. #Monity #Productivity</sys:String>
+    <sys:String x:Key="ShareCaption_NoData">Tracking my usage with Monity. #Monity</sys:String>
 </ResourceDictionary>

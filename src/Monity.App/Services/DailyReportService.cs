@@ -13,12 +13,14 @@ public sealed class DailyReportService : IDailyReportService
 {
     private readonly IUsageRepository _repository;
     private readonly ITrayNotifier _trayNotifier;
+    private readonly IInsightService _insightService;
     private DispatcherTimer? _timer;
 
-    public DailyReportService(IUsageRepository repository, ITrayNotifier trayNotifier)
+    public DailyReportService(IUsageRepository repository, ITrayNotifier trayNotifier, IInsightService insightService)
     {
         _repository = repository;
         _trayNotifier = trayNotifier;
+        _insightService = insightService;
     }
 
     public void Start()
@@ -81,6 +83,15 @@ public sealed class DailyReportService : IDailyReportService
         var durationText = FormatDuration(totalSeconds);
         var title = Strings.Get("ReportNotification_Title");
         var message = string.Format(Strings.Get("ReportNotification_Text"), durationText, topAppName);
+
+        var insightsEnabled = (await _repository.GetSettingAsync("smart_insights_enabled") ?? "true") == "true";
+        if (insightsEnabled)
+        {
+            var insights = await _insightService.GetInsightsAsync(DateTime.Parse(date));
+            var firstInsight = insights.FirstOrDefault();
+            if (firstInsight != null)
+                message += "\n\n" + firstInsight.Message;
+        }
 
         _trayNotifier.ShowBalloonTip(title, message);
 
