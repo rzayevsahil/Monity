@@ -61,6 +61,7 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
   - **Browser usage:** Filtering by browser and total duration display.
   - **Most visited sites:** Site-based usage duration and percentage chart.
   - **Site usage list:** Detailed table view, search and sort features.
+- **Screenshot capture:** Use the camera icon in the top header to capture a screenshot of the whole app. Supports **visible area** or **full page (scrollable content)** modes with preview, PNG save, and copy-to-clipboard.
 - **Settings:**
   - **Theme:** Light or Dark; applied immediately upon selection, preference is saved.
   - **Language:** Turkish or English; interface texts and category lists change based on the selected language.

@@ -42,7 +42,7 @@
                               Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8"/>
                     
                     <!-- Version Info -->
-                    <TextBlock x:Name="TxtVersion" Text="v5.1.0" 
+                    <TextBlock x:Name="TxtVersion" Text="v5.5.0" 
                                FontSize="12" FontWeight="SemiBold"
                                HorizontalAlignment="Center" 
                                Foreground="{DynamicResource PrimaryBrush}"/>
@@ -73,69 +73,82 @@
                               Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <!-- Sağ sütundaki uzun metinler için biraz daha geniş alan -->
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         
                         <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature1}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature2}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature3}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature4}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature5}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature6}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature7}"/>
+                            </TextBlock>
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
+                                <Run Text="• "/>
+                                <Run Text="{DynamicResource About_Feature8}"/>
+                            </TextBlock>
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
+                                <Run Text="• "/>
+                                <Run Text="{DynamicResource About_Feature9}"/>
                             </TextBlock>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1">
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
-                                <Run Text="• "/>
-                                <Run Text="{DynamicResource About_Feature8}"/>
-                            </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
-                                <Run Text="• "/>
-                                <Run Text="{DynamicResource About_Feature9}"/>
-                            </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature10}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature11}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature12}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature13}"/>
                             </TextBlock>
-                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}">
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
                                 <Run Text="• "/>
                                 <Run Text="{DynamicResource About_Feature14}"/>
+                            </TextBlock>
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
+                                <Run Text="• "/>
+                                <Run Text="{DynamicResource About_Feature15}"/>
+                            </TextBlock>
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4" TextWrapping="Wrap">
+                                <Run Text="• "/>
+                                <Run Text="{DynamicResource About_Feature16}"/>
+                            </TextBlock>
+                            <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" TextWrapping="Wrap">
+                                <Run Text="• "/>
+                                <Run Text="{DynamicResource About_Feature17}"/>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -204,7 +217,7 @@
                 </StackPanel>
             </Border>
             
-            <!-- Version History Section -->
+            <!-- Version History Section: her sürüm başlık + maddeler (düzenli liste) -->
             <Border Background="{DynamicResource CardBrush}" CornerRadius="8" 
                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
                    Padding="20" Margin="0,0,0,16">
@@ -213,86 +226,64 @@
                               FontSize="16" FontWeight="SemiBold" 
                               Foreground="{DynamicResource TextBrush}" Margin="0,0,0,12"/>
                     <StackPanel>
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
-                            <Run Text="v5.1.0" FontWeight="SemiBold"/>
-                            <Run Text=" (Mart 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
-                            <LineBreak/>
-                            <Run Text="    • Başarım (Achievement) Sistemi ve Gamification"/>
-                            <LineBreak/>
-                            <Run Text="    • Kazanılan başarılar için bildirim sistemi"/>
-                            <LineBreak/>
-                            <Run Text="    • Başarı ilerleme takibi ve özel sayfa"/>
-                        </TextBlock>
-
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
-                            <Run Text="v5.0.0" FontWeight="SemiBold"/>
-                            <Run Text=" (Mart 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
-                            <LineBreak/>
-                            <Run Text="    • Hedef Sistemi ve İlerleme Takibi"/>
-                            <LineBreak/>
-                            <Run Text="    • Doğal Dil İşleme (Akıllı cümle analizi)"/>
-                            <LineBreak/>
-                            <Run Text="    • Dashboard Hedef Kartları ve Progress Barlar"/>
-                        </TextBlock>
-
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
-                            <Run Text="v4.9.8" FontWeight="SemiBold"/>
-                            <Run Text=" (Mart 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
-                            <LineBreak/>
-                            <Run Text="    • Akıllı Öneri Sistemi (İçgörüler)"/>
-                            <LineBreak/>
-                            <Run Text="    • Günlük Rapor Bildirimi"/>
-                            <LineBreak/>
-                            <Run Text="    • Gelişmiş Saat Seçim Arayüzü"/>
-                            <LineBreak/>
-                            <Run Text="    • Performans ve Tasarım İyileştirmeleri"/>
-                        </TextBlock>
-
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
-                            <Run Text="v4.9.0" FontWeight="SemiBold"/>
-                            <Run Text=" (Mart 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
-                            <LineBreak/>
-                            <Run Text="    • Hakkında sayfası eklendi"/>
-                            <LineBreak/>
-                            <Run Text="    • Geliştirici iletişim bilgileri"/>
-                            <LineBreak/>
-                            <Run Text="    • Uygulama logosu entegrasyonu"/>
-                            <LineBreak/>
-                            <Run Text="    • Platform ikonları (Email, GitHub, LinkedIn)"/>
-                            <LineBreak/>
-                            <Run Text="    • Versiyon geçmişi görüntüleme"/>
-                        </TextBlock>
-                        
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
-                            <Run Text="v4.2.0" FontWeight="SemiBold"/>
-                            <Run Text=" (Mart 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
-                            <LineBreak/>
-                            <Run Text="    • Opera GX tarayıcı desteği eklendi"/>
-                            <LineBreak/>
-                            <Run Text="    • Tarayıcı takibi iyileştirmeleri"/>
-                            <LineBreak/>
-                            <Run Text="    • UI/UX geliştirmeleri"/>
-                        </TextBlock>
-                        
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8">
-                            <Run Text="v4.1.0" FontWeight="SemiBold"/>
-                            <Run Text=" (Şubat 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
-                            <LineBreak/>
-                            <Run Text="    • Performans optimizasyonları"/>
-                            <LineBreak/>
-                            <Run Text="    • Hata düzeltmeleri"/>
-                        </TextBlock>
-                        
-                        <TextBlock FontSize="13" Foreground="{DynamicResource TextBrush}">
-                            <Run Text="v4.0.0" FontWeight="SemiBold"/>
-                            <Run Text=" (Ocak 2026)" Foreground="{DynamicResource TextMutedBrush}"/>
-                            <LineBreak/>
-                            <Run Text="    • Ana versiyon yayınlandı"/>
-                            <LineBreak/>
-                            <Run Text="    • Tarayıcı takibi özelliği"/>
-                            <LineBreak/>
-                            <Run Text="    • İstatistik raporları"/>
-                        </TextBlock>
+                        <!-- v5.5.0 -->
+                        <TextBlock Text="{DynamicResource About_Ver_550}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,10">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_550_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_550_2}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_550_3}"/></TextBlock>
+                        </StackPanel>
+                        <!-- v5.1.0 -->
+                        <TextBlock Text="{DynamicResource About_Ver_510}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,10">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_510_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_510_2}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_510_3}"/></TextBlock>
+                        </StackPanel>
+                        <!-- v5.0.0 -->
+                        <TextBlock Text="{DynamicResource About_Ver_500}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,10">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_500_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_500_2}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_500_3}"/></TextBlock>
+                        </StackPanel>
+                        <!-- v4.9.8 -->
+                        <TextBlock Text="{DynamicResource About_Ver_498}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,10">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_498_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_498_2}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_498_3}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_498_4}"/></TextBlock>
+                        </StackPanel>
+                        <!-- v4.9.0 -->
+                        <TextBlock Text="{DynamicResource About_Ver_490}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,10">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_490_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_490_2}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_490_3}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_490_4}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_490_5}"/></TextBlock>
+                        </StackPanel>
+                        <!-- v4.2.0 -->
+                        <TextBlock Text="{DynamicResource About_Ver_420}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,10">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_420_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_420_2}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_420_3}"/></TextBlock>
+                        </StackPanel>
+                        <!-- v4.1.0 -->
+                        <TextBlock Text="{DynamicResource About_Ver_410}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,10">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_410_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_410_2}"/></TextBlock>
+                        </StackPanel>
+                        <!-- v4.0.0 -->
+                        <TextBlock Text="{DynamicResource About_Ver_400}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,4"/>
+                        <StackPanel Margin="16,0,0,0">
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_400_1}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,2"><Run Text="• "/><Run Text="{DynamicResource About_Ver_400_2}"/></TextBlock>
+                            <TextBlock FontSize="12" TextWrapping="Wrap" Foreground="{DynamicResource TextBrush}"><Run Text="• "/><Run Text="{DynamicResource About_Ver_400_3}"/></TextBlock>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
             </Border>

@@ -35,6 +35,15 @@ Bu klasöre aşağıdaki ekran görüntülerini ekleyin:
    - İletişim linkleri (Email, GitHub, LinkedIn)
    - Versiyon geçmişi
 
+6. **share-card.png** - Paylaşım kartı önizlemesi
+   - Tarih aralığı, dönem etiketi ve toplam süre
+   - Trend yüzdesi, günlük ortalama ve en verimli saatler
+   - Top 3 kategori / uygulama ve öne çıkan özetler
+
+7. **screenshot-dialog.png** - Ekran görüntüsü dialogu
+   - Görünen kısım / tam sayfa seçenekleri
+   - Önizleme alanı, Kaydet ve Panoya kopyala butonları
+
 ## Görsel Özellikleri
 
 - **Format:** PNG
