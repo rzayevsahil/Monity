@@ -129,19 +129,63 @@ public partial class ScreenshotDialog : Window
         }
         if (contentToRender == null || contentHeight > 16000)
             return CaptureVisible(main);
+        // Canlı arayüzü hiç etkilememek için içeriği geçici olarak ekran dışı panele taşıyıp orada render al
         RenderTargetBitmap? bmpContent = null;
-        try
+        if (scrollViewer != null)
         {
-            contentToRender.Arrange(new Rect(0, 0, width, contentHeight));
-            bmpContent = new RenderTargetBitmap(
-                Math.Max(1, (int)width),
-                Math.Max(1, (int)contentHeight),
-                96, 96, PixelFormats.Pbgra32);
-            bmpContent.Render(contentToRender);
+            scrollViewer.Content = null;
+            var offscreenBorder = new Border
+            {
+                Width = width,
+                Height = contentHeight,
+                Child = contentToRender,
+                Background = main.TryFindResource("BackgroundBrush") as System.Windows.Media.Brush
+            };
+            var offscreenCanvas = new Canvas
+            {
+                Width = rootGrid.ActualWidth,
+                Height = rootGrid.ActualHeight,
+                IsHitTestVisible = false,
+                ClipToBounds = false
+            };
+            System.Windows.Controls.Canvas.SetLeft(offscreenBorder, -width * 3);
+            System.Windows.Controls.Canvas.SetTop(offscreenBorder, 0);
+            offscreenCanvas.Children.Add(offscreenBorder);
+            Grid.SetRowSpan(offscreenCanvas, 3);
+            Grid.SetRow(offscreenCanvas, 0);
+            rootGrid.Children.Add(offscreenCanvas);
+            try
+            {
+                rootGrid.UpdateLayout();
+                bmpContent = new RenderTargetBitmap(
+                    Math.Max(1, (int)width),
+                    Math.Max(1, (int)contentHeight),
+                    96, 96, PixelFormats.Pbgra32);
+                bmpContent.Render(contentToRender);
+            }
+            finally
+            {
+                rootGrid.Children.Remove(offscreenCanvas);
+                offscreenBorder.Child = null;
+                scrollViewer.Content = contentToRender;
+                rootGrid.UpdateLayout();
+            }
         }
-        finally
+        else
         {
-            frame.UpdateLayout();
+            try
+            {
+                contentToRender.Arrange(new Rect(0, 0, width, contentHeight));
+                bmpContent = new RenderTargetBitmap(
+                    Math.Max(1, (int)width),
+                    Math.Max(1, (int)contentHeight),
+                    96, 96, PixelFormats.Pbgra32);
+                bmpContent.Render(contentToRender);
+            }
+            finally
+            {
+                frame.UpdateLayout();
+            }
         }
         var hHeader = bmpHeader?.PixelHeight ?? 0;
         var hFooter = bmpFooter?.PixelHeight ?? 0;
