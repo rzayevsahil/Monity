@@ -229,8 +229,6 @@ public partial class ScreenshotDialog : Window
                 "Monity",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
-            DialogResult = true;
-            Close();
         }
         catch
         {

@@ -36,7 +36,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <!-- Tek satır: Sürümü sadece burada güncelle. AssemblyVersion/FileVersion/InformationalVersion SDK tarafından bundan türetilir. -->
-    <Version>5.3.0</Version>
+    <Version>5.5.0</Version>
   </PropertyGroup>
 
 </Project>
