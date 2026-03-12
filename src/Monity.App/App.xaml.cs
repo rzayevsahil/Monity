@@ -74,6 +74,9 @@ public partial class App : System.Windows.Application
 
         _trackingService.Start();
 
+        var focusMode = _services.GetRequiredService<FocusModeService>();
+        await focusMode.LoadSettingsAsync();
+
         var mainWindow = _services.GetRequiredService<MainWindow>();
         _powerHandler = _services.GetRequiredService<PowerEventHandler>();
         _powerHandler.Attach(mainWindow);
@@ -127,6 +130,9 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IInsightService, InsightService>();
         services.AddSingleton<IShareService, ShareService>();
         services.AddSingleton<IDailyReportService, DailyReportService>();
+        services.AddSingleton<IReportExportService, ReportExportService>();
+        services.AddSingleton<IPomodoroService, PomodoroService>();
+        services.AddSingleton<FocusModeService>();
         services.AddSingleton<IGoalParsingService, GoalParsingService>();
         services.AddSingleton<IGoalService, GoalService>();
         services.AddTransient<MainWindow>();

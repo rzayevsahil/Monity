@@ -46,6 +46,7 @@
                 <ComboBox x:Name="CategoryFilter" Width="120" VerticalAlignment="Center" SelectionChanged="CategoryFilter_SelectionChanged"
                           Foreground="{DynamicResource TextBrush}"/>
                 <Button x:Name="BtnRefresh" Content="{DynamicResource Dashboard_Refresh}" Style="{DynamicResource PrimaryButtonStyle}" Margin="12,0,0,0" Click="BtnRefresh_Click"/>
+                <Button x:Name="BtnExport" Content="{DynamicResource Stats_Export}" Style="{DynamicResource SecondaryButtonStyle}" Margin="8,0,0,0" Click="BtnExport_Click"/>
                 <TextBlock x:Name="TxtDateRange" VerticalAlignment="Center" Margin="16,0,0,0" FontSize="13" Foreground="{DynamicResource TextMutedBrush}"/>
             </StackPanel>
 

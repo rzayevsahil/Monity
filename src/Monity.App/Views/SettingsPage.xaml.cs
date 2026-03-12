@@ -37,6 +37,7 @@ public partial class SettingsPage : Page
     private readonly ObservableCollection<AppExcludeItem> _appExcludeItems = [];
     private readonly ObservableCollection<DailyLimitItem> _dailyLimitItems = [];
     private readonly ObservableCollection<CategoryItem> _categoryItems = [];
+    private readonly ObservableCollection<FocusModeBlockItem> _focusModeBlockedItems = [];
     private readonly ObservableCollection<Goal> _goals = [];
     private readonly ICollectionView _appExcludeView;
     private readonly ICollectionView _dailyLimitView;
@@ -62,6 +63,7 @@ public partial class SettingsPage : Page
         _categoryView = CollectionViewSource.GetDefaultView(_categoryItems);
         AppExcludeList.ItemsSource = _appExcludeView;
         DailyLimitList.ItemsSource = _dailyLimitView;
+        FocusModeBlockList.ItemsSource = _focusModeBlockedItems;
         CategoryList.ItemsSource = _categoryView;
         GoalsList.ItemsSource = _goals;
         CategoryComboBox.ItemsSource = CategoryItem.GetCategoryOptions();
@@ -144,6 +146,10 @@ public partial class SettingsPage : Page
 
         TxtMinSessionSeconds.Text = _trackingService.MinSessionSeconds.ToString();
 
+        var recordWindowTitle = (await _repository.GetSettingAsync("record_window_title") ?? "true") == "true";
+        CbRecordWindowTitle.IsChecked = recordWindowTitle;
+        _trackingService.RecordWindowTitle = recordWindowTitle;
+
         var ignoredStr = await _repository.GetSettingAsync("ignored_processes") ?? "";
         var ignoredSet = new HashSet<string>(ignoredStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), StringComparer.OrdinalIgnoreCase);
 
@@ -198,6 +204,15 @@ public partial class SettingsPage : Page
         ApplyDailyLimitSearchFilter();
         var limitExceededAction = await _repository.GetSettingAsync("limit_exceeded_action") ?? "notify";
         ChkLimitExceededCloseApp.IsChecked = limitExceededAction == "close_app";
+
+        // Odak modu
+        var focusEnabled = (await _repository.GetSettingAsync("focus_mode_enabled") ?? "false") == "true";
+        ChkFocusModeEnabled.IsChecked = focusEnabled;
+        var focusBlockedStr = await _repository.GetSettingAsync("focus_mode_blocked_processes") ?? "";
+        var focusBlockedSet = new HashSet<string>(focusBlockedStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries), StringComparer.OrdinalIgnoreCase);
+        _focusModeBlockedItems.Clear();
+        foreach (var app in _appExcludeItems)
+            _focusModeBlockedItems.Add(new FocusModeBlockItem(app.ProcessName, app.DisplayName, focusBlockedSet.Contains(app.ProcessName)));
 
         // Uygulama kategorileri listesi
         var appsWithCategory = await _repository.GetTrackedAppsWithCategoryAsync();
@@ -598,6 +613,10 @@ public partial class SettingsPage : Page
         await _languageService.SaveLanguageAsync(language);
 
         await _startupService.SetEnabledAsync(CbStartWithWindows.IsChecked == true);
+
+        var recordWindowTitle = CbRecordWindowTitle.IsChecked == true;
+        await _repository.SetSettingAsync("record_window_title", recordWindowTitle ? "true" : "false");
+        _trackingService.RecordWindowTitle = recordWindowTitle;
         
         // Refresh goal-related localized elements
         PopulateGoalComboBoxes();
@@ -679,6 +698,16 @@ public partial class SettingsPage : Page
         System.Windows.MessageBox.Show(Strings.Get("Msg_GeneralSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
     }
 
+    private async void BtnSaveFocusMode_Click(object sender, RoutedEventArgs e)
+    {
+        var focusService = _services.GetRequiredService<FocusModeService>();
+        var enabled = ChkFocusModeEnabled.IsChecked == true;
+        await focusService.SetEnabledAsync(enabled);
+        var blocked = _focusModeBlockedItems.Where(x => x.IsBlocked).Select(x => x.ProcessName).ToList();
+        await focusService.SetBlockedProcessesAsync(blocked);
+        System.Windows.MessageBox.Show(Strings.Get("Msg_GeneralSaved"), Strings.Get("Msg_AppName"), MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
     private static T? FindParent<T>(DependencyObject child) where T : DependencyObject
     {
         var parent = VisualTreeHelper.GetParent(child);
@@ -706,6 +735,25 @@ public partial class SettingsPage : Page
             ProcessName = processName;
             DisplayName = displayName;
             _isExcluded = isExcluded;
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
+    }
+
+    private sealed class FocusModeBlockItem : INotifyPropertyChanged
+    {
+        public string ProcessName { get; }
+        public string DisplayName { get; }
+        private bool _isBlocked;
+        public bool IsBlocked
+        {
+            get => _isBlocked;
+            set { _isBlocked = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsBlocked))); }
+        }
+        public FocusModeBlockItem(string processName, string displayName, bool isBlocked)
+        {
+            ProcessName = processName;
+            DisplayName = displayName;
+            _isBlocked = isBlocked;
         }
         public event PropertyChangedEventHandler? PropertyChanged;
     }

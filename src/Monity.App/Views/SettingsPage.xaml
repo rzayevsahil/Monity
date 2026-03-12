@@ -55,6 +55,7 @@
                          PreviewTextInput="TxtMinSessionSeconds_PreviewTextInput"
                          LostFocus="TxtMinSessionSeconds_LostFocus"/>
             </Border>
+            <CheckBox x:Name="CbRecordWindowTitle" Content="{DynamicResource Settings_RecordWindowTitle}" Margin="0,0,0,12" Foreground="{DynamicResource TextBrush}" ToolTip="{DynamicResource Settings_RecordWindowTitleHint}"/>
             <Button x:Name="BtnSaveGeneral" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveGeneral_Click"/>
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
@@ -158,6 +159,24 @@
             </Border>
             <Button x:Name="BtnSaveDailyLimit" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,8" Click="BtnSaveDailyLimit_Click"/>
             
+            <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
+
+            <!-- Odak modu -->
+            <TextBlock Text="{DynamicResource FocusMode_Title}" FontSize="14" Foreground="{DynamicResource TextBrush}" Margin="0,0,0,8"/>
+            <CheckBox x:Name="ChkFocusModeEnabled" Content="{DynamicResource FocusMode_Enable}" Margin="0,0,0,8" Foreground="{DynamicResource TextBrush}"/>
+            <TextBlock Text="{DynamicResource FocusMode_Hint}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,8" TextWrapping="Wrap"/>
+            <TextBlock Text="{DynamicResource FocusMode_BlockedApps}" FontSize="12" Foreground="{DynamicResource TextMutedBrush}" Margin="0,0,0,4"/>
+            <Border Background="{DynamicResource CardBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8" MaxHeight="180">
+                <ListBox x:Name="FocusModeBlockList" BorderThickness="0" Background="Transparent">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsBlocked, Mode=TwoWay}" Content="{Binding DisplayName}" Margin="0,4" Cursor="Hand" Foreground="{DynamicResource TextBrush}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Border>
+            <Button x:Name="BtnSaveFocusMode" Content="{DynamicResource Settings_Save}" Style="{DynamicResource PrimaryButtonStyle}" HorizontalAlignment="Left" Margin="0,0,0,24" Click="BtnSaveFocusMode_Click"/>
+
             <Border Height="1" Margin="0,20,0,20" Background="{DynamicResource BorderBrush}"/>
 
             <!-- Hedef Sistemi -->

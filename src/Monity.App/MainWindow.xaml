@@ -38,6 +38,7 @@
                     </Border>
                     <Button x:Name="BtnDashboard" Content="{DynamicResource Dashboard_Title}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnDashboard_Click"/>
                     <Button x:Name="BtnBrowserTracking" Content="{DynamicResource Navigation_BrowserTracking}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnBrowserTracking_Click"/>
+                    <Button x:Name="BtnPomodoro" Content="{DynamicResource Navigation_Pomodoro}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnPomodoro_Click"/>
                     <Button x:Name="BtnStatistics" Content="{DynamicResource Main_Statistics}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnStatistics_Click"/>
                     <Button x:Name="BtnAchievements" Content="{DynamicResource Achievement_Title}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnAchievements_Click"/>
                     <Button x:Name="BtnSettings" Content="{DynamicResource Main_Settings}" Style="{DynamicResource SecondaryButtonStyle}" Padding="8,6" Margin="0,0,6,0" Click="BtnSettings_Click"/>

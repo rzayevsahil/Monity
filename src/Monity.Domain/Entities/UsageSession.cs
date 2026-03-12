@@ -10,6 +10,7 @@ public class UsageSession
     public bool IsIdle { get; set; }
     public string? WindowTitle { get; set; }
     public string DayDate { get; set; } = string.Empty; // YYYY-MM-DD
+    public string? Tag { get; set; }
 
     public AppInfo? App { get; set; }
 }

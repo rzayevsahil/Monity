@@ -53,7 +53,9 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
   - **Time distribution chart:** Hourly bar chart in daily mode; daily total bar chart in weekly/monthly/yearly mode.
   - **Application distribution chart:** Pie chart of most used applications; slice and tooltip values with 2 decimal places.
   - **Application usage table:** Total, average, and percentage columns; filtering with search box. Excluded applications are not shown in the list or totals.
+  - **Export:** Export statistics to CSV (UTF-8 BOM, Excel-compatible) for the selected period and category; includes summary, application list, and daily breakdown.
   - **Back to Dashboard:** Return button next to the page title and at the end of the page.
+- **Pomodoro (Focus Timer):** Page accessible from the main menu; configurable work and break durations (default 25/5 min), countdown, start/pause/stop, and tray notification when a period ends.
 - **Achievements:** A dedicated page accessed from the main menu to track earned rewards and progress.
 - **Share:** Generate a usage summary card for today, this week, or this month. The card shows period label, date range, total duration, trend vs. previous period (percentage), daily average, most used application, peak productive hours (if available), a single insight highlight, and goal status (if set). The right panel lists category distribution (top 3 categories), top 3 applications (with mini bar chart), and highlights. The layout is clean and focused; the image can be copied to the clipboard or shared externally.
 - **Browser Tracking:** A separate page accessed from the main menu:
@@ -68,6 +70,8 @@ A WPF application that tracks **application usage time** on Windows desktop. It 
   - **Auto-start at Windows startup:** Optional (Registry Run or task scheduler).
   - **Idle time** (seconds), between 10–600.
   - **Minimum session duration** (seconds): 0 = off, between 1–600; sessions shorter than this are not recorded.
+  - **Record window title:** When on, which file or page you work on (window title) is used in reports; can be turned off for privacy.
+  - **Focus mode:** When on, a tray notification is shown when switching to any of the selected apps in the list.
   - **Applications to exclude from tracking:** Lists both previously used (in DB) and **installed programs** (from Windows Uninstall records); filtering with search box. Monity and Windows Explorer are excluded by default.
   - **Daily time limits:** Minute limit per application (1–1440); tray notification when limit is exceeded. Optional **"Close application when limit is exceeded"** option.
   - **Application categories:** Categories can be assigned to each application (Browser, Development, Social, Entertainment, Office, Other, Uncategorized); filtering by category in Dashboard and Statistics.
@@ -186,6 +190,8 @@ Data is kept in local time; dashboard queries are performed via `daily_summary`.
 | **Auto-start at Windows startup** | When on, the app starts with Windows. |
 | **Idle time** | 10–600 seconds. If no input for this duration, time is not counted. |
 | **Minimum session duration** | 0 = off, 1–600 seconds. Sessions shorter than this are not recorded. |
+| **Record window title** | When on, window title is used in reports; can be turned off for privacy. |
+| **Focus mode** | When on, tray notification when switching to apps in the list. |
 | **Applications to exclude from tracking** | Applications marked in the list are not shown in Dashboard or Statistics. List: apps used in DB + Windows installed programs. |
 | **Daily time limits** | Minute limit per application; tray notification on excess. Optional "Close application when limit is exceeded". |
 | **Application categories** | Categories assigned to apps; category filter used in Dashboard and Statistics. |

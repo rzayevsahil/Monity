@@ -10,7 +10,9 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using Monity.App.Helpers;
+using Monity.App.Services;
 using Monity.Infrastructure.Persistence;
 using Monity.Infrastructure.Tracking;
 using SkiaSharp;
@@ -127,6 +129,49 @@ public partial class StatisticsPage : Page
     private async void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e) => await LoadDataAsync();
 
     private async void CategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e) => await LoadDataAsync();
+
+    private async void BtnExport_Click(object sender, RoutedEventArgs e)
+    {
+        var period = GetPeriod();
+        var dateStart = GetSelectedDate();
+        var dateEnd = GetSelectedEndDate();
+        DateTime start;
+        DateTime end;
+        if (dateEnd.HasValue && dateEnd.Value.Date >= dateStart.Date)
+        {
+            start = dateStart.Date;
+            end = dateEnd.Value.Date;
+        }
+        else
+        {
+            (start, end, _) = DurationAndPeriodHelper.GetPeriodRange(period, dateStart);
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Filter = "CSV (*.csv)|*.csv|All files (*.*)|*.*",
+            DefaultExt = "csv",
+            FileName = "Monity_Statistics_" + start.ToString("yyyy-MM-dd") + "_" + end.ToString("yyyy-MM-dd") + ".csv"
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            BtnExport.IsEnabled = false;
+            var exportService = _services.GetRequiredService<IReportExportService>();
+            await exportService.ExportStatisticsToCsvAsync(start, end, GetSelectedCategoryName(), dialog.FileName);
+            System.Windows.MessageBox.Show(Strings.Get("Export_Success"), Strings.Get("App_Name"), MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "Statistics export failed");
+            System.Windows.MessageBox.Show(Strings.Get("Export_Error") + " " + ex.Message, Strings.Get("Msg_Error"), MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+        finally
+        {
+            BtnExport.IsEnabled = true;
+        }
+    }
 
     private async void BtnRefresh_Click(object sender, RoutedEventArgs e)
     {

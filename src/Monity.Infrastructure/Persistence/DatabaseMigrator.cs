@@ -128,5 +128,18 @@ public static class DatabaseMigrator
         using var cmd = conn.CreateCommand();
         cmd.CommandText = sql;
         cmd.ExecuteNonQuery();
+
+        EnsureTagColumn(conn);
+    }
+
+    private static void EnsureTagColumn(SqliteConnection conn)
+    {
+        using var check = conn.CreateCommand();
+        check.CommandText = "SELECT COUNT(*) FROM pragma_table_info('usage_sessions') WHERE name='tag'";
+        var hasTag = (long)(check.ExecuteScalar() ?? 0L) > 0;
+        if (hasTag) return;
+        using var alter = conn.CreateCommand();
+        alter.CommandText = "ALTER TABLE usage_sessions ADD COLUMN tag TEXT NULL";
+        alter.ExecuteNonQuery();
     }
 }

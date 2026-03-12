@@ -83,6 +83,8 @@
     <sys:String x:Key="Settings_IdleHint">If you don't touch keyboard or mouse for this duration, time is not counted. 10–600 (60 = 1 min).</sys:String>
     <sys:String x:Key="Settings_MinSessionLabel">Minimum session duration (seconds)</sys:String>
     <sys:String x:Key="Settings_MinSessionHint">Sessions shorter than this are not recorded. 0 = off, 1–600.</sys:String>
+    <sys:String x:Key="Settings_RecordWindowTitle">Record window title</sys:String>
+    <sys:String x:Key="Settings_RecordWindowTitleHint">When on, which file or page you work on (e.g. file name, tab title) appears in reports. Turn off for privacy.</sys:String>
     <sys:String x:Key="Settings_Save">Save</sys:String>
     <sys:String x:Key="Settings_ExcludeTitle">Excluded apps</sys:String>
     <sys:String x:Key="Settings_ExcludeHint">Check apps you don't want to track. Only previously used apps appear. Monity and Windows Explorer are always excluded.</sys:String>
@@ -142,6 +144,9 @@
     <sys:String x:Key="Stats_Total">Total</sys:String>
     <sys:String x:Key="Stats_Average">Average</sys:String>
     <sys:String x:Key="Stats_Percent">Percent</sys:String>
+    <sys:String x:Key="Stats_Export">Export</sys:String>
+    <sys:String x:Key="Export_Success">Report exported successfully.</sys:String>
+    <sys:String x:Key="Export_Error">Export failed:</sys:String>
     <!-- Messages -->
     <sys:String x:Key="Msg_AppName">Monity</sys:String>
     <sys:String x:Key="Msg_Error">Error</sys:String>
@@ -226,6 +231,26 @@
     <sys:String x:Key="BrowserTracking_TimeUnit">(h/m/s)</sys:String>
     <sys:String x:Key="BrowserTracking_BrowserLabel">Browser:</sys:String>
     <sys:String x:Key="Navigation_BrowserTracking">Browser Tracking</sys:String>
+    <sys:String x:Key="Pomodoro_Title">Focus Timer (Pomodoro)</sys:String>
+    <sys:String x:Key="Navigation_Pomodoro">Pomodoro</sys:String>
+    <sys:String x:Key="Pomodoro_Work">Work</sys:String>
+    <sys:String x:Key="Pomodoro_Break">Break</sys:String>
+    <sys:String x:Key="Pomodoro_StartWork">Start work</sys:String>
+    <sys:String x:Key="Pomodoro_StartBreak">Start break</sys:String>
+    <sys:String x:Key="Pomodoro_Pause">Pause</sys:String>
+    <sys:String x:Key="Pomodoro_Resume">Resume</sys:String>
+    <sys:String x:Key="Pomodoro_Stop">Stop</sys:String>
+    <sys:String x:Key="Pomodoro_WorkMinutes">Work (min)</sys:String>
+    <sys:String x:Key="Pomodoro_BreakMinutes">Break (min)</sys:String>
+    <sys:String x:Key="Pomodoro_NotificationTitle">Pomodoro</sys:String>
+    <sys:String x:Key="Pomodoro_WorkComplete">Work period over. Take a short break.</sys:String>
+    <sys:String x:Key="Pomodoro_BreakComplete">Break over. You can get back to work.</sys:String>
+    <sys:String x:Key="FocusMode_Title">Focus mode</sys:String>
+    <sys:String x:Key="FocusMode_Enable">Enable focus mode</sys:String>
+    <sys:String x:Key="FocusMode_Hint">When on, you get a warning notification when you switch to any of the apps listed below.</sys:String>
+    <sys:String x:Key="FocusMode_BlockedApps">Apps to warn about</sys:String>
+    <sys:String x:Key="FocusMode_NotificationTitle">Focus mode</sys:String>
+    <sys:String x:Key="FocusMode_NotificationText">You are using "{0}". Focus mode is on.</sys:String>
     
     <!-- About Page -->
     <sys:String x:Key="About_Title">About</sys:String>
@@ -256,6 +281,11 @@
     <sys:String x:Key="About_Contact">Contact:</sys:String>
     <sys:String x:Key="About_VersionHistory">Version History</sys:String>
     <!-- Version history: title + items separate (clean list layout) -->
+    <sys:String x:Key="About_Ver_570">v5.7.0 (March 2026)</sys:String>
+    <sys:String x:Key="About_Ver_570_1">CSV export from Statistics (by period and category, UTF-8 BOM, Excel-compatible)</sys:String>
+    <sys:String x:Key="About_Ver_570_2">Pomodoro / Focus timer (work-break durations, tray notification)</sys:String>
+    <sys:String x:Key="About_Ver_570_3">Window title recording (can be toggled in Settings for privacy)</sys:String>
+    <sys:String x:Key="About_Ver_570_4">Focus mode: Tray warning when switching to selected apps</sys:String>
     <sys:String x:Key="About_Ver_550">v5.5.0 (March 2026)</sys:String>
     <sys:String x:Key="About_Ver_550_1">Improved share card (date range, trend, peak hours, top 3 categories/apps, highlights)</sys:String>
     <sys:String x:Key="About_Ver_550_2">In-app screenshot capture (visible area / full page, preview, save and copy to clipboard)</sys:String>

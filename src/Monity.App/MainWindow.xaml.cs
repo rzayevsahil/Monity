@@ -168,6 +168,11 @@ public partial class MainWindow : Window
         MainFrame.Navigate(new BrowserTrackingPage(Services));
     }
 
+    private void BtnPomodoro_Click(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigate(new PomodoroPage(Services));
+    }
+
     private void BtnStatistics_Click(object sender, RoutedEventArgs e)
     {
         MainFrame.Navigate(new StatisticsPage(Services));

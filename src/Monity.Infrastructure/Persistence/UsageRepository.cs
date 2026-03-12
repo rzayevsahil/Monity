@@ -101,8 +101,8 @@ public sealed class UsageRepository : IUsageRepository
             {
                 await conn.ExecuteAsync(
                     """
-                    INSERT INTO usage_sessions (app_id, started_at, ended_at, duration_seconds, is_idle, window_title, day_date)
-                    VALUES (@AppId, @StartedAt, @EndedAt, @DurationSeconds, @IsIdle, @WindowTitle, @DayDate)
+                    INSERT INTO usage_sessions (app_id, started_at, ended_at, duration_seconds, is_idle, window_title, day_date, tag)
+                    VALUES (@AppId, @StartedAt, @EndedAt, @DurationSeconds, @IsIdle, @WindowTitle, @DayDate, @Tag)
                     """,
                     new
                     {
@@ -112,7 +112,8 @@ public sealed class UsageRepository : IUsageRepository
                         s.DurationSeconds,
                         IsIdle = s.IsIdle ? 1 : 0,
                         s.WindowTitle,
-                        s.DayDate
+                        s.DayDate,
+                        s.Tag
                     },
                     tx);
             }
@@ -195,7 +196,7 @@ public sealed class UsageRepository : IUsageRepository
         return rows.ToList();
     }
 
-    public async Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
+    public async Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, string? tag = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
@@ -206,36 +207,22 @@ public sealed class UsageRepository : IUsageRepository
         var categoryFilter = categoryName != null
             ? (categoryName.Length == 0 ? " AND (a.category IS NULL OR a.category = '')" : " AND a.category = @CategoryName")
             : "";
+        var tagFilter = tag != null ? " AND (s.tag = @Tag)" : "";
         var sql = $"""
             SELECT a.id AS AppId, a.process_name AS ProcessName, a.display_name AS DisplayName,
                    SUM(CASE WHEN s.is_idle = 0 THEN s.duration_seconds ELSE 0 END) AS TotalSeconds,
                    COUNT(*) AS SessionCount
             FROM usage_sessions s
             JOIN apps a ON a.id = s.app_id
-            WHERE s.day_date >= @Start AND s.day_date <= @End {idleFilter}{excludeFilter}{categoryFilter}
+            WHERE s.day_date >= @Start AND s.day_date <= @End {idleFilter}{excludeFilter}{categoryFilter}{tagFilter}
             GROUP BY a.id, a.process_name, a.display_name
             ORDER BY TotalSeconds DESC
             """;
 
         var startStr = startDate.ToString("yyyy-MM-dd");
         var endStr = endDate.ToString("yyyy-MM-dd");
-        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
-        {
-            var rows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName });
-            return rows.ToList();
-        }
-        if (excludedProcessNames is { Count: > 0 })
-        {
-            var rows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames });
-            return rows.ToList();
-        }
-        if (categoryName != null && categoryName.Length > 0)
-        {
-            var rows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr, CategoryName = categoryName });
-            return rows.ToList();
-        }
-        var allRows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr });
-        return allRows.ToList();
+        var rows = await conn.QueryAsync<AppUsageSummary>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName, Tag = tag });
+        return rows.ToList();
     }
 
     public async Task<IReadOnlyList<HourlyUsage>> GetHourlyUsageAsync(string date, bool excludeIdle = true, string? categoryName = null, CancellationToken ct = default)
@@ -292,77 +279,99 @@ public sealed class UsageRepository : IUsageRepository
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 
-    public async Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
+    public async Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, string? tag = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
         var excludeFilter = excludedProcessNames is { Count: > 0 }
-            ? " AND app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
+            ? " AND s.app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
             : "";
         var categoryFilter = categoryName != null
-            ? (categoryName.Length == 0 ? " AND app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
+            ? (categoryName.Length == 0 ? " AND s.app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND s.app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
             : "";
+        var tagFilter = tag != null ? " AND (s.tag = @Tag)" : "";
         var sql = $"""
-            SELECT COALESCE(SUM(CASE WHEN is_idle = 0 THEN duration_seconds ELSE 0 END), 0) AS TotalSeconds,
+            SELECT COALESCE(SUM(CASE WHEN s.is_idle = 0 THEN s.duration_seconds ELSE 0 END), 0) AS TotalSeconds,
                    COUNT(*) AS SessionCount
-            FROM usage_sessions
-            WHERE day_date >= @Start AND day_date <= @End{excludeFilter}{categoryFilter}
+            FROM usage_sessions s
+            WHERE s.day_date >= @Start AND s.day_date <= @End{excludeFilter}{categoryFilter}{tagFilter}
             """;
 
         var startStr = startDate.ToString("yyyy-MM-dd");
         var endStr = endDate.ToString("yyyy-MM-dd");
-        dynamic? row = null;
-        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
-            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName });
-        else if (excludedProcessNames is { Count: > 0 })
-            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames });
-        else if (categoryName != null && categoryName.Length > 0)
-            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr, CategoryName = categoryName });
-        else
-            row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, new { Start = startStr, End = endStr });
+        object param = new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName, Tag = tag };
+        dynamic? row = await conn.QueryFirstOrDefaultAsync<dynamic>(sql, param);
         if (row == null)
             return new DailyTotal(0, 0);
         return new DailyTotal((long)row.TotalSeconds, (int)row.SessionCount);
     }
 
-    public async Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default)
+    public async Task UpdateSessionTagAsync(int sessionId, string? tag, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        await conn.ExecuteAsync(
+            "UPDATE usage_sessions SET tag = @Tag WHERE id = @Id",
+            new { Id = sessionId, Tag = tag });
+    }
+
+    public async Task<IReadOnlyList<SessionForTagging>> GetSessionsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        await EnsureDisplayNamesFilledAsync(conn);
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
+        var idleFilter = excludeIdle ? "AND s.is_idle = 0" : "";
+        var excludeFilter = excludedProcessNames is { Count: > 0 }
+            ? " AND a.process_name NOT IN @Excluded"
+            : "";
+        var sql = $"""
+            SELECT s.id AS Id, s.app_id AS AppId, COALESCE(a.display_name, a.process_name) AS DisplayName,
+                   s.started_at AS StartedAt, s.ended_at AS EndedAt, s.duration_seconds AS DurationSeconds, s.day_date AS DayDate, s.tag AS Tag
+            FROM usage_sessions s
+            JOIN apps a ON a.id = s.app_id
+            WHERE s.day_date >= @Start AND s.day_date <= @End {idleFilter}{excludeFilter}
+            ORDER BY s.started_at DESC
+            """;
+        var rows = await conn.QueryAsync<(int Id, int AppId, string DisplayName, string StartedAt, string EndedAt, int DurationSeconds, string DayDate, string? Tag)>(
+            sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames });
+        return rows.Select(r => new SessionForTagging(
+            r.Id, r.AppId, r.DisplayName,
+            DateTime.Parse(r.StartedAt, null, System.Globalization.DateTimeStyles.RoundtripKind),
+            DateTime.Parse(r.EndedAt, null, System.Globalization.DateTimeStyles.RoundtripKind),
+            r.DurationSeconds, r.DayDate, r.Tag)).ToList();
+    }
+
+    public async Task<IReadOnlyList<string>> GetDistinctTagsAsync(CancellationToken ct = default)
+    {
+        await using var conn = OpenConnection();
+        var rows = await conn.QueryAsync<string>("SELECT DISTINCT tag FROM usage_sessions WHERE tag IS NOT NULL AND tag != '' ORDER BY tag");
+        return rows.ToList();
+    }
+
+    public async Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, string? tag = null, CancellationToken ct = default)
     {
         await using var conn = OpenConnection();
 
         var excludeFilter = excludedProcessNames is { Count: > 0 }
-            ? " AND app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
+            ? " AND s.app_id NOT IN (SELECT id FROM apps WHERE process_name IN @Excluded)"
             : "";
         var categoryFilter = categoryName != null
-            ? (categoryName.Length == 0 ? " AND app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
+            ? (categoryName.Length == 0 ? " AND s.app_id IN (SELECT id FROM apps WHERE category IS NULL OR category = '')" : " AND s.app_id IN (SELECT id FROM apps WHERE category = @CategoryName)")
             : "";
+        var tagFilter = tag != null ? " AND (s.tag = @Tag)" : "";
         var sql = $"""
-            SELECT day_date AS Date,
-                   SUM(CASE WHEN is_idle = 0 THEN duration_seconds ELSE 0 END) AS TotalSeconds
-            FROM usage_sessions
-            WHERE day_date >= @Start AND day_date <= @End{excludeFilter}{categoryFilter}
-            GROUP BY day_date
-            ORDER BY day_date
+            SELECT s.day_date AS Date,
+                   SUM(CASE WHEN s.is_idle = 0 THEN s.duration_seconds ELSE 0 END) AS TotalSeconds
+            FROM usage_sessions s
+            WHERE s.day_date >= @Start AND s.day_date <= @End{excludeFilter}{categoryFilter}{tagFilter}
+            GROUP BY s.day_date
+            ORDER BY s.day_date
             """;
 
         var startStr = startDate.ToString("yyyy-MM-dd");
         var endStr = endDate.ToString("yyyy-MM-dd");
-        if (excludedProcessNames is { Count: > 0 } && categoryName != null && categoryName.Length > 0)
-        {
-            var rows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName });
-            return rows.ToList();
-        }
-        if (excludedProcessNames is { Count: > 0 })
-        {
-            var rows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames });
-            return rows.ToList();
-        }
-        if (categoryName != null && categoryName.Length > 0)
-        {
-            var rows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr, CategoryName = categoryName });
-            return rows.ToList();
-        }
-        var allRows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr });
-        return allRows.ToList();
+        var rows = await conn.QueryAsync<DailyTotalByDate>(sql, new { Start = startStr, End = endStr, Excluded = excludedProcessNames, CategoryName = categoryName, Tag = tag });
+        return rows.ToList();
     }
 
     public async Task<DateTime?> GetFirstSessionStartedAtAsync(string date, CancellationToken ct = default)

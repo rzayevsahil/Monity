@@ -9,11 +9,14 @@ public interface IUsageRepository
     Task AddSessionsAsync(IReadOnlyList<UsageSession> sessions, CancellationToken ct = default);
     Task UpdateDailySummaryAsync(string date, CancellationToken ct = default);
     Task<IReadOnlyList<AppUsageSummary>> GetDailyUsageAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
-    Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
+    Task<IReadOnlyList<AppUsageSummary>> GetWeeklyUsageAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, string? tag = null, CancellationToken ct = default);
     Task<IReadOnlyList<HourlyUsage>> GetHourlyUsageAsync(string date, bool excludeIdle = true, string? categoryName = null, CancellationToken ct = default);
     Task<DailyTotal> GetDailyTotalAsync(string date, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
-    Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
-    Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, CancellationToken ct = default);
+    Task<DailyTotal> GetRangeTotalAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, string? tag = null, CancellationToken ct = default);
+    Task<IReadOnlyList<DailyTotalByDate>> GetDailyTotalsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, string? categoryName = null, string? tag = null, CancellationToken ct = default);
+    Task UpdateSessionTagAsync(int sessionId, string? tag, CancellationToken ct = default);
+    Task<IReadOnlyList<SessionForTagging>> GetSessionsInRangeAsync(DateTime startDate, DateTime endDate, bool excludeIdle = true, IReadOnlyList<string>? excludedProcessNames = null, CancellationToken ct = default);
+    Task<IReadOnlyList<string>> GetDistinctTagsAsync(CancellationToken ct = default);
     Task<DateTime?> GetFirstSessionStartedAtAsync(string date, CancellationToken ct = default);
     Task<string?> GetSettingAsync(string key, CancellationToken ct = default);
     Task SetSettingAsync(string key, string value, CancellationToken ct = default);
@@ -79,3 +82,5 @@ public class HourlyUsage
 public record DailyTotal(long TotalSeconds, int SessionCount);
 
 public record DailyTotalByDate(string Date, long TotalSeconds);
+
+public record SessionForTagging(int Id, int AppId, string DisplayName, DateTime StartedAt, DateTime EndedAt, int DurationSeconds, string DayDate, string? Tag);

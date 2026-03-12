@@ -16,6 +16,16 @@ public sealed class UsageTrackingService
     private readonly IWindowTracker _windowTracker;
     private readonly IBrowserTrackingService? _browserTrackingService;
     private bool _started;
+    private bool _recordWindowTitle = true;
+
+    /// <summary>
+    /// When false, window title is not stored (privacy). Default true. Updated from settings.
+    /// </summary>
+    public bool RecordWindowTitle
+    {
+        get => _recordWindowTitle;
+        set => _recordWindowTitle = value;
+    }
 
     public UsageTrackingService(
         ITrackingEngine engine,
@@ -40,7 +50,21 @@ public sealed class UsageTrackingService
 
         _engine.Start();
         _started = true;
+        _ = LoadRecordWindowTitleSettingAsync();
         Serilog.Log.Information("UsageTrackingService started");
+    }
+
+    private async Task LoadRecordWindowTitleSettingAsync()
+    {
+        try
+        {
+            var v = await _repository.GetSettingAsync("record_window_title");
+            _recordWindowTitle = v != "false";
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Warning(ex, "Could not load record_window_title setting");
+        }
     }
 
     public async Task StopAsync()
@@ -95,7 +119,7 @@ public sealed class UsageTrackingService
                 EndedAt = endedLocal,
                 DurationSeconds = e.DurationSeconds,
                 IsIdle = e.IsIdle,
-                WindowTitle = e.WindowTitle,
+                WindowTitle = _recordWindowTitle ? e.WindowTitle : null,
                 DayDate = startedLocal.ToString("yyyy-MM-dd")
             };
 
